@@ -99,7 +99,7 @@ All facility data is illustrative and labelled (engine accepts measured data unc
 ## Team
 
 ```
-[TEAM NAME] — [members and roles to confirm at submission; solo entry permitted per handbook §8]
+Team MedGrid Sentinel — Jackson Sixtus Abetianbe (solo entry; permitted per Handbook §8)
 ```
 
 ## Build files

@@ -27,6 +27,6 @@ The Day-2 coach checkpoint (Sat Oct 31, 12:00 PM ET) gives 15–20 minutes of ru
 4. Financials — payback 7.9 yr, EaaS breakeven 4.6%, sizing table flip (daytime vs evening) (4 min)
 5. Readiness ratings request against all five rubric criteria (3 min)
 
-## Team roles recommended (handbook suggests 3–5 cross-disciplinary members)
+## Team roles — solo entry (Jackson Sixtus Abetianbe), all roles consolidated
 
-- Software/simulation (built) · Energy engineering review · Finance/business · Product design & pitch · Healthcare/community knowledge — solo entry is permitted; the video runbook and this package minimize the single-person load.
+- Software/simulation (built) · Energy engineering review · Finance/business · Product design & pitch · Healthcare/community knowledge. Solo entries are permitted per Handbook §8; the video runbook and this package keep the single-person load to the recording session only.

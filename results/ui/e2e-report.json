@@ -1,0 +1,19 @@
+{
+  "steps": [
+    "dashboard playback OK",
+    "tab:twin OK",
+    "twin live recompute OK",
+    "tab:scenarios OK",
+    "scenario B run OK",
+    "tab:scenarios2 OK",
+    "tab:financials OK",
+    "sizing search OK",
+    "tab:intelligence OK",
+    "tab:brief OK",
+    "tab:sources OK",
+    "tab:scenarios3 OK",
+    "hero dashboard OK",
+    "twin baseline text captured (5 chars)"
+  ],
+  "errors": []
+}

@@ -32,6 +32,15 @@ Built for the **Anneru IAS Global Energy Hackathon 2026** (October 30 – Novemb
 
 These numbers are **reproducible**: `npm run results` regenerates `results/demo-results.json` from the engine.
 
+## Screenshots (captured from the running application by the E2E walkthrough)
+
+| | |
+|---|---|
+| ![Dashboard — islanded during the brief-scenario outage](results/ui/dashboard-hero.png) | ![Scenario Lab — ten deterministic scenarios](results/ui/scenarios2.png) |
+| ![Digital Twin — configurable microgrid](results/ui/twin.png) | ![Financials — EaaS economics and sizing search](results/ui/financials.png) |
+
+More views in `results/ui/` (`brief-hero.png`, `intelligence.png`, `sources.png`, `scenario-b.png`). The walkthrough (`npm run e2e`) drives every tab in a real Chrome instance and fails on any console error.
+
 ## Quick start
 
 ```bash

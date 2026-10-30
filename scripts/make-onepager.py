@@ -47,7 +47,7 @@ E.append(Spacer(1, 2))
 E.append(HRFlowable(width="100%", thickness=1.4, color=NAVY, spaceAfter=3))
 E.append(Paragraph(
     "One-page summary · Anneru IAS Global Energy Hackathon 2026 (Oct 30 – Nov 1) · <b>Brief #13 — Power for a city the grid can't protect</b> · "
-    "<b>Track 2</b> Digital Solutions &amp; AI · <b>Setting B</b> Non-residential (healthcare) · Team: [CONFIRM AT SUBMISSION]", styles["m"]))
+    "<b>Track 2</b> Digital Solutions &amp; AI · <b>Setting B</b> Non-residential (healthcare) · Team: Jackson Sixtus Abetianbe (solo entry - permitted per Handbook s8)", styles["m"]))
 E.append(Spacer(1, 2))
 
 def sec(title, body):

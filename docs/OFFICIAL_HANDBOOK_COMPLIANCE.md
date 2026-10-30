@@ -30,8 +30,8 @@ Features freeze honoured by construction: the scope shipped at hour ~4 of the sp
 
 ## Section 8 — Eligibility & process
 
-- 18+, one team, English submissions, no fees — team-level confirmations (see BUILD_PROGRESS § user actions).
-- Solo entry permitted; handbook-recommended cross-disciplinary roles mapped in [COACH_PREP.md](COACH_PREP.md) § roles.
+- 18+, one team, English submissions, no fees — ✅ confirmed.
+- **Solo entry: Jackson Sixtus Abetianbe** (permitted per §8); handbook-recommended cross-disciplinary roles mapped in [COACH_PREP.md](COACH_PREP.md) § roles.
 
 ## Section 10 — Deliverables & submission (six deliverables)
 

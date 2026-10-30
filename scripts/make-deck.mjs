@@ -155,31 +155,26 @@ function hairline(slide, x, y, w) {
     ["58 / 58", "engine unit tests passing — physics, dispatch, finance, forecasting, verified build", TEXT],
   ];
   cards.forEach(([num, label, c], i) => {
-    const x = M + (i % 2) * 3.65, y = 1.85 + Math.floor(i / 2) * 1.95;
-    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w: 3.45, h: 1.75, fill: { color: PANEL }, rectRadius: 0.06, line: { color: "24466E", width: 1 } });
-    s.addText(num, { x: x + 0.25, y: y + 0.15, w: 3.0, h: 0.65, fontFace: F, fontSize: 28, bold: true, color: c, margin: 0 });
-    s.addText(label, { x: x + 0.25, y: y + 0.82, w: 3.0, h: 0.85, fontFace: F, fontSize: 11.5, color: MUTED, margin: 0 });
+    const x = M + (i % 2) * 3.57, y = 1.85 + Math.floor(i / 2) * 1.95;
+    s.addShape(p.shapes.ROUNDED_RECTANGLE, { x, y, w: 3.35, h: 1.75, fill: { color: PANEL }, rectRadius: 0.06, line: { color: "24466E", width: 1 } });
+    s.addText(num, { x: x + 0.22, y: y + 0.15, w: 2.95, h: 0.65, fontFace: F, fontSize: 26, bold: true, color: c, margin: 0 });
+    s.addText(label, { x: x + 0.22, y: y + 0.82, w: 2.95, h: 0.85, fontFace: F, fontSize: 11, color: MUTED, margin: 0 });
   });
 
-  s.addChart(p.charts.BAR, [{
-    name: "Diesel litres (3-day run)",
-    labels: ["Diesel-only baseline", "Sentinel-managed"],
-    values: [1295, 763],
-  }], {
-    x: 8.1, y: 1.85, w: 4.73, h: 3.7, barDir: "col",
-    chartColors: [AMBER, CYAN], varyColors: true,
-    chartArea: { fill: { color: PANEL }, roundedCorners: true },
-    catAxisLabelColor: MUTED, valAxisLabelColor: MUTED,
-    catAxisLabelFontSize: 11, valAxisLabelFontSize: 10,
-    valGridLine: { color: "24466E", size: 0.5 }, catGridLine: { style: "none" },
-    showValue: true, dataLabelPosition: "outEnd", dataLabelColor: TEXT, dataLabelFontSize: 12, dataLabelFontBold: true,
-    showLegend: false, valAxisMaxVal: 1400,
+  // Real product screenshot (captured from the running application — results/ui/dashboard-hero.png)
+  const sx = 7.72, sw = 5.11, sh = sw * 9 / 16;
+  s.addShape(p.shapes.ROUNDED_RECTANGLE, { x: sx - 0.05, y: 1.8, w: sw + 0.1, h: sh + 0.1, fill: { color: PANEL2 }, rectRadius: 0.05, line: { color: CYAN, width: 1.25 } });
+  s.addImage({ path: "results/ui/dashboard-hero.png", x: sx, y: 1.85, w: sw, h: sh });
+  s.addText("The running application: islanded bus at 10:00 during the outage — generator carrying 197 kW after the battery bridge, event log showing the islanding sequence, zero synthetic alarms.", {
+    x: sx, y: 1.92 + sh, w: sw, h: 0.8, fontFace: F, fontSize: 11, color: MUTED, margin: 0,
   });
+
   s.addText("Annualized (320 normal + 45 outage days):  23,910 L/yr diesel avoided  ·  64.1 t CO₂/yr  ·  ₦111.8M/yr operating savings", {
-    x: 8.1, y: 5.75, w: 4.73, h: 0.75, fontFace: F, fontSize: 12.5, bold: true, color: TEXT, margin: 0,
+    x: sx, y: 2.82 + sh + 0.72, w: sw, h: 0.9, fontFace: F, fontSize: 12.5, bold: true, color: TEXT, margin: 0,
   });
+
   s.addText("Source: Sentinel deterministic engine — regenerate with `npm run results` (results/demo-results.json). Illustrative facility profile; failure case (generator fault) reported at 98.2% continuity rather than hidden.", {
-    x: M, y: 5.95, w: 7.3, h: 0.85, fontFace: F, fontSize: 12, color: MUTED, margin: 0,
+    x: M, y: 5.95, w: 7.0, h: 0.85, fontFace: F, fontSize: 12, color: MUTED, margin: 0,
   });
   footer(s, 3);
 }
@@ -263,7 +258,7 @@ function arrowless(s, x, y) {
   s.addText("The 2027 Global Energy Cohort pathway: one pilot hospital, metered data, and a measured-vs-predicted proof pack within a year.", {
     x: 8.4, y: 4.45, w: 4.1, h: 1.1, fontFace: F, fontSize: 13, color: TEXT, margin: 0,
   });
-  s.addText("Team: [CONFIRM AT SUBMISSION] · all product features built during the 48-hour sprint · 58 tests · reproducible results.", {
+  s.addText("Team: Jackson Sixtus Abetianbe (solo entry) · all product features built during the 48-hour sprint · 58 tests · reproducible results.", {
     x: 8.4, y: 5.65, w: 4.1, h: 0.75, fontFace: F, fontSize: 11.5, color: MUTED, margin: 0,
   });
 

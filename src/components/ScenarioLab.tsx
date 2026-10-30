@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useApp } from "@/lib/store";
 import { SCENARIOS, buildBaselineConfig, runSimulation } from "@/engine";
 import { fmtHour12, fmtKwh, fmtNaira, fmtPct } from "@/lib/format";
@@ -23,23 +24,27 @@ export function ScenarioLab() {
   const { config, sim, baseline, scenarioId, runScenario } = useApp();
 
   // Lazily evaluate all scenarios for the comparison table (cheap: 96×3 steps each).
-  const rows: Row[] = SCENARIOS.map((s) => {
-    const cfg = s.build();
-    const proposed = runSimulation(cfg);
-    const bl = runSimulation(buildBaselineConfig(cfg));
-    const m = proposed.metrics;
-    return {
-      id: s.id,
-      name: s.name,
-      outageHours: m.outageHours,
-      criticalServiceHours: m.criticalServiceHours,
-      continuity: m.outageHours > 0 ? m.criticalServiceHours / m.outageHours : 1,
-      diesel: m.dieselLitres,
-      baselineDiesel: bl.metrics.dieselLitres,
-      unserved: m.unservedKwh[1] + m.unservedKwh[2] + m.unservedKwh[3],
-      opex: m.opexNaira,
-    };
-  });
+  const rows: Row[] = useMemo(
+    () =>
+      SCENARIOS.map((s) => {
+        const cfg = s.build();
+        const proposed = runSimulation(cfg);
+        const bl = runSimulation(buildBaselineConfig(cfg));
+        const m = proposed.metrics;
+        return {
+          id: s.id,
+          name: s.name,
+          outageHours: m.outageHours,
+          criticalServiceHours: m.criticalServiceHours,
+          continuity: m.outageHours > 0 ? m.criticalServiceHours / m.outageHours : 1,
+          diesel: m.dieselLitres,
+          baselineDiesel: bl.metrics.dieselLitres,
+          unserved: m.unservedKwh[1] + m.unservedKwh[2] + m.unservedKwh[3],
+          opex: m.opexNaira,
+        };
+      }),
+    []
+  );
 
   const chartData = rows.map((r) => ({
     name: r.id,

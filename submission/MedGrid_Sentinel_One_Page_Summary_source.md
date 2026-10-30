@@ -6,7 +6,7 @@
 
 **MEDGRID SENTINEL** — Intelligent Hospital Microgrids · Predictive Energy Resilience · Uninterrupted Critical Care
 
-Anneru IAS Global Energy Hackathon 2026 (Oct 30 – Nov 1) · **Brief #13 — Power for a city the grid can't protect** · **Track 2** Digital Solutions & AI · **Setting B** Non-residential (healthcare) · Team: [CONFIRM AT SUBMISSION]
+Anneru IAS Global Energy Hackathon 2026 (Oct 30 – Nov 1) · **Brief #13 — Power for a city the grid can't protect** · **Track 2** Digital Solutions & AI · **Setting B** Non-residential (healthcare) · Team: Jackson Sixtus Abetianbe (solo entry - permitted per Handbook s8)
 
 **Community & target user.** Urban Nigerian hospitals on feeders that fail with the national grid (250-bed reference hospital, illustrative). User: facility/works engineer and duty manager. Payer: the hospital, or an energy-service provider under Energy-as-a-Service — the structure of the real NSIA-LUTH cancer-centre microgrid (300 kWp/1.1 MWh, 2025).
 

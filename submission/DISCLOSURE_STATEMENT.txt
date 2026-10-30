@@ -1,5 +1,5 @@
 MEDGRID SENTINEL — DISCLOSURE STATEMENT
-Anneru IAS Global Energy Hackathon 2026 · Team: [CONFIRM AT SUBMISSION] · Brief #13 · Track 2 (Digital Solutions & AI) · Setting B (Non-residential)
+Anneru IAS Global Energy Hackathon 2026 · Team: Team MedGrid Sentinel — Jackson Sixtus Abetianbe (solo entry) · Brief #13 · Track 2 (Digital Solutions & AI) · Setting B (Non-residential)
 
 1. WHAT EXISTED BEFORE THE SPRINT (October 30, 2026, 12:00 PM ET)
 - Nothing of this project. The repository began at the sprint start ("Initial commit", empty except git metadata).
@@ -48,4 +48,4 @@ Anneru IAS Global Energy Hackathon 2026 · Team: [CONFIRM AT SUBMISSION] · Brie
   anywhere in the project.
 
 Declaration: the statements above are true to the best of the team's knowledge at submission time.
-Team representative: [NAME / SIGNATURE AT SUBMISSION]
+Team representative: Jackson Sixtus Abetianbe

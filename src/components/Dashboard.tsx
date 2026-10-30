@@ -96,7 +96,7 @@ export function Dashboard() {
         />
         <Kpi
           icon={<Activity size={18} />}
-          label="Critical service (day)"
+          label="Continuity (day)"
           value={dayCriticalDemand > 0 ? fmtPct(dayCriticalServed / dayCriticalDemand) : "—"}
           tone={dayCriticalServed / Math.max(1e-9, dayCriticalDemand) > 0.999 ? "good" : "bad"}
           sub={`T1+T2 of ${fmtKwh(dayCriticalDemand)}`}

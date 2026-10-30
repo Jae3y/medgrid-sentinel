@@ -36,7 +36,7 @@
 
 ## Remaining user actions (require the team)
 
-1. **Confirm team name/members** → one-page summary + portal fields + file names.
+1. ~~Confirm team name/members~~ — DONE: solo entry, Jackson Sixtus Abetianbe (filled into summary, disclosure, portal text, deck).
 2. **Kick-off (Thu Oct 29 8 PM ET / Fri 1 AM WAT):** obtain full Brief #13 text → reconcile `docs/BRIEF_SELECTION_AND_STRATEGY.md` §2 definitions.
 3. **Review the product** (`npm run dev`), especially the Brief & Metrics and Financials tabs.
 4. **Record the two videos** per `submission/video/` runbook; run `Final_Video_Checklist.md`.

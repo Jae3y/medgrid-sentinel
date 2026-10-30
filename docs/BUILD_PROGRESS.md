@@ -41,5 +41,5 @@
 3. **Review the product** (`npm run dev`), especially the Brief & Metrics and Financials tabs.
 4. **Record the two videos** per `submission/video/` runbook; run `Final_Video_Checklist.md`.
 5. **Upload all six deliverables** to the portal before **4:00 PM WAT Sunday** (deadline 6:00 PM WAT / 12:00 PM ET).
-6. **Push the repository** (GitHub public or accessible-link) for the build-files deliverable.
+6. ~~Push the repository~~ — DONE: https://github.com/Jae3y/medgrid-sentinel (public).
 7. Optional: request a coach in the Track-2 Slack channel using `docs/COACH_PREP.md`.

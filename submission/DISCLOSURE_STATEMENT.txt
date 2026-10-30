@@ -1,0 +1,51 @@
+MEDGRID SENTINEL — DISCLOSURE STATEMENT
+Anneru IAS Global Energy Hackathon 2026 · Team: [CONFIRM AT SUBMISSION] · Brief #13 · Track 2 (Digital Solutions & AI) · Setting B (Non-residential)
+
+1. WHAT EXISTED BEFORE THE SPRINT (October 30, 2026, 12:00 PM ET)
+- Nothing of this project. The repository began at the sprint start ("Initial commit", empty except git metadata).
+- No prior code, designs, data, or text was brought into the submission. No repository tag for prior work was needed.
+
+2. WHAT WAS BUILT DURING THE SPRINT
+- The complete MedGrid Sentinel application: deterministic microgrid simulation engine
+  (PV, battery, genset, grid, PQ, tiered dispatch, metrics), 58-test suite, Next.js product UI
+  (dashboard, digital twin, scenario lab, financials, intelligence, brief, sources),
+  financial/forecasting/sizing engines, documentation set, and all submission artifacts.
+- Verification performed during the sprint: `npm test` (58/58 passing), `npm run build`
+  (production build), `npm run results` (canonical results snapshot), production-server smoke test.
+
+3. AI TOOLS USED (permitted under Handbook §13/§17 with disclosure)
+- ZCode (GLM-based coding agent): used as the development instrument for code generation,
+  testing, documentation and artifact preparation, working from the team's execution brief.
+  All outputs were defined, reviewed and accepted as the team's work product for this entry.
+- No AI-generated video, imagery or fabricated evidence was used. The demo and pitch videos
+  are deliberately not produced by AI; they are recorded by the team (scripts and runbooks provided).
+- No confidential or personal information was entered into any AI tool.
+
+4. OPEN-SOURCE CODE AND LIBRARIES (standard licenses, used unmodified)
+- Next.js 15, React 19, TypeScript, Tailwind CSS 3.4, Recharts 2.15, Zustand 5, lucide-react,
+  clsx, Vitest 2, tsx — per package.json / package-lock.json (npm registry, install during sprint).
+
+5. DATASETS
+- No external datasets ingested. All simulation inputs (facility loads, irradiance, prices) are
+  synthetic or clearly-labelled illustrative defaults defined in-repo and disclosed in
+  docs/ASSUMPTIONS_AND_LIMITATIONS.md. "Measured" forecast history is synthetic (seeded) and
+  labelled as such in-product and in docs/AI_AND_FORECASTING_METHODOLOGY.md.
+
+6. EXTERNAL API SERVICES
+- None. The application has no runtime API dependencies, no keys, and functions fully offline.
+
+7. THIRD-PARTY ASSETS
+- None beyond the open-source libraries above. Branding is text-based (no third-party logos).
+
+8. SOURCES / REFERENCES
+- Public sources consulted for statistics are registered with URLs, access dates and confidence
+  levels in docs/DATA_SOURCES.md (e.g., EM-ONE/RIPLE NSIA-LUTH announcement; ICIR/APGC grid
+  counts; NERC tariff orders; NBS diesel price watch).
+
+9. OWNERSHIP
+- The team retains ownership of the work, subject to the event's judging and promotion agreement
+  (Handbook §13). Nothing here is derived from confidential partner data; no patient data exists
+  anywhere in the project.
+
+Declaration: the statements above are true to the best of the team's knowledge at submission time.
+Team representative: [NAME / SIGNATURE AT SUBMISSION]

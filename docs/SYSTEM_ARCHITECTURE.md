@@ -49,6 +49,9 @@ flowchart LR
 - **Safety boundary:** protection and ATS stay in certified devices. Sentinel issues set-points (generator start/stop, charge targets, load-group contactor requests for Tier 3/2) only after shadow-mode validation, and Tier-1 is never in a shed group.
 - **Security:** no inbound internet exposure on the edge controller; outbound-only telemetry; signed configuration; hospital data ownership; no patient data.
 
+### Dependency audit (31 Oct 2026)
+`npm audit --omit=dev` reports advisories in **build-time tooling only**: `postcss` (bundled in Next 15's CSS pipeline, processing our own stylesheets) and `image-size` (via `pptxgenjs`, used only by the deck script, now a devDependency). The shipped artefact is a static export with no server, no user-supplied CSS and no image parsing at runtime, so none of these paths is reachable by users. The fix (Next 16) is a major upgrade scheduled after the hackathon.
+
 ## 3. Module responsibilities
 | Module | Responsibility |
 |---|---|

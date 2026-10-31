@@ -107,12 +107,12 @@ export function ScenarioLab() {
                 {rows.map((r) => (
                   <tr key={r.id} className={`border-t border-surface-border/50 ${scenarioId === r.id ? "text-cyan" : "text-slate-200"}`}>
                     <td className="py-1.5 pr-2 font-semibold">{r.id}</td>
-                    <td className="py-1.5 pr-2 font-mono">{r.outageHours.toFixed(1)}</td>
-                    <td className="py-1.5 pr-2 font-mono">{r.criticalServiceHours.toFixed(2)}</td>
-                    <td className="py-1.5 pr-2 font-mono">
+                    <td className="py-1.5 pr-2 num">{r.outageHours.toFixed(1)}</td>
+                    <td className="py-1.5 pr-2 num">{r.criticalServiceHours.toFixed(2)}</td>
+                    <td className="py-1.5 pr-2 num">
                       {r.outageHours > 0 ? fmtPct(r.continuity) : "—"}
                     </td>
-                    <td className={`py-1.5 pr-2 font-mono ${r.unserved > 1 ? "text-energy-red" : ""}`}>
+                    <td className={`py-1.5 pr-2 num ${r.unserved > 1 ? "text-energy-red" : ""}`}>
                       {r.unserved.toFixed(1)}
                     </td>
                   </tr>
@@ -133,10 +133,10 @@ export function ScenarioLab() {
                 <CartesianGrid {...GRID_PROPS} />
                 <XAxis dataKey="name" {...AXIS_PROPS} />
                 <YAxis unit=" L" width={58} {...AXIS_PROPS} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} cursor={{ fill: "rgba(34,211,238,0.06)" }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} cursor={{ fill: "rgba(69,224,160,0.06)" }} />
                 <Legend {...LEGEND_STYLE} />
-                <Bar dataKey="Baseline diesel (L)" fill="#F59E0B" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="Sentinel diesel (L)" fill="#22D3EE" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Baseline diesel (L)" fill="#F2B544" radius={[3, 3, 0, 0]} />
+                <Bar dataKey="Sentinel diesel (L)" fill="#45E0A0" radius={[3, 3, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -171,7 +171,7 @@ export function ScenarioLab() {
                   e.severity === "critical" ? "bg-energy-red" : e.severity === "warning" ? "bg-energy-amber" : "bg-cyan"
                 }`}
               />
-              <span className="w-24 shrink-0 font-mono text-[10px] text-slate-500">
+              <span className="w-24 shrink-0 num text-[10px] text-slate-500">
                 D{e.day + 1} {fmtHour12(e.hour)}
               </span>
               <span className="text-[11px] leading-snug text-slate-300">{e.message}</span>

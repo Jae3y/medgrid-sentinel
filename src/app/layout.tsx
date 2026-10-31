@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { Archivo } from "next/font/google";
 import "./globals.css";
+
+const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
 
 export const metadata: Metadata = {
   title: "MedGrid Sentinel — Intelligent Hospital Microgrids",
@@ -17,12 +20,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#060D1F",
+  themeColor: "#0A1A1C",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className={archivo.variable}>
       <body className="min-h-screen font-sans text-slate-100 antialiased">{children}</body>
     </html>
   );

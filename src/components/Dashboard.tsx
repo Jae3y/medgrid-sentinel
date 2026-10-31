@@ -202,12 +202,12 @@ export function Dashboard() {
                 <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
                 <Legend {...LEGEND_STYLE} />
-                <Area type="monotone" dataKey="pv" name="Solar" stackId="src" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
-                <Area type="monotone" dataKey="grid" name="Grid" stackId="src" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />
-                <Area type="monotone" dataKey="battery" name="Battery" stackId="src" stroke="#7DE9F7" strokeWidth={1.5} fill="url(#gradBattery)" />
-                <Area type="monotone" dataKey="genset" name="Generator" stackId="src" stroke="#F59E0B" strokeWidth={1.5} fill="url(#gradGenset)" />
+                <Area type="monotone" dataKey="pv" name="Solar" stackId="src" stroke="#F2C14E" strokeWidth={1.5} fill="url(#gradSolar)" />
+                <Area type="monotone" dataKey="grid" name="Grid" stackId="src" stroke="#A3AEC2" strokeWidth={1.5} fill="url(#gradGrid)" />
+                <Area type="monotone" dataKey="battery" name="Battery" stackId="src" stroke="#7CB8FF" strokeWidth={1.5} fill="url(#gradBattery)" />
+                <Area type="monotone" dataKey="genset" name="Generator" stackId="src" stroke="#E06A3C" strokeWidth={1.5} fill="url(#gradGenset)" />
                 <Line type="monotone" dataKey="demand" name="Demand" stroke="#F1F5F9" strokeWidth={2.2} dot={false} />
-                <Line type="monotone" dataKey="critical" name="Critical (T1+T2)" stroke="#F87171" strokeWidth={1.4} strokeDasharray="5 4" dot={false} />
+                <Line type="monotone" dataKey="critical" name="Critical (T1+T2)" stroke="#FF7A86" strokeWidth={1.4} strokeDasharray="5 4" dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -223,17 +223,17 @@ export function Dashboard() {
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
                 <ReferenceLine
                   y={config.battery.gridReserveSocFrac * 100}
-                  stroke="#22D3EE"
+                  stroke="#45E0A0"
                   strokeDasharray="4 4"
-                  label={{ value: `reserve ${(config.battery.gridReserveSocFrac * 100).toFixed(0)}%`, fill: "#22D3EE", fontSize: 10, position: "insideTopRight" }}
+                  label={{ value: `reserve ${(config.battery.gridReserveSocFrac * 100).toFixed(0)}%`, fill: "#45E0A0", fontSize: 10, position: "insideTopRight" }}
                 />
                 <ReferenceLine
                   y={config.battery.minSocFrac * 100}
-                  stroke="#EF4444"
+                  stroke="#FF4D5E"
                   strokeDasharray="4 4"
-                  label={{ value: `floor ${(config.battery.minSocFrac * 100).toFixed(0)}%`, fill: "#F87171", fontSize: 10, position: "insideBottomRight" }}
+                  label={{ value: `floor ${(config.battery.minSocFrac * 100).toFixed(0)}%`, fill: "#FF7A86", fontSize: 10, position: "insideBottomRight" }}
                 />
-                <Line type="monotone" dataKey="soc" name="SOC" stroke="#34D399" strokeWidth={2.5} dot={false} />
+                <Line type="monotone" dataKey="soc" name="SOC" stroke="#45E0A0" strokeWidth={2.5} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -270,11 +270,11 @@ export function Dashboard() {
                 <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
                 <Legend {...LEGEND_STYLE} />
-                <Area type="monotone" dataKey="unserved" name="Unserved" stroke="#EF4444" strokeWidth={1.4} fill="url(#gradUnserved)" />
-                <Area type="monotone" dataKey="pv" name="Solar" stackId="mix" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
-                <Area type="monotone" dataKey="grid" name="Grid" stackId="mix" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />
-                <Area type="monotone" dataKey="battery" name="Battery" stackId="mix" stroke="#7DE9F7" strokeWidth={1.5} fill="url(#gradBattery)" />
-                <Area type="monotone" dataKey="genset" name="Generator" stackId="mix" stroke="#F59E0B" strokeWidth={1.5} fill="url(#gradGenset)" />
+                <Area type="monotone" dataKey="unserved" name="Unserved" stroke="#FF4D5E" strokeWidth={1.4} fill="url(#gradUnserved)" />
+                <Area type="monotone" dataKey="pv" name="Solar" stackId="mix" stroke="#F2C14E" strokeWidth={1.5} fill="url(#gradSolar)" />
+                <Area type="monotone" dataKey="grid" name="Grid" stackId="mix" stroke="#A3AEC2" strokeWidth={1.5} fill="url(#gradGrid)" />
+                <Area type="monotone" dataKey="battery" name="Battery" stackId="mix" stroke="#7CB8FF" strokeWidth={1.5} fill="url(#gradBattery)" />
+                <Area type="monotone" dataKey="genset" name="Generator" stackId="mix" stroke="#E06A3C" strokeWidth={1.5} fill="url(#gradGenset)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

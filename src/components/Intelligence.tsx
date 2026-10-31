@@ -114,7 +114,7 @@ export function Intelligence() {
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
                 <Legend {...LEGEND_STYLE} />
                 <Line type="monotone" dataKey="measured" name="Held-out actual" stroke="#F8FAFC" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="forecast" name="Sentinel forecast" stroke="#22D3EE" strokeWidth={2} strokeDasharray="5 3" dot={false} />
+                <Line type="monotone" dataKey="forecast" name="Sentinel forecast" stroke="#45E0A0" strokeWidth={2} strokeDasharray="5 3" dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>

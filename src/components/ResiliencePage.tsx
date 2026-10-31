@@ -18,7 +18,7 @@ import { Badge, Card, Note, Row } from "./ui";
 import { fmtNum, fmtPct } from "@/lib/format";
 import { AXIS_PROPS, GRID_PROPS, LEGEND_STYLE, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 
-const COLORS: Record<string, string> = { baseline: "#94A3B8", conventional: "#F59E0B", sentinel: "#22D3EE", nrel: "#64748B" };
+const COLORS: Record<string, string> = { baseline: "#A3AEC2", conventional: "#F2B544", sentinel: "#45E0A0", nrel: "#64748B" };
 const LABEL = (k: string) => (k === "nrel" ? "NREL single-EDG formula" : STRATEGIES.find((s) => s.id === k)?.short ?? k);
 
 const DURATIONS = [
@@ -108,8 +108,8 @@ export function ResiliencePage() {
           <Badge>NASA POWER Maiduguri 2022–2024</Badge>
           <Badge>Common random numbers</Badge>
         </div>
-        <h2 className="mt-3 text-xl font-bold text-white">How likely is the ICU to stay powered through the next line outage?</h2>
-        <p className="mt-1 max-w-4xl text-sm text-slate-400">
+        <p className="mt-3 max-w-[78ch] text-[14.5px] leading-relaxed text-slate-300">
+          <span className="font-semibold text-white">How likely is the ICU to stay powered through the next line outage? </span>
           One replay shows what happened once. Each trial here draws a random outage start across three measured weather years, a generator
           failure-to-start and failures-while-running from published reliability statistics, a repair time, the starting tank level, and late or
           cancelled deliveries — then runs all three controllers against that identical trial.
@@ -125,7 +125,7 @@ export function ResiliencePage() {
                 {RELIABILITY_CLASSES.map((c) => (
                   <button key={c.id} onClick={() => setCls(c.id)} className={clsx("w-full rounded-lg border px-2.5 py-1.5 text-left text-[11px]", cls === c.id ? "border-cyan/60 bg-cyan/10 text-white" : "border-surface-border text-slate-400 hover:text-white")}>
                     <div className="font-semibold">{c.label}</div>
-                    <div className="num font-mono text-[10px] text-slate-500">FTS {fmtPct(c.failToStartProb, 2)} · MTTF {fmtNum(c.mttfHours)} h</div>
+                    <div className="num text-[10px] text-slate-500">FTS {fmtPct(c.failToStartProb, 2)} · MTTF {fmtNum(c.mttfHours)} h</div>
                   </button>
                 ))}
               </div>
@@ -139,12 +139,12 @@ export function ResiliencePage() {
               </div>
             </div>
             <label className="block">
-              <div className="flex justify-between"><span className="label">Mean repair incl. logistics</span><span className="num font-mono text-sm text-white">{repair} h</span></div>
+              <div className="flex justify-between"><span className="label">Mean repair incl. logistics</span><span className="num text-sm text-white">{repair} h</span></div>
               <input type="range" min={24} max={168} step={12} value={repair} onChange={(e) => setRepair(Number(e.target.value))} className="w-full accent-cyan" aria-label="Mean repair hours" />
               <div className="text-[11px] text-slate-500">U.S. PREP data: 37 h. NE Nigeria assumed longer.</div>
             </label>
             <label className="block">
-              <div className="flex justify-between"><span className="label">Diesel per week</span><span className="num font-mono text-sm text-white">{fmtNum(supply)} L</span></div>
+              <div className="flex justify-between"><span className="label">Diesel per week</span><span className="num text-sm text-white">{fmtNum(supply)} L</span></div>
               <input type="range" min={2000} max={16000} step={1000} value={supply} onChange={(e) => setSupply(Number(e.target.value))} className="w-full accent-cyan" aria-label="Weekly diesel" />
               <div className="text-[11px] text-slate-500">30% of deliveries late (≤ 96 h), 10% never arrive.</div>
             </label>
@@ -162,7 +162,7 @@ export function ResiliencePage() {
             {progress !== null && (
               <div className="h-1.5 overflow-hidden rounded-full bg-navy-800"><div className="h-full bg-cyan transition-all" style={{ width: `${Math.round(progress * 100)}%` }} /></div>
             )}
-            {res && <div className="num font-mono text-[10px] text-slate-500">{res.options.trials} trials × 3 controllers · {fmtNum(res.elapsedMs)} ms · seed {res.options.seed}</div>}
+            {res && <div className="num text-[10px] text-slate-500">{res.options.trials} trials × 3 controllers · {fmtNum(res.elapsedMs)} ms · seed {res.options.seed}</div>}
           </div>
         </Card>
 

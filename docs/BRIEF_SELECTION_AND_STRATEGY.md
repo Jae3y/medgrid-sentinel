@@ -1,61 +1,56 @@
 # Brief Selection & Competition Strategy
 
-**Status: LOCKED** — Brief **#13 "Power for a city the grid can't protect"** · Track **2 — Digital Solutions & AI** · Setting **B — Non-residential (healthcare)**.
+**Status: LOCKED.** The choices are **Brief #13 "Power for a city the grid can't protect"**, **Track 2 Digital Solutions & AI**, and **Setting B Non-residential (healthcare)**.
 
----
+## 1. Decision matrix (official weights; Handbook §11)
 
-## 1. The decision, and why
+Scores are 1–5 against the official definitions. Internal criteria (data availability, 48-h demonstrability) are noted separately and are not part of the rubric.
 
-The handbook's healthcare-relevant briefs (Appendix B, p. 34) were scored in a decision matrix against the five official judging criteria (Impact 25%, Innovation 25%, Sustainability 25%, Feasibility 15%, Scalability 10%) plus internal criteria (data availability, 48-hour demonstrability, originality).
-
-| Criterion (weighted) | #1 Off-grid cold storage for clinics | #12 Relocatable solar, hospital on the move | **#13 Power for a city the grid can't protect** |
+| Criterion (weight) | #1 Off-grid cold storage for clinics | #12 Relocatable solar, hospital on the move | **#13 Power for a city the grid can't protect** |
 |---|---|---|---|
-| Impact (25%) | Strong (doses protected is crisp) | Strong (theatre hours) | **Strong (critical-service hours, whole-facility scope)** |
-| Innovation (25%) | Medium — crowded cold-chain space | Medium — relocatable hardware is the core ask, not our strength | **Strong — predictive dispatch + honest economics for critical facilities is the gap** |
-| Sustainability (25%) | Strong | Medium (logistics burden) | **Strong (diesel displacement + EaaS financing lens)** |
-| Feasibility (15%) | Strong (small system) | Weak-medium — brief owner expects relocatable hardware; we build software | **Strong — exact metric is computable in our deterministic engine** |
-| Scalability (10%) | Medium | Medium | **Strong — configurable twin replicates across facilities/countries** |
-| Fit to MedGrid Sentinel identity | Narrow (refrigeration slice) | Partial (hardware brief) | **Direct (microgrid resilience = our core)** |
+| Impact (25%) | 4: doses protected is crisp, but scope is one fridge | 4: theatre hours | **5: whole-hospital critical-service hours during a multi-week line outage — the brief's metric can be computed directly on a documented real event (Maiduguri 2024)** |
+| Innovation (25%) | 3: crowded cold-chain market | 3: brief expects relocatable hardware | **5: diesel *logistics* as the binding constraint, a tiered fuel-runway governor, and software value isolated on identical hardware** |
+| Sustainability (25%) | 4 | 3: logistics burden | **5: 3.3-yr payback, EaaS with zero hospital CapEx, −40% diesel** |
+| Feasibility (15%) | 5 | 2: a software team against a hardware brief | **4–5: working engine on real weather and published reliability data; shadow-mode pilot path** |
+| Scalability (10%) | 3 | 3 | **4–5: configuration-only replication; 10 site-year fleet screen** |
+| Internal: real data in 48 h | Medium | Low | **High (NASA POWER, NREL, TCN/ICIR reporting)** |
 
-**Verdict:** #13 wins on the combination that matters. Its metrics — *hours of critical service maintained during a line outage* and *diesel litres avoided* — are precisely what a hospital microgrid digital twin computes, they are demonstrable with deterministic evidence in 48 hours, and the brief's framing (grid failures threatening critical services) matches Nigeria's documented reality (12+ national grid disturbances in 2024 by industry/media counts; [DATA_SOURCES.md](DATA_SOURCES.md)).
+**Verdict: #13.** Its metrics ("hours of critical service maintained during a line outage, and diesel litres avoided") are exactly what a hospital microgrid twin computes. Its title describes a documented, recurring reality: Maiduguri's 330 kV line was vandalised on 22 Sep 2024 and restored on 31 Oct 2024, after an outage of about two months in 2021. Briefs #1 and #12 remain fallbacks: the engine already treats cold chain and theatres as Tier-1 loads.
 
-Briefs #1 and #12 remain documented fallbacks: the engine already computes cold-chain uptime (Tier-1 refrigeration is a first-class load) and theatre-hours metrics; re-scoping to #12 would touch the brief-selection documents and demo script, not the engine.
+## 2. Locked definitions
 
-## 2. The locked definitions
-
-Extracted verbatim from Innovator Handbook Appendix B (p. 34):
-
-> **#13 — Power for a city the grid can't protect.** Success metric judges look for: **Hours of critical service maintained during a line outage, and diesel litres avoided.**
-
-| Item | Locked definition |
+| Item | Definition |
 |---|---|
-| Community | Hospitals and clinics in Nigerian urban centres served by feeders that fail during national grid disturbances |
-| User | Hospital facility/works engineer and duty manager |
-| Payer | Hospital management (ownership) or an energy-service provider under EaaS (both modelled) |
-| "Critical service" | Tier-1 (life-critical: OT, ICU, cold chain, oxygen, ED) + Tier-2 (clinical priority: wards, lab, pharmacy, IT, kitchen, water) |
-| Metric 1 computation | Energy-weighted hours where served critical demand ≥ 99% of demanded critical demand, summed over all islanded hours (includes the 0.5 h simulated reconnection delay) |
-| Metric 2 computation | Diesel litres consumed by the Sentinel-managed system vs a diesel-only backup baseline (grid + genset, generator sized to carry full load) over identical loads and outage schedules |
-| Baseline | The typical current installation: Band A grid supply when available + 450 kW-class diesel generator during outages. No PV, no storage. |
-| Intervention | 300 kWp PV + 600 kWh LFP storage + 250 kW inverter + intelligent dispatch layered on the existing 400 kW genset |
+| Brief metric (verbatim) | "Hours of critical service maintained during a line outage, and diesel litres avoided." |
+| Community | Referral hospitals in cities whose transmission supply is repeatedly cut by vandalism or insurgency. The instance is Maiduguri, Borno State, Nigeria. |
+| User | Hospital works engineer and duty manager |
+| Beneficiaries | Patients on Tier-1 (ICU, theatres, blood bank and vaccine cold chain, oxygen plant, ED, critical lighting) and Tier-2 (wards, lab and imaging, pharmacy/CSSD, clinical IT, kitchen, water) circuits |
+| Payer | Hospital management (federal/state budget or own revenue), or an energy-service company under EaaS, repaid from diesel the hospital no longer buys |
+| "Critical service" | Tier 1 + Tier 2, both served at ≥ 99.5% of demand in that quarter-hour. Tier 1 is also reported on its own. |
+| Metric 1 | Islanded hours with critical service maintained. A ≤ 90 s generator transfer break is counted as a Tier-1 *interruption* but does not erase the quarter-hour. |
+| Metric 2 | Status-quo diesel litres − Sentinel litres over the same window (replay), and per year (full measured year) |
+| Baseline (status quo) | Grid when available + a diesel generator sized to the full facility peak (450 kW), no PV or storage, the same tank and deliveries |
+| Intervention | 600 kWp PV + 600 kWh LFP + 510 kW PCS + MedGrid Sentinel controller, keeping a 400 kW generator |
+| Replay | 20 Sep – 1 Nov 2024, outage 22 Sep 00:00 → 31 Oct 00:30 (936.5 islanded h incl. reconnection delay), NASA POWER weather, 6,000 L/week in two drops, 10,000 L tank starting 60% full |
 
-Headline computed results (brief scenario B — 12.5 h islanded window; full table in [IMPACT_AND_METRICS.md](IMPACT_AND_METRICS.md)):
+## 3. Headline (results/demo-results.json)
 
-- **Metric 1: 12.50 / 12.50 h maintained (100%), 0.00 kWh unserved Tier-1 energy**
-- **Metric 2: 763 L vs 1,295 L baseline = 532 L avoided (−41%)** in the 3-day run; **23,910 L/yr avoided** annualized
+- Metric 1: **449 → 937 h**. Tier-1: 451 → 937 h. Tier-1 breaks: 12 → 0. Empty-tank hours: 489 → 0.
+- Metric 2: **2,841 L avoided** in the outage, and **91,654 L/yr** over a full measured year (−39.7%).
+- vs fixed-rule hybrid on the same hardware: **+179 critical hours**.
+- 14-day Monte Carlo (NRC-class generator): P(Tier-1 kept powered for 14 days) **0% → 78%**.
 
-## 3. Why this wins on the rubric (strategy note)
+## 4. Why this wins on the rubric
 
-- **Impact:** the metric is the brief's own metric, computed from a deterministic engine and shown live — not asserted.
-- **Innovation:** the root cause existing solutions miss is *decision quality*: hospitals buy hardware (diesel, or solar on a brochure) but have no way to know how the system will behave at 06:00 on the day the feeder fails, or what it will actually cost. Sentinel makes design and dispatch decisions computable — including the uncomfortable results (negative NPV at commercial rates; storage unnecessary for daytime outages).
-- **Sustainability:** diesel displacement (−41% outage-day, −23,910 L/yr), maintainable locally (LiFePO4 + standard genset + software), payback 7.9 yr — pays for itself over its 20+ year life; EaaS structure closes with concessional capital (breakeven 4.6% financing) which is exactly how Nigerian healthcare solar is actually financed (NSIA-LUTH precedent).
-- **Feasibility:** 58 unit tests, production build verified, deterministic replay, every number reproducible via `npm run results`.
-- **Scalability:** one configuration object per facility; the sizing engine already demonstrates that the optimal design changes with outage timing (PV-first for daytime outages, storage-heavy for evening outages).
+- **Impact (25%):** the brief's own metric, computed on a documented outage in a named city, with the size of the benefit (+487 h) shown against three alternatives.
+- **Innovation (25%):** the root cause others miss is fuel logistics, not kW. A governor schedules care tiers against the next convoy, and its value is isolated on identical hardware.
+- **Sustainability (25%):** pays back in 3.3 years. EaaS needs no grant and no hospital CapEx; −40% diesel and −246 t CO₂/yr; maintainable with LFP + standard generator + local O&M.
+- **Feasibility (15%):** a working prototype on real data, 89 tests, relevant standards mapped, and a shadow-mode pilot gate.
+- **Scalability (10%):** replication by configuration only; the 10 site-year fleet screen shows where it pays and where it doesn't.
 
-## 4. Discrepancies and clarifications log
+## 5. Discrepancy log
 
-Per the master instructions, where other material differs from the handbook, the handbook governs and the discrepancy is logged:
-
-1. **Full brief text.** The handbook states full briefs are released *during the Kick-off call* (FAQ, p. 26). We built against the published Appendix B summaries and metrics. **Action required from the team: reconcile against the full Brief #13 text at kick-off; if the partner's definition of "critical service" or the payer differs, only the definitions section above and the demo narrative change — the engine already computes both metrics generically.**
-2. **Deadline conversion.** Handbook deadline: Sunday Nov 1, 12:00 PM ET. U.S. DST ends Sun Nov 1 at 02:00 ET, so the deadline is in EST (UTC−5) = **6:00 PM WAT** (the sprint *begins* Oct 30 12:00 PM EDT = 5:00 PM WAT). Internal target: all six deliverables uploaded by **4:00 PM WAT Sunday** for margin.
-3. **File naming.** Handbook FAQ suggests `TeamName_Brief##_Demo.mp4` — we adopt `MedGridSentinel_Brief13_Demo.mp4` / `MedGridSentinel_Brief13_Pitch.mp4` in the recording runbook.
-4. **Team size.** Solo entry — Jackson Sixtus Abetianbe (permitted per Handbook §8). Cross-disciplinary coverage is documented in `docs/COACH_PREP.md`; the recording runbook keeps the single-person load manageable.
+1. **Full brief text** is released at kick-off (Handbook FAQ, p. 26). We built against the published Appendix B title and metric. If the partner's definition of "critical service" or the target city differs, only the tier mapping and the replay dates change. See [BRIEF13_RECONCILIATION_CHECKLIST.md](BRIEF13_RECONCILIATION_CHECKLIST.md).
+2. **Deadline:** Sun 1 Nov 12:00 PM ET. US DST ends at 02:00 that day, so it is 17:00 UTC = **18:00 WAT**. Internal target: everything uploaded by 16:00 WAT.
+3. **Pitch video length:** Handbook §10 says "up to 3–5 minutes" and the FAQ says "up to 5 minutes". We target ≤ 4:45.
+4. **Team size:** solo entry is permitted (§8); this is declared in every artifact.

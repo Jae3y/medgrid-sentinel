@@ -5,30 +5,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // "Night shift" palette — every hue is semantic (see src/lib/palette.ts)
         navy: {
-          950: "#060D1F",
-          900: "#0B1F3A",
-          800: "#12294B",
-          700: "#1B3A63",
-          600: "#27507F",
+          950: "#0A1A1C", // scrubs night (page)
+          900: "#0D2124",
+          800: "#13292C",
+          700: "#1A3739",
+          600: "#24474A",
         },
         cyan: {
-          DEFAULT: "#22D3EE",
-          soft: "#7DE9F7",
+          DEFAULT: "#45E0A0", // pulse green: care maintained / Sentinel
+          soft: "#8EF0C5",
         },
         energy: {
-          green: "#34D399",
-          amber: "#F59E0B",
-          red: "#EF4444",
+          green: "#45E0A0",
+          amber: "#F2B544",
+          red: "#FF4D5E",
+        },
+        source: {
+          solar: "#F2C14E",
+          diesel: "#E06A3C",
+          battery: "#7CB8FF",
+          grid: "#A3AEC2",
         },
         surface: {
-          DEFAULT: "#0F2440",
-          raised: "#16304F",
-          border: "#24466E",
+          DEFAULT: "#102528",
+          raised: "#163133",
+          border: "#24474A",
         },
       },
       fontFamily: {
         sans: [
+          "var(--font-archivo)",
           "Inter",
           "Segoe UI",
           "system-ui",
@@ -38,6 +46,7 @@ const config: Config = {
           "Arial",
           "sans-serif",
         ],
+        display: ["var(--font-archivo)", "sans-serif"],
         mono: ["Consolas", "SFMono-Regular", "Menlo", "monospace"],
       },
     },

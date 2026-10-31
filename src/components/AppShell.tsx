@@ -1,148 +1,143 @@
 "use client";
 
 import { useApp, type TabId } from "@/lib/store";
-import { SUBMISSION_DEADLINE_WAT, countdownParts, fmtNum } from "@/lib/format";
-import { scenarioById } from "@/engine";
+import { fmtNum } from "@/lib/format";
 import { clsx } from "clsx";
 import {
   Activity,
-  Dice5,
-  Network,
-  Siren,
   BatteryCharging,
   BookOpenCheck,
   BrainCircuit,
+  Dice5,
   FlaskConical,
   Landmark,
+  Network,
   ScrollText,
-  Timer,
+  Siren,
 } from "lucide-react";
-import { useEffect, useState } from "react";
 import { OfflineStatus } from "./OfflineStatus";
 
-const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
-  { id: "mission", label: "Line Outage · Brief #13", icon: <Siren size={16} /> },
-  { id: "resilience", label: "Resilience Lab", icon: <Dice5 size={16} /> },
-  { id: "dashboard", label: "Dashboard", icon: <Activity size={16} /> },
-  { id: "twin", label: "Digital Twin", icon: <BatteryCharging size={16} /> },
-  { id: "scenarios", label: "Scenario Lab", icon: <FlaskConical size={16} /> },
-  { id: "financials", label: "Financials", icon: <Landmark size={16} /> },
-  { id: "fleet", label: "Fleet & Scale", icon: <Network size={16} /> },
-  { id: "intelligence", label: "Intelligence", icon: <BrainCircuit size={16} /> },
-  { id: "brief", label: "Brief & Metrics", icon: <BookOpenCheck size={16} /> },
-  { id: "sources", label: "Data & Sources", icon: <ScrollText size={16} /> },
+interface NavItem {
+  id: TabId;
+  label: string;
+  icon: React.ReactNode;
+  title: string;
+  lede: string;
+}
+
+const GROUPS: { name: string; items: NavItem[] }[] = [
+  {
+    name: "Brief #13",
+    items: [
+      { id: "mission", label: "Line outage replay", icon: <Siren size={16} />, title: "Maiduguri, 39 days without the 330 kV line", lede: "Four controllers, one hospital, the same diesel trucks. Measured weather, simulated care." },
+      { id: "resilience", label: "Resilience lab", icon: <Dice5 size={16} />, title: "The next outage, run three hundred times", lede: "Generator failures from published reliability data, late convoys, three years of real weather." },
+    ],
+  },
+  {
+    name: "Plant",
+    items: [
+      { id: "dashboard", label: "Live dashboard", icon: <Activity size={16} />, title: "Plant dashboard", lede: "One-line diagram, power flows and state of charge for the active stress scenario." },
+      { id: "twin", label: "Digital twin", icon: <BatteryCharging size={16} />, title: "Digital twin", lede: "Every load, panel, cell and generator setting is editable; results recompute instantly." },
+      { id: "scenarios", label: "Stress scenarios", icon: <FlaskConical size={16} />, title: "Stress scenarios", lede: "Ten short, deterministic tests — including the ones the system fails." },
+    ],
+  },
+  {
+    name: "Business",
+    items: [
+      { id: "financials", label: "Financials", icon: <Landmark size={16} />, title: "What it costs, who pays, what it earns", lede: "A full measured operating year priced over twenty years — ownership and energy-as-a-service." },
+      { id: "fleet", label: "Fleet & scale", icon: <Network size={16} />, title: "Where it pays, and where it only nearly pays", lede: "Ten facility-years on each city's own weather and grid." },
+    ],
+  },
+  {
+    name: "Evidence",
+    items: [
+      { id: "intelligence", label: "Forecasting & AI", icon: <BrainCircuit size={16} />, title: "Forecasting, tested on data it never saw", lede: "What is learned, what is rule-based, and why the two are kept apart." },
+      { id: "brief", label: "Brief & metrics", icon: <BookOpenCheck size={16} />, title: "The brief, the metric, the answers", lede: "The seven questions judges cannot ask live, answered with computed numbers." },
+      { id: "sources", label: "Data & sources", icon: <ScrollText size={16} />, title: "Data and sources", lede: "Every external number, where it came from, and how sure we are." },
+    ],
+  },
 ];
 
-function DeadlineChip() {
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => {
-    setNow(new Date());
-    const iv = setInterval(() => setNow(new Date()), 30_000);
-    return () => clearInterval(iv);
-  }, []);
-  if (!now) return null;
-  const { h, m } = countdownParts(now);
+const ALL = GROUPS.flatMap((g) => g.items);
+
+function Mark() {
+  // A bus bar crossed by a heartbeat: power and care on one line.
   return (
-    <div className="flex items-center gap-2 rounded-lg border border-energy-amber/30 bg-energy-amber/10 px-3 py-1.5">
-      <Timer size={14} className="shrink-0 text-energy-amber" />
-      <div className="hidden leading-tight sm:block">
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-energy-amber">
-          Submission deadline
-        </div>
-        <div className="num text-xs font-semibold text-slate-200">
-          {SUBMISSION_DEADLINE_WAT} · T−{h}h {String(m).padStart(2, "0")}m
-        </div>
-      </div>
-      <div className="num text-xs font-semibold text-energy-amber sm:hidden">T−{h}h</div>
-    </div>
+    <svg viewBox="0 0 40 40" className="h-9 w-9 shrink-0" aria-hidden>
+      <rect x="1" y="1" width="38" height="38" rx="10" fill="#13292C" stroke="#24474A" />
+      <path d="M7 22h7l3-9 5 15 3-8 2 2h6" fill="none" stroke="#45E0A0" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 30h26" stroke="#F2C14E" strokeWidth="1.6" strokeLinecap="round" opacity="0.8" />
+    </svg>
   );
 }
 
 function Brand() {
   return (
-    <div className="flex items-center gap-2.5">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-cyan to-navy-600 text-navy-950 shadow-[0_0_18px_-4px_rgba(34,211,238,0.55)]">
-        <Activity size={18} strokeWidth={2.5} />
-      </div>
-      <div>
-        <div className="text-sm font-bold tracking-wide text-white">MEDGRID SENTINEL</div>
-        <div className="text-[10px] font-medium uppercase tracking-[0.18em] text-cyan">
-          Hospital Energy Resilience
-        </div>
+    <div className="flex items-center gap-3">
+      <Mark />
+      <div className="leading-none">
+        <div className="display text-[19px] font-bold text-white">MedGrid Sentinel</div>
+        <div className="mt-1 text-[11.5px] text-slate-400">Fuel-aware hospital microgrids</div>
       </div>
     </div>
   );
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { tab, setTab, config, scenarioId, sim, lastRunMs } = useApp();
-  const scenario = scenarioId === "custom" ? null : scenarioById(scenarioId);
+  const { tab, setTab, sim, lastRunMs } = useApp();
+  const active = ALL.find((i) => i.id === tab) ?? ALL[0];
 
   return (
     <div className="min-h-screen">
-      {/* ---------- Desktop sidebar ---------- */}
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-surface-border/80 bg-navy-900/70 backdrop-blur md:flex">
-        <div className="border-b border-surface-border/70 px-4 py-4">
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-surface-border/60 bg-navy-900 md:flex">
+        <div className="px-5 pb-5 pt-6">
           <Brand />
         </div>
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          {TABS.map((t) => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              aria-current={tab === t.id ? "page" : undefined}
-              className={clsx("tabbtn w-full", tab === t.id && "tabbtn-active")}
-            >
-              {t.icon}
-              {t.label}
-            </button>
+        <nav className="flex-1 space-y-5 overflow-y-auto px-3 pb-4" aria-label="Sections">
+          {GROUPS.map((g) => (
+            <div key={g.name}>
+              <div className="px-3 pb-1.5 text-[11.5px] font-semibold text-slate-500">{g.name}</div>
+              <div className="space-y-0.5">
+                {g.items.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => setTab(t.id)}
+                    aria-current={tab === t.id ? "page" : undefined}
+                    className={clsx("tabbtn w-full", tab === t.id && "tabbtn-active")}
+                  >
+                    <span className={tab === t.id ? "text-cyan" : "text-slate-500"}>{t.icon}</span>
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
-        <div className="space-y-2 border-t border-surface-border/70 p-3 text-[11px] leading-relaxed text-slate-500">
-          {scenario && tab !== "mission" && tab !== "resilience" && tab !== "fleet" && (
-            <div className="rounded-lg border border-surface-border/60 bg-navy-950/60 px-2.5 py-2">
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-cyan">
-                Active scenario · {scenario.id}
-              </div>
-              <div className="mt-0.5 text-slate-400">{scenario.name.replace(/^[A-J] · /, "")}</div>
-            </div>
-          )}
-          {scenarioId === "custom" && (
-            <div className="rounded-lg border border-cyan/30 bg-cyan/5 px-2.5 py-2 text-[10px] font-semibold uppercase tracking-wider text-cyan">
-              Custom configuration — live edits
-            </div>
-          )}
+        <div className="space-y-2 border-t border-surface-border/60 px-5 py-4 text-[11.5px] leading-relaxed text-slate-500">
           <div>
-            Anneru IAS Global Energy Hackathon 2026
+            Global Energy Hackathon 2026
             <br />
-            Track 2 · Digital Solutions & AI · Setting B
-            <br />
-            Brief #13 · Maiduguri line outage · {config.facility.beds}-bed reference hospital
+            Brief #13 · Track 2 Digital Solutions &amp; AI · Setting B
           </div>
-          <div className="num rounded-lg border border-surface-border/60 bg-navy-950/60 px-2.5 py-2 font-mono text-[10px] text-slate-500">
-            engine · {fmtNum(sim.steps.length)} steps{lastRunMs > 0 ? ` · ${lastRunMs.toFixed(0)} ms` : ""}
-            <br />
-            deterministic · seed {config.seed} · 89 tests
+          <div className="num">
+            Engine {fmtNum(sim.steps.length)} steps{lastRunMs > 0 ? `, ${lastRunMs.toFixed(0)} ms` : ""} · 89 tests
           </div>
           <OfflineStatus />
         </div>
       </aside>
 
-      {/* ---------- Mobile top nav ---------- */}
-      <div className="sticky top-0 z-30 border-b border-surface-border/80 bg-navy-950/90 backdrop-blur md:hidden">
-        <div className="flex items-center justify-between px-4 pt-3">
+      {/* Mobile */}
+      <div className="sticky top-0 z-30 border-b border-surface-border/60 bg-navy-950/95 backdrop-blur md:hidden">
+        <div className="px-4 pt-3">
           <Brand />
-          <DeadlineChip />
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-3 py-2">
-          {TABS.map((t) => (
+        <nav className="flex gap-1 overflow-x-auto px-3 py-2.5" aria-label="Sections">
+          {ALL.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={clsx(
-                "flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium",
-                tab === t.id ? "bg-navy-800 text-white ring-1 ring-cyan/40" : "text-slate-400"
-              )}
+              aria-current={tab === t.id ? "page" : undefined}
+              className={clsx("flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium", tab === t.id ? "bg-navy-800 text-white ring-1 ring-cyan/40" : "text-slate-400")}
             >
               {t.icon}
               {t.label}
@@ -151,18 +146,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </nav>
       </div>
 
-      <div className="md:ml-60">
-        <header className="sticky top-0 z-10 hidden items-center justify-between gap-4 border-b border-surface-border/80 bg-navy-950/85 px-6 py-3 backdrop-blur md:flex">
-          <div>
-            <h1 className="text-base font-bold text-white">Intelligent Hospital Microgrid Digital Twin</h1>
-            <p className="text-xs text-slate-400">
-              Predictive Energy Resilience · Uninterrupted Critical Care — every value simulated
-              live from the documented engineering model
-            </p>
-          </div>
-          <DeadlineChip />
+      <div className="md:ml-64">
+        <header className="mx-auto max-w-[1480px] px-4 pb-1 pt-6 md:px-8 md:pt-8">
+          <h1 className="display text-[30px] font-bold leading-[1.05] text-white md:text-[40px]">{active.title}</h1>
+          <p className="mt-2 max-w-[70ch] text-[15px] text-slate-400">{active.lede}</p>
         </header>
-        <main className="mx-auto max-w-[1440px] p-4 md:p-6">{children}</main>
+        <main className="mx-auto max-w-[1480px] px-4 pb-10 pt-5 md:px-8">{children}</main>
       </div>
     </div>
   );

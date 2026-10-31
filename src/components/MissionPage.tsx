@@ -15,24 +15,25 @@ import {
 } from "@/engine";
 import { missionConfig, useApp } from "@/lib/store";
 import { Badge, Card, Note } from "./ui";
+import { OutageTheatre } from "./OutageTheatre";
 import { fmtNum } from "@/lib/format";
 import { AXIS_PROPS, GRID_PROPS, LEGEND_STYLE, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 
 const STRAT_COLOR: Record<Strategy, string> = {
-  baseline: "#94A3B8",
+  baseline: "#A3AEC2",
   baseline_rationed: "#C084FC",
-  conventional: "#F59E0B",
-  sentinel: "#22D3EE",
+  conventional: "#F2B544",
+  sentinel: "#45E0A0",
 };
 
 type Cell = "grid" | "full" | "deferred" | "essential" | "t1only" | "lost";
 const CELL_COLOR: Record<Cell, string> = {
-  grid: "#1B3A63",
-  full: "#34D399",
-  deferred: "#2DD4BF",
-  essential: "#F59E0B",
+  grid: "#1A3739",
+  full: "#45E0A0",
+  deferred: "#2F9E8F",
+  essential: "#F2B544",
   t1only: "#FB923C",
-  lost: "#EF4444",
+  lost: "#FF4D5E",
 };
 const CELL_LABEL: Record<Cell, string> = {
   grid: "Grid connected",
@@ -97,7 +98,7 @@ function ServiceRibbon({ results }: { results: Record<Strategy, SimResult> }) {
             <div key={s.id}>
               <div className="mb-1 flex items-baseline justify-between gap-2 text-[11px]">
                 <span className={clsx("font-semibold", s.id === "sentinel" ? "text-cyan" : "text-slate-300")}>{s.label}</span>
-                <span className="num font-mono text-slate-400">
+                <span className="num text-slate-400">
                   {fmtNum(m.criticalMaintainedHours)} h critical · {fmtNum(m.tier1MaintainedHours)} h Tier-1
                 </span>
               </div>
@@ -113,7 +114,7 @@ function ServiceRibbon({ results }: { results: Record<Strategy, SimResult> }) {
       <svg viewBox={`0 0 ${W} 16`} className="mt-1 h-4 w-full" preserveAspectRatio="none" aria-hidden>
         {Array.from({ length: days + 1 }, (_, d) =>
           d % 3 === 0 ? (
-            <text key={d} x={d * 24 * cw} y={12} fill="#7C8EA6" fontSize={10} textAnchor={d === 0 ? "start" : "middle"}>
+            <text key={d} x={d * 24 * cw} y={12} fill="#8FA9A6" fontSize={10} textAnchor={d === 0 ? "start" : "middle"}>
               {dateLabel(start, d)}
             </text>
           ) : null
@@ -150,8 +151,8 @@ function FuelChart({ results }: { results: Record<Strategy, SimResult> }) {
         <YAxis {...AXIS_PROPS} width={52} tickFormatter={(v) => `${fmtNum(v / 1000, 0)}k L`} />
         <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(d) => dateLabel(MAIDUGURI_EVENT.simStart, Math.floor(Number(d)))} formatter={(v: number, k: string) => [`${fmtNum(v)} L`, STRATEGIES.find((s) => s.id === k)?.short ?? k]} />
         <Legend {...LEGEND_STYLE} formatter={(k: string) => STRATEGIES.find((s) => s.id === k)?.short ?? k} />
-        <ReferenceLine x={MAIDUGURI_EVENT.outageStartDay} stroke="#EF4444" strokeDasharray="3 3" />
-        <ReferenceLine x={MAIDUGURI_EVENT.outageStartDay + MAIDUGURI_EVENT.outageDays} stroke="#34D399" strokeDasharray="3 3" />
+        <ReferenceLine x={MAIDUGURI_EVENT.outageStartDay} stroke="#FF4D5E" strokeDasharray="3 3" />
+        <ReferenceLine x={MAIDUGURI_EVENT.outageStartDay + MAIDUGURI_EVENT.outageDays} stroke="#45E0A0" strokeDasharray="3 3" />
         {STRATEGIES.map((s) => (
           <Line key={s.id} dataKey={s.id} stroke={STRAT_COLOR[s.id]} dot={false} strokeWidth={s.id === "sentinel" ? 2.4 : 1.4} isAnimationActive={false} />
         ))}
@@ -225,7 +226,7 @@ function SupplyCurve() {
             <YAxis {...AXIS_PROPS} width={44} domain={[0, 940]} />
             <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(v) => `${fmtNum(Number(v))} L/week`} formatter={(v: number, k: string) => [`${fmtNum(v)} h`, STRATEGIES.find((s) => k.endsWith(s.id))?.short ?? k]} />
             <Legend {...LEGEND_STYLE} formatter={(k: string) => STRATEGIES.find((s) => k.endsWith(s.id))?.short ?? k} />
-            <ReferenceLine x={current} stroke="#22D3EE" strokeDasharray="3 3" label={{ value: "selected", fill: "#22D3EE", fontSize: 10, position: "top" }} />
+            <ReferenceLine x={current} stroke="#45E0A0" strokeDasharray="3 3" label={{ value: "selected", fill: "#45E0A0", fontSize: 10, position: "top" }} />
             {STRATEGIES.map((s) => (
               <Line key={s.id} dataKey={`${metric}_${s.id}`} stroke={STRAT_COLOR[s.id]} strokeWidth={s.id === "sentinel" ? 2.6 : 1.5} dot={{ r: 2 }} isAnimationActive={false} />
             ))}
@@ -284,7 +285,7 @@ function Slider({ label, value, min, max, step, onChange, fmt, hint }: { label: 
     <label className="block">
       <div className="flex items-baseline justify-between gap-2">
         <span className="label">{label}</span>
-        <span className="num font-mono text-sm font-semibold text-white">{fmt(local)}</span>
+        <span className="num text-sm font-semibold text-white">{fmt(local)}</span>
       </div>
       <input
         type="range"
@@ -326,47 +327,33 @@ export function MissionPage() {
 
   return (
     <div className="space-y-5">
-      {/* Hero */}
-      <div className="card relative overflow-hidden p-5">
-        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-cyan/10 blur-3xl" />
-        <div className="flex flex-wrap items-center gap-2">
-          <Badge tone="cyan">Brief #13 · Power for a city the grid can&apos;t protect</Badge>
-          <Badge tone="default"><MapPin size={11} /> {MAIDUGURI_EVENT.city}</Badge>
-          <Badge tone="warn"><Zap size={11} /> {MAIDUGURI_EVENT.line} line down 22 Sep → 31 Oct 2024</Badge>
-          <Badge tone="good"><Sun size={11} /> NASA POWER measured weather</Badge>
-        </div>
-        <h2 className="mt-3 max-w-4xl text-xl font-bold leading-snug text-white md:text-2xl">
-          The generator works. The fuel doesn&apos;t come. Sentinel turns every litre the sun saves into hours of critical care.
-        </h2>
-        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-slate-400">
-          Replay of the documented 39-day line outage for an illustrative 250-bed referral hospital (not measured data from a named
-          facility). Four controllers face identical loads, weather, fuel deliveries and failures — the only difference is the
-          decisions. In December 2022 two Maiduguri hospitals sat dark for days with working generators and empty tanks
-          (ICIR); this page computes what the supply chain allows.
-        </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-cyan/30 bg-cyan/5 p-3">
-            <div className="label text-cyan">Metric 1 · critical-service hours</div>
-            <div className="num text-2xl font-bold text-white">{fmtNum(sen.criticalMaintainedHours)} <span className="text-sm text-slate-400">/ {fmtNum(outageH)} h</span></div>
-            <div className="text-xs text-slate-400">status quo {fmtNum(base.criticalMaintainedHours)} h · <span className="font-semibold text-energy-green">{hoursGained >= 0 ? "+" : ""}{fmtNum(hoursGained)} h</span></div>
+      <OutageTheatre results={results} pvKwp={mission.pvKwp ?? 600} batteryKwh={mission.batteryKwh ?? 600} tankLitres={mission.tankLitres ?? 10000} />
+
+      {/* The brief's metric, as one ledger rather than four look-alike cards */}
+      <section className="grid overflow-hidden rounded-[18px] border border-surface-border/70 bg-surface/60 sm:grid-cols-2 lg:grid-cols-4">
+        {[
+          { k: "Critical-service hours kept", v: `${fmtNum(sen.criticalMaintainedHours)}`, unit: `of ${fmtNum(outageH)} h`, note: `Status quo ${fmtNum(base.criticalMaintainedHours)} h — Sentinel keeps ${fmtNum(hoursGained)} more hours of Tier 1 and 2 care.`, tone: "text-energy-green" },
+          { k: "Diesel litres avoided", v: `${fmtNum(litresSaved)}`, unit: "litres", note: `${fmtNum(sen.dieselLitres)} L burned against ${fmtNum(base.dieselLitres)} L — twice the care on less fuel.`, tone: "text-energy-green" },
+          { k: "Life-critical hours", v: `${fmtNum(sen.tier1MaintainedHours)}`, unit: `of ${fmtNum(outageH)} h`, note: `ICU, theatres and cold chain never lose power. Status quo: ${base.tier1Interruptions} interruptions.`, tone: "text-white" },
+          { k: "What the software alone adds", v: `+${fmtNum(sen.criticalMaintainedHours - conv.criticalMaintainedHours)}`, unit: "hours", note: "Against a fixed-rule inverter on the identical solar, battery and generator.", tone: "text-white" },
+        ].map((m, i) => (
+          <div key={m.k} className={clsx("p-5", i > 0 && "border-t border-surface-border/60 sm:border-t-0 sm:border-l")}>
+            <div className="text-[13px] text-slate-400">{m.k}</div>
+            <div className="mt-1 flex items-baseline gap-2">
+              <span className={clsx("display num text-[44px] font-bold leading-none", m.tone)}>{m.v}</span>
+              <span className="text-[13px] text-slate-400">{m.unit}</span>
+            </div>
+            <p className="mt-2 text-[13px] leading-snug text-slate-400">{m.note}</p>
           </div>
-          <div className="rounded-xl border border-energy-green/30 bg-energy-green/5 p-3">
-            <div className="label text-energy-green">Metric 2 · diesel litres avoided</div>
-            <div className="num text-2xl font-bold text-white">{fmtNum(litresSaved)} L</div>
-            <div className="text-xs text-slate-400">{fmtNum(sen.dieselLitres)} L vs {fmtNum(base.dieselLitres)} L status quo</div>
-          </div>
-          <div className="rounded-xl border border-surface-border bg-navy-950/50 p-3">
-            <div className="label">Tier-1 life-critical hours</div>
-            <div className="num text-2xl font-bold text-white">{fmtNum(sen.tier1MaintainedHours)} <span className="text-sm text-slate-400">/ {fmtNum(outageH)}</span></div>
-            <div className="text-xs text-slate-400">status quo {fmtNum(base.tier1MaintainedHours)} h · {base.tier1Interruptions} interruptions vs {sen.tier1Interruptions}</div>
-          </div>
-          <div className="rounded-xl border border-surface-border bg-navy-950/50 p-3">
-            <div className="label">Same hardware, different brain</div>
-            <div className="num text-2xl font-bold text-white">+{fmtNum(sen.criticalMaintainedHours - conv.criticalMaintainedHours)} h</div>
-            <div className="text-xs text-slate-400">Sentinel vs fixed-rule hybrid on identical PV + battery</div>
-          </div>
-        </div>
-      </div>
+        ))}
+      </section>
+
+      <p className="max-w-[78ch] text-[14.5px] leading-relaxed text-slate-400">
+        On 22 September 2024 insurgents brought down tower 372 on the Gombe–Damaturu–Maiduguri 330 kV line; the city was cut off until
+        31 October. In December 2022 two Maiduguri hospitals sat dark for days with working generators and empty tanks. This replay runs that
+        39-day outage, on NASA POWER weather measured for those exact dates, for an illustrative 250-bed referral hospital — four controllers,
+        identical loads, deliveries and failures. Simulation, not measured hospital data.
+      </p>
 
       <div className="grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)]">
         {/* Controls */}
@@ -380,7 +367,7 @@ export function MissionPage() {
                 {HARDWARE.map((h) => (
                   <button key={h.id} onClick={() => setMission({ pvKwp: h.pvKwp, batteryKwh: h.batteryKwh, inverterKw: h.inverterKw })} className={clsx("rounded-lg border px-2 py-1.5 text-left text-[11px] leading-tight", hw === h.id ? "border-cyan/60 bg-cyan/10 text-white" : "border-surface-border text-slate-400 hover:text-white")}>
                     <div className="font-semibold">{h.label}</div>
-                    <div className="num font-mono text-[10px] text-slate-500">{h.pvKwp} kWp · {h.batteryKwh} kWh</div>
+                    <div className="num text-[10px] text-slate-500">{h.pvKwp} kWp · {h.batteryKwh} kWh</div>
                   </button>
                 ))}
               </div>
@@ -419,19 +406,19 @@ export function MissionPage() {
                   </div>
                   <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1.5 text-[11px]">
                     <span className="text-slate-400">Critical hours</span>
-                    <span className={clsx("num text-right font-mono font-semibold", m.criticalMaintainedHours >= outageH ? "text-energy-green" : "text-white")}>{fmtNum(m.criticalMaintainedHours)}</span>
+                    <span className={clsx("num text-right num font-semibold", m.criticalMaintainedHours >= outageH ? "text-energy-green" : "text-white")}>{fmtNum(m.criticalMaintainedHours)}</span>
                     <span className="text-slate-400">Tier-1 hours</span>
-                    <span className={clsx("num text-right font-mono font-semibold", m.tier1MaintainedHours >= outageH ? "text-energy-green" : "text-energy-red")}>{fmtNum(m.tier1MaintainedHours)}</span>
+                    <span className={clsx("num text-right num font-semibold", m.tier1MaintainedHours >= outageH ? "text-energy-green" : "text-energy-red")}>{fmtNum(m.tier1MaintainedHours)}</span>
                     <span className="text-slate-400">Diesel burned</span>
-                    <span className="num text-right font-mono text-white">{fmtNum(m.dieselLitres)} L</span>
+                    <span className="num text-right num text-white">{fmtNum(m.dieselLitres)} L</span>
                     <span className="text-slate-400">Empty-tank hours</span>
-                    <span className={clsx("num text-right font-mono", m.fuelOutHours > 0 ? "text-energy-red" : "text-white")}>{fmtNum(m.fuelOutHours)}</span>
+                    <span className={clsx("num text-right num", m.fuelOutHours > 0 ? "text-energy-red" : "text-white")}>{fmtNum(m.fuelOutHours)}</span>
                     <span className="text-slate-400">Tier-1 breaks</span>
-                    <span className="num text-right font-mono text-white">{m.tier1Interruptions}</span>
+                    <span className="num text-right num text-white">{m.tier1Interruptions}</span>
                     <span className="text-slate-400">Load deferred</span>
-                    <span className="num text-right font-mono text-white">{fmtNum(m.deferredKwh / 1000, 1)} MWh</span>
+                    <span className="num text-right num text-white">{fmtNum(m.deferredKwh / 1000, 1)} MWh</span>
                     <span className="text-slate-400">Generator hours</span>
-                    <span className="num text-right font-mono text-white">{fmtNum(m.gensetRuntimeH)}</span>
+                    <span className="num text-right num text-white">{fmtNum(m.gensetRuntimeH)}</span>
                   </div>
                 </div>
               );
@@ -454,7 +441,7 @@ export function MissionPage() {
               <div key={i} className="flex gap-2 rounded-lg border border-surface-border/50 bg-navy-950/50 px-2.5 py-1.5 text-[11.5px] leading-snug">
                 {e.severity === "critical" ? <AlertTriangle size={13} className="mt-0.5 shrink-0 text-energy-red" /> : e.severity === "warning" ? <Radio size={13} className="mt-0.5 shrink-0 text-energy-amber" /> : <CheckCircle2 size={13} className="mt-0.5 shrink-0 text-energy-green" />}
                 <div>
-                  <span className="num mr-1.5 font-mono text-[10.5px] text-slate-500">{dateLabel(MAIDUGURI_EVENT.simStart, e.day)} {String(Math.floor(e.hour)).padStart(2, "0")}:{String(Math.round((e.hour % 1) * 60)).padStart(2, "0")}</span>
+                  <span className="num mr-1.5 num text-[10.5px] text-slate-500">{dateLabel(MAIDUGURI_EVENT.simStart, e.day)} {String(Math.floor(e.hour)).padStart(2, "0")}:{String(Math.round((e.hour % 1) * 60)).padStart(2, "0")}</span>
                   <span className="text-slate-300">{e.message}</span>
                 </div>
               </div>

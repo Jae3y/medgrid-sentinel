@@ -59,8 +59,7 @@ export function FleetPage() {
           <Badge>Measured weather per site</Badge>
           <Badge>Same engine, new configuration</Badge>
         </div>
-        <h2 className="mt-3 text-xl font-bold text-white">Where Sentinel pays — and where it only nearly pays</h2>
-        <p className="mt-1 max-w-4xl text-sm text-slate-400">
+        <p className="mt-3 max-w-[78ch] text-[14.5px] leading-relaxed text-slate-300">
           Ten facility–site combinations, each a full-year 15-minute simulation on its own NASA POWER weather year and grid regime, priced at the
           same national defaults so the differences come from sunshine and grid reliability. The answer is not uniform, and the tool says so.
         </p>
@@ -82,14 +81,14 @@ export function FleetPage() {
                   <td className="py-1.5 pr-3 font-semibold text-white">{r.site}</td>
                   <td className="py-1.5 pr-3 text-slate-400">{r.regime}</td>
                   <td className="py-1.5 pr-3 text-slate-300">{r.archetype}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{fmtNum(r.annualGhiKwhM2)}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{fmtNum(r.specificYieldKwhPerKwp)}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{fmtUsd(r.capexUsd)}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{r.paybackYears ? `${r.paybackYears.toFixed(1)} y` : "—"}</td>
-                  <td className={clsx("num py-1.5 pr-3 font-mono", r.npvNaira >= 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(r.npvNaira)}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{r.irr !== null ? fmtPct(r.irr) : "—"}</td>
-                  <td className="num py-1.5 pr-3 font-mono">{fmtNum(r.dieselAvoidedLitres)} L ({fmtPct(r.dieselAvoidedPct, 0)})</td>
-                  <td className="num py-1.5 pr-3 font-mono">{fmtNum(r.tier1BreaksAvoided)}</td>
+                  <td className="num py-1.5 pr-3 num">{fmtNum(r.annualGhiKwhM2)}</td>
+                  <td className="num py-1.5 pr-3 num">{fmtNum(r.specificYieldKwhPerKwp)}</td>
+                  <td className="num py-1.5 pr-3 num">{fmtUsd(r.capexUsd)}</td>
+                  <td className="num py-1.5 pr-3 num">{r.paybackYears ? `${r.paybackYears.toFixed(1)} y` : "—"}</td>
+                  <td className={clsx("num py-1.5 pr-3 num", r.npvNaira >= 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(r.npvNaira)}</td>
+                  <td className="num py-1.5 pr-3 num">{r.irr !== null ? fmtPct(r.irr) : "—"}</td>
+                  <td className="num py-1.5 pr-3 num">{fmtNum(r.dieselAvoidedLitres)} L ({fmtPct(r.dieselAvoidedPct, 0)})</td>
+                  <td className="num py-1.5 pr-3 num">{fmtNum(r.tier1BreaksAvoided)}</td>
                   <td className="py-1.5 pr-3"><Badge tone={VERDICT_TONE[r.verdict]}>{r.verdict}</Badge></td>
                 </tr>
               ))}
@@ -112,7 +111,7 @@ export function FleetPage() {
               <YAxis {...AXIS_PROPS} width={30} />
               <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} formatter={(v: number) => [`${v.toFixed(1)} years`, "Payback"]} />
               <Bar dataKey="payback" radius={[4, 4, 0, 0]} isAnimationActive={false}>
-                {referral.map((r) => <Cell key={r.siteId} fill={r.verdict === "strong" ? "#34D399" : r.verdict === "viable" ? "#F59E0B" : "#EF4444"} />)}
+                {referral.map((r) => <Cell key={r.siteId} fill={r.verdict === "strong" ? "#45E0A0" : r.verdict === "viable" ? "#F2B544" : "#FF4D5E"} />)}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -124,7 +123,7 @@ export function FleetPage() {
               <XAxis dataKey="sites" {...AXIS_PROPS} scale="log" domain={[1, 100]} type="number" ticks={[1, 2, 5, 10, 20, 50, 100]} />
               <YAxis {...AXIS_PROPS} width={56} tickFormatter={(v) => `$${Math.round(v / 1000)}k`} />
               <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(n) => `${n} sites`} formatter={(v: number) => [fmtUsd(v), "CapEx per site"]} />
-              <Line dataKey="capexPerSiteUsd" stroke="#22D3EE" strokeWidth={2.2} dot={{ r: 3 }} isAnimationActive={false} />
+              <Line dataKey="capexPerSiteUsd" stroke="#45E0A0" strokeWidth={2.2} dot={{ r: 3 }} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>
           <Note>Labelled as a hypothesis: global PV module learning rates exceed 20 % per doubling of cumulative capacity (IRENA); we assume far less because only design, procurement and installation scale with a hospital fleet. To be validated by the first five quotes.</Note>
@@ -137,7 +136,7 @@ export function FleetPage() {
             <div key={t.id} className="rounded-xl border border-surface-border/70 bg-navy-950/50 p-3">
               <div className="flex items-baseline justify-between">
                 <div className="text-sm font-semibold text-white">{t.country}</div>
-                <div className="num font-mono text-xs text-cyan">{fmtNum(t.ghi)} kWh/m²·yr</div>
+                <div className="num text-xs text-cyan">{fmtNum(t.ghi)} kWh/m²·yr</div>
               </div>
               <p className="mt-1.5 text-[11.5px] leading-relaxed text-slate-400">{t.changes}</p>
             </div>

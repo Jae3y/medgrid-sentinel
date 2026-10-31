@@ -2,26 +2,43 @@
 @tailwind components;
 @tailwind utilities;
 
+/* MedGrid Sentinel — "night shift" design system.
+   Base is the deep green-black of theatre scrubs under low light; every accent is semantic:
+   pulse green = care maintained, harmattan gold = solar, laterite = diesel, cell blue = storage,
+   pylon grey = grid, code red = life-critical load lost. */
+
 :root {
   color-scheme: dark;
+  --night: #0a1a1c;
+  --ward: #102528;
+  --line: #24474a;
+  --ink: #e4eeec;
+  --ink-muted: #93aba8;
+  --pulse: #45e0a0;
 }
 
 html,
 body {
-  background-color: #060d1f;
-  color: #e6eef8;
+  background-color: var(--night);
+  color: var(--ink);
 }
 
 body {
-  background-image: radial-gradient(1100px 520px at 72% -8%, rgba(34, 211, 238, 0.07), transparent 62%),
-    radial-gradient(900px 480px at -8% 108%, rgba(52, 211, 153, 0.045), transparent 58%);
+  /* One warm haze, low on the horizon — the harmattan sky at dusk. No other decoration. */
+  background-image: radial-gradient(1400px 600px at 18% 112%, rgba(224, 106, 60, 0.07), transparent 60%),
+    radial-gradient(900px 420px at 88% -10%, rgba(69, 224, 160, 0.05), transparent 60%);
   background-attachment: fixed;
+  font-feature-settings: "tnum" 1, "lnum" 1;
 }
 
 :focus-visible {
-  outline: 2px solid rgba(34, 211, 238, 0.55);
+  outline: 2px solid rgba(69, 224, 160, 0.7);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+::selection {
+  background: rgba(69, 224, 160, 0.28);
 }
 
 ::-webkit-scrollbar {
@@ -29,36 +46,50 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b1f3a;
+  background: #0d2124;
 }
 ::-webkit-scrollbar-thumb {
-  background: #24466e;
+  background: #24474a;
   border-radius: 6px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #2e567f;
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @layer components {
+  /* Panels: hairline instrument frames, flat fill, no glass. */
   .card {
-    @apply rounded-xl border border-surface-border/80 bg-surface/70 shadow-[0_14px_34px_-22px_rgba(0,0,0,0.65)] backdrop-blur-sm;
+    @apply rounded-[14px] border border-surface-border/70 bg-surface/80;
   }
   .card-hover {
     @apply transition-colors hover:border-cyan/40;
   }
+  /* Field labels: sentence case, quiet — the data carries the weight, not the label. */
   .label {
-    @apply text-[11px] font-semibold uppercase tracking-wider text-slate-400;
+    @apply text-[12px] font-medium text-slate-400;
+  }
+  .display {
+    font-family: var(--font-archivo), sans-serif;
+    font-stretch: 68%;
+    font-variation-settings: "wdth" 68;
+    letter-spacing: -0.01em;
   }
   .num {
-    font-variant-numeric: tabular-nums;
+    font-variant-numeric: tabular-nums lining-nums;
   }
   .input-num {
     @apply w-24 rounded-md border border-surface-border bg-navy-950 px-2 py-1 text-right text-sm text-slate-100 outline-none transition-colors focus:border-cyan;
   }
   .tabbtn {
-    @apply flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:bg-surface hover:text-white;
+    @apply flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13.5px] font-medium text-slate-400 transition-colors hover:bg-navy-800 hover:text-white;
   }
   .tabbtn-active {
-    @apply bg-navy-800 text-white ring-1 ring-cyan/40;
+    @apply bg-navy-800 text-white shadow-[inset_2px_0_0_0_#45e0a0];
   }
 }

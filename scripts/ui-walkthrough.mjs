@@ -24,7 +24,18 @@ const tab = async (label) => {
   await page.waitForTimeout(800);
 };
 const shot = async (name, opts = {}) => {
-  await page.screenshot({ path: `results/ui/${name}.png`, ...opts });
+  // Capture to memory, then write with retries: on Windows an antivirus scan can
+  // briefly lock a freshly written PNG.
+  const buf = await page.screenshot(opts);
+  for (let i = 0; i < 6; i++) {
+    try {
+      writeFileSync(`results/ui/${name}.png`, buf);
+      break;
+    } catch (e) {
+      if (i === 5) throw e;
+      await new Promise((r) => setTimeout(r, 700));
+    }
+  }
   steps.push(`screenshot ${name}`);
 };
 const text = async () => page.locator("main").innerText();
@@ -35,8 +46,17 @@ try {
 
   // ---- Line Outage (Brief #13) ----
   const t0 = await text();
-  if (!t0.includes("METRIC 1") && !t0.toUpperCase().includes("METRIC 1")) throw new Error("mission page did not render metrics");
+  if (!t0.includes("Critical-service hours kept")) throw new Error("mission page did not render metrics");
+  await page.waitForSelector("canvas", { timeout: 60000 });
+  await page.waitForTimeout(2500);
   await shot("mission-hero");
+  // 3D: flip the controller at the same moment — the status-quo hospital is dark.
+  await page.getByRole("radio", { name: "Status quo" }).click();
+  await page.waitForTimeout(1500);
+  await shot("scene-status-quo");
+  await page.getByRole("radio", { name: "Sentinel" }).click();
+  await page.waitForTimeout(1500);
+  await shot("scene-sentinel");
   await page.waitForSelector("text=vs weekly diesel supply");
   await page.waitForFunction(() => !document.body.innerText.includes("Running replays"), null, { timeout: 60000 });
   await page.mouse.wheel(0, 900);
@@ -49,17 +69,17 @@ try {
   await page.waitForTimeout(500);
   await shot("mission-sms");
   // Interaction: toggle the generator-trip stress event; results must change.
-  const before = await page.locator("text=/Same hardware, different brain/i").locator("..").innerText();
+  const before = await page.locator("text=What the software alone adds").locator("..").innerText();
   await page.getByText("Generator trips after 150 run-hours").click();
   await page.waitForTimeout(1500);
-  const after = await page.locator("text=/Same hardware, different brain/i").locator("..").innerText();
+  const after = await page.locator("text=What the software alone adds").locator("..").innerText();
   steps.push(`stress toggle changed results: ${before !== after}`);
   await page.getByText("Generator trips after 150 run-hours").click();
   await page.waitForTimeout(1200);
   await page.evaluate(() => window.scrollTo(0, 0));
 
   // ---- Resilience Lab ----
-  await tab("Resilience Lab");
+  await tab("Resilience lab");
   await page.waitForFunction(() => document.body.innerText.includes("P(TIER-1 KEPT") || document.body.innerText.includes("P(Tier-1 kept"), null, { timeout: 120000 });
   await page.waitForFunction(() => !document.body.innerText.includes("Running…"), null, { timeout: 120000 });
   await page.waitForTimeout(800);
@@ -68,11 +88,11 @@ try {
 
   // ---- Dashboard / Twin / Scenario Lab ----
   await page.evaluate(() => window.scrollTo(0, 0));
-  await tab("Dashboard");
+  await tab("Live dashboard");
   await shot("dashboard");
-  await tab("Digital Twin");
+  await tab("Digital twin");
   await shot("twin");
-  await tab("Scenario Lab");
+  await tab("Stress scenarios");
   await page.getByRole("button", { name: /G · Generator failure/ }).first().click().catch(() => steps.push("scenario G button not found"));
   await page.waitForTimeout(1000);
   await shot("scenarios");
@@ -88,25 +108,25 @@ try {
 
   // ---- Fleet ----
   await page.evaluate(() => window.scrollTo(0, 0));
-  await tab("Fleet & Scale");
+  await tab("Fleet & scale");
   await page.waitForFunction(() => document.body.innerText.includes("10 site-years simulated"), null, { timeout: 180000 });
   await page.waitForTimeout(800);
   await shot("fleet");
 
   // ---- Intelligence / Brief / Sources ----
-  await tab("Intelligence");
+  await tab("Forecasting & AI");
   await page.waitForTimeout(1000);
   await shot("intelligence");
-  await tab("Brief & Metrics");
+  await tab("Brief & metrics");
   await page.waitForTimeout(2500);
   await shot("brief");
-  await tab("Data & Sources");
+  await tab("Data & sources");
   await shot("sources");
 
   // ---- Mobile layout ----
   await page.setViewportSize({ width: 390, height: 844 });
   await page.evaluate(() => window.scrollTo(0, 0));
-  await page.getByRole("button", { name: "Line Outage · Brief #13" }).first().click();
+  await page.getByRole("button", { name: "Line outage replay" }).first().click();
   await page.waitForTimeout(1200);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   steps.push(`mobile horizontal overflow px: ${overflow}`);

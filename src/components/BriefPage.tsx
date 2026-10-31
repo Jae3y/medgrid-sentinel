@@ -110,8 +110,8 @@ export function BriefPage() {
             on-campus siting and insurance in the EaaS fee.
           </QA>
           <QA q="What existed before the event vs this weekend?">
-            Nothing existed before 30 Oct 2026, 12:00 PM ET. A first prototype was built on 30 Oct with another AI coding model; on 31 Oct the
-            engine was rebuilt (real weather, fuel logistics, four strategies, Monte Carlo, annual economics, forecasting on held-out data) — see
+            Nothing existed before 30 Oct 2026, 12:00 PM ET. A first version was built on 30 Oct with the ZCode AI coding agent; on 31 Oct the
+            engine was rebuilt with Claude Code (real weather, fuel logistics, four strategies, Monte Carlo, annual economics, forecasting on held-out data) — see
             the git history and disclosure statement.
           </QA>
         </div>

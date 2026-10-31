@@ -36,7 +36,7 @@ export function SolarForecastCard() {
             <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(d) => `Day ${d} of 2024`} formatter={(v: number, k: string) => [`${v} kWh/m²`, k]} />
             <Legend {...LEGEND_STYLE} />
             <Line dataKey="actual" name="Measured (NASA POWER)" stroke="#E2E8F0" strokeWidth={1.2} dot={false} isAnimationActive={false} />
-            <Line dataKey="forecast" name="Learned blend forecast" stroke="#22D3EE" strokeWidth={1.6} dot={false} isAnimationActive={false} />
+            <Line dataKey="forecast" name="Learned blend forecast" stroke="#45E0A0" strokeWidth={1.6} dot={false} isAnimationActive={false} />
           </LineChart>
         </ResponsiveContainer>
         <div className="mt-3 overflow-x-auto">
@@ -54,10 +54,10 @@ export function SolarForecastCard() {
               {r.models.map((m) => (
                 <tr key={m.id} className={clsx("border-t border-surface-border/50", m.id === best.id ? "text-cyan" : "text-slate-200")} title={m.description}>
                   <td className="py-1 pr-2">{m.label}</td>
-                  <td className="py-1 pr-2 font-mono">{m.maeKwhM2.toFixed(3)}</td>
-                  <td className="py-1 pr-2 font-mono">{m.rmseKwhM2.toFixed(3)}</td>
-                  <td className="py-1 pr-2 font-mono">{fmtPct(m.maePct)}</td>
-                  <td className="py-1 pr-2 font-mono">{m.skill >= 0 ? "+" : ""}{fmtPct(m.skill)}</td>
+                  <td className="py-1 pr-2 num">{m.maeKwhM2.toFixed(3)}</td>
+                  <td className="py-1 pr-2 num">{m.rmseKwhM2.toFixed(3)}</td>
+                  <td className="py-1 pr-2 num">{fmtPct(m.maePct)}</td>
+                  <td className="py-1 pr-2 num">{m.skill >= 0 ? "+" : ""}{fmtPct(m.skill)}</td>
                 </tr>
               ))}
             </tbody>

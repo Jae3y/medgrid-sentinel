@@ -82,8 +82,8 @@ export function Financials() {
                 <YAxis tickFormatter={(v: number) => `${(v / 1e9).toFixed(1)}B`} width={50} {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(y) => `Year ${y}`} formatter={(v: number, k: string) => [fmtNairaFull(v), k === "net" ? "Net cash flow" : "Cumulative"]} />
                 <ReferenceLine y={0} stroke="#475569" />
-                <Bar dataKey="net" fill="#22D3EE" opacity={0.55} radius={[2, 2, 0, 0]} isAnimationActive={false} />
-                <Area type="monotone" dataKey="cumulative" stroke="#34D399" strokeWidth={2} fill="url(#gradCash)" isAnimationActive={false} />
+                <Bar dataKey="net" fill="#45E0A0" opacity={0.55} radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                <Area type="monotone" dataKey="cumulative" stroke="#45E0A0" strokeWidth={2} fill="url(#gradCash)" isAnimationActive={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -97,7 +97,7 @@ export function Financials() {
             ].map(([k, v]) => (
               <div key={k as string} className="flex justify-between rounded-md bg-navy-950/60 px-2 py-1">
                 <span className="text-slate-400">{k}</span>
-                <span className="num font-mono text-white">{fmtUsd(v as number)}</span>
+                <span className="num text-white">{fmtUsd(v as number)}</span>
               </div>
             ))}
           </div>
@@ -113,15 +113,15 @@ export function Financials() {
             <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
               <div className="font-bold text-white">2 · Energy-as-a-Service (recommended)</div>
               An energy-service company owns, insures and maintains PV + storage + Sentinel. The hospital pays a fixed{" "}
-              <span className="font-mono text-cyan">{fmtNaira(econ.eaasAnnualFeeNaira)}/yr</span> ({fmtNaira(econ.eaasAnnualFeeNaira / 12)}/month) — {fmtPct(1 - fin.eaasHospitalShare, 0)} of its
+              <span className="num text-cyan">{fmtNaira(econ.eaasAnnualFeeNaira)}/yr</span> ({fmtNaira(econ.eaasAnnualFeeNaira / 12)}/month) — {fmtPct(1 - fin.eaasHospitalShare, 0)} of its
               measured savings — so its energy bill falls from day one with zero CapEx. Provider IRR{" "}
-              <span className="font-mono text-cyan">{econ.eaasProviderIrr !== null ? fmtPct(econ.eaasProviderIrr) : "n/a"}</span> after O&M,
+              <span className="num text-cyan">{econ.eaasProviderIrr !== null ? fmtPct(econ.eaasProviderIrr) : "n/a"}</span> after O&M,
               subscription and year-{fin.batteryLifeYears} replacements. Patients pay nothing extra.
             </div>
             <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
               <div className="font-bold text-white">3 · Blended finance</div>
               Concessional capital lowers the provider&apos;s hurdle rate. A CRF-based fee equals the savings at a financing rate of{" "}
-              <span className="font-mono">{econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"}</span> — the number a
+              <span className="num">{econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"}</span> — the number a
               DFI needs. No grant is assumed anywhere.
             </div>
           </div>
@@ -164,10 +164,10 @@ export function Financials() {
                   {sens.map((r, i) => (
                     <tr key={i} className="border-t border-surface-border/50 text-slate-200">
                       <td className="py-1.5 pr-2">{r.variable}</td>
-                      <td className="py-1.5 pr-2 font-mono">{r.change}</td>
-                      <td className="py-1.5 pr-2 font-mono">{r.paybackYears ? `${fmtNum(r.paybackYears, 1)} yr` : "n/a"}</td>
-                      <td className={clsx("py-1.5 pr-2 font-mono", r.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(r.npvNaira)}</td>
-                      <td className="py-1.5 pr-2 font-mono">{r.irr !== null ? fmtPct(r.irr) : "n/a"}</td>
+                      <td className="py-1.5 pr-2 num">{r.change}</td>
+                      <td className="py-1.5 pr-2 num">{r.paybackYears ? `${fmtNum(r.paybackYears, 1)} yr` : "n/a"}</td>
+                      <td className={clsx("py-1.5 pr-2 num", r.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(r.npvNaira)}</td>
+                      <td className="py-1.5 pr-2 num">{r.irr !== null ? fmtPct(r.irr) : "n/a"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -200,15 +200,15 @@ export function Financials() {
                 <tbody>
                   {sizing.candidates.map((c, i) => (
                     <tr key={i} className={clsx("border-t border-surface-border/50", sizing.best === c ? "text-cyan" : c.feasible ? "text-slate-200" : "text-slate-500")}>
-                      <td className="py-1.5 pr-2 font-mono">{c.pvKwp}</td>
-                      <td className="py-1.5 pr-2 font-mono">{c.batteryKwh}</td>
-                      <td className="py-1.5 pr-2 font-mono">{c.inverterKw}</td>
-                      <td className="py-1.5 pr-2 font-mono">{fmtNum(c.criticalServiceHours)}</td>
-                      <td className="py-1.5 pr-2 font-mono">{fmtNum(c.tier1Hours)}</td>
-                      <td className="py-1.5 pr-2 font-mono">{fmtPct(c.dieselAvoidedPct, 0)}</td>
-                      <td className="py-1.5 pr-2 font-mono">{fmtNaira(c.capexNaira)}</td>
-                      <td className="py-1.5 pr-2 font-mono">{c.paybackYears ? `${c.paybackYears.toFixed(1)} y` : "—"}</td>
-                      <td className={clsx("py-1.5 pr-2 font-mono", c.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(c.npvNaira)}</td>
+                      <td className="py-1.5 pr-2 num">{c.pvKwp}</td>
+                      <td className="py-1.5 pr-2 num">{c.batteryKwh}</td>
+                      <td className="py-1.5 pr-2 num">{c.inverterKw}</td>
+                      <td className="py-1.5 pr-2 num">{fmtNum(c.criticalServiceHours)}</td>
+                      <td className="py-1.5 pr-2 num">{fmtNum(c.tier1Hours)}</td>
+                      <td className="py-1.5 pr-2 num">{fmtPct(c.dieselAvoidedPct, 0)}</td>
+                      <td className="py-1.5 pr-2 num">{fmtNaira(c.capexNaira)}</td>
+                      <td className="py-1.5 pr-2 num">{c.paybackYears ? `${c.paybackYears.toFixed(1)} y` : "—"}</td>
+                      <td className={clsx("py-1.5 pr-2 num", c.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(c.npvNaira)}</td>
                       <td className="py-1.5 pr-2">{c.feasible ? "✓" : "✗"}</td>
                     </tr>
                   ))}

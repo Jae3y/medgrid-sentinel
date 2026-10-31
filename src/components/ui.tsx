@@ -106,7 +106,7 @@ export function Row({
   return (
     <div className="flex items-baseline justify-between gap-3 border-b border-surface-border/50 py-1.5 last:border-0">
       <span className="text-xs text-slate-400">{k}</span>
-      <span className={clsx("text-sm font-semibold text-white", mono && "font-mono")}>{v}</span>
+      <span className={clsx("text-sm font-semibold text-white", mono && "num")}>{v}</span>
     </div>
   );
 }

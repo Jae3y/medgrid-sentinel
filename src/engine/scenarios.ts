@@ -17,7 +17,7 @@ import { dayOfYear } from "./measured";
 export const DEFAULTS = {
   gridTariffNairaPerKwh: 207, // Band A, NERC order effective 6 May 2024: ₦206.80/kWh (no later Band A order found; verify at pilot)
   dieselNairaPerLitre: 1950, // Oct-2026 retail range ₦1,900–2,020/L; Dangote gantry ₦1,800/L from 10 Oct 2026 (DATA_SOURCES #12)
-  fxNairaPerUsd: 1500, // planning rate; sensitivity covers ±20 %
+  fxNairaPerUsd: 1335, // NFEM official ≈ ₦1,331–1,334/$ through Oct 2026; sensitivity covers +20 % depreciation
 };
 
 const W: Record<string, WeatherDay> = WEATHER_LIBRARY;

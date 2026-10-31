@@ -1,36 +1,37 @@
-# AI & Forecasting Methodology
+# AI, Forecasting & Probabilistic Methods
 
-## Design principle
+Principle: **nothing safety-critical is a black box.** Dispatch is deterministic and explainable. Learned models only produce *forecasts* and *probabilities* that the deterministic governor consumes with calibrated caution.
 
-AI earns its place only where it changes a decision. Every intelligent function is deterministic, explainable, and reports its own basis. No black-box model touches dispatch — the safety-critical engine is a fully deterministic, unit-tested state machine.
+| Layer | Method | Data | Validation |
+|---|---|---|---|
+| Solar day-ahead forecast | Statistical ML: OLS blend of 3-day mean + climatology | NASA POWER Maiduguri, train 2022–23, test 2024 | Held-out MAE/RMSE/skill |
+| Governor solar confidence | Empirical calibration | Held-out 2024 residuals | Coverage of k × forecast |
+| Resilience probabilities | Monte Carlo | NREL generator statistics × 3 measured weather years × supply shocks | Determinism, monotone survival, NREL closed-form reference |
+| Demand forecast & anomalies | Statistical (hybrid prior; leave-one-out z-scores) | **Synthetic** until pilot metering | Labelled synthetic everywhere |
+| Generative AI / LLM | **Not used in the product** | — | No message on screen or by SMS is LLM-written; all are generated from engine state |
 
-## 1. Demand forecasting
+## 1. Solar forecaster (`forecast.ts: evaluateSolarForecast`)
+- Target: next-day insolation (kWh/m²/day). Features: the 3-day persistence mean p₃ and the climatology c (the same ±7-day window averaged over the training years).
+- Model: ŷ = a·p₃ + b·c + e, fitted by least squares on **2022–2023 only**: a = 0.192, b = 0.830, e = −0.131.
+- Held-out 2024 (363 scored days, mean 5.75 kWh/m²/day):
 
-- **Model:** hybrid — `0.5 × 7-day hourly mean + 0.5 × facility schedule prior`.
-- **Training/scored data:** synthetic "measured" history generated from the facility's own profiles with seeded ±5% noise (one injected evening surge) — deliberately honest for a 48-hour POC with no facility data. The interfaces accept measured AMI series unchanged.
-- **Reported accuracy (held-out day):** Sentinel hybrid **MAE 8.1 kW / RMSE 9.7 kW** vs naive persistence **8.6 / 10.4** — on a 200–450 kW load, ≈3–4% error. Both numbers are shown in the UI; the model must beat persistence to earn its place, and it does.
-- **What would improve it:** real AMI data → gradient-boosted or seasonal-naive models with day-of-week terms; the evaluation harness (MAE/RMSE on held-out windows) is already built.
+| Model | MAE | RMSE | Skill vs climatology |
+|---|---:|---:|---:|
+| Persistence (tomorrow = today) | 0.730 | 1.131 | −24.1% |
+| 3-day persistence mean | 0.644 | 0.950 | −4.3% |
+| Climatology | 0.632 | 0.911 | 0 |
+| **Learned blend** | **0.612** | **0.886** | **+2.8%** |
 
-## 2. Battery depletion projection
+The honest reading: the blend clearly beats naive persistence (−22% RMSE) and modestly beats climatology. Sahel day-to-day solar variability is low outside the rainy season, so climatology is strong.
 
-Energy-bookkeeping projection: usable kWh above floor ÷ mean 12-h forecast demand → autonomy hours and depletion clock-time. This is the duty manager's midnight question ("how long can we hold, when does the genset need to be ready?") answered deterministically.
+## 2. Calibration of the governor
+The governor counts only k × forecast solar. On held-out 2024 the share of days with actual ≥ k × (3-day forecast) was: k = 0.5 → 98.1%, 0.6 → 96.4%, **0.7 → 94.5%**, 0.8 → 91.7%, 0.9 → 81.8%, 1.0 → 54.8%. **k = 0.7** therefore gives about a 1-in-18-day shortfall risk on the solar term alone, and the 24 h delivery margin plus the 10% restore hysteresis absorb that. The live governor uses the 3-day mean, which is causal and needs no climatology table for new sites. Wiring the learned blend in is a roadmap item, worth about 7% RMSE.
 
-## 3. Anomaly detection
+## 3. Monte Carlo resilience (`resilience.ts`)
+Per trial: dataset ∈ {2022, 2023, 2024}, uniform start day and hour; FTS ~ Bernoulli(p_FTS); run-hours to failure ~ cumulative Exp(MTTF); repair ~ LogNormal(mean 72 h, σ 0.6); initial tank ~ U(30%, 100%); each delivery missed with p = 0.10, otherwise late with p = 0.30 by U(0, 96] h. The same sample is replayed for every controller (common random numbers). Outputs: survival S(h) = P(no sustained Tier-1 interruption before hour h), the distribution of critical hours (p10/p50/p90), mean diesel and run-hours. A sanity reference is NREL's closed form R(t) = OA·(1−FTS)·e^(−t/MTTF), plotted alongside.
 
-**Leave-one-out z-score** per hour (a point scored against the *other* days' statistics), flagging |z| ≥ 3. Statistical note (documented in code): with n = 7 samples, a conventional z-score including the outlier can never exceed ≈2.27 — small-sample anomaly detection *requires* the leave-one-out form. In the sprint dataset the method flags the injected evening surge (z ≈ 9) and no false positives from the ±5% noise band. Every alert prints observed vs expected kW and a plain-language explanation.
+## 4. Demand forecast & anomaly detection (synthetic)
+These are kept from the Day-1 build and clearly labelled: a hybrid forecast (50% recent history + 50% schedule prior) is scored on a held-out *synthetic* day, and anomaly screening uses leave-one-out z ≥ 3. They stay labelled as synthetic until circuit-level metering exists (pilot months 1–3), when they are retrained on real data.
 
-## 4. Recommendation engine
-
-Rule-based, each recommendation printing its inputs and basis, e.g.:
-- "Tier-2 deficits of X kWh detected → add storage or shift laundry/pumping into solar hours" (basis: unserved-energy accounting of the active run)
-- "X kWh of PV curtailed at midday → larger inverter or load shifting converts curtailment into savings" (basis: curtailed energy vs the 250 kW inverter limit)
-- "Generator averages Y kW loading vs 120 kW minimum-load point" (basis: runtime + fuel model)
-- "Reserve +10% adds ~N kWh ride-through" (basis: battery configuration)
-
-## 5. Optional LLM analyst — deliberately excluded from the POC core
-
-The architecture reserves a server-side, structured-state-only LLM endpoint for a natural-language analyst, but the POC ships **without any external AI API dependency**: the product is fully functional offline, and no judge needs an API key to reproduce anything. This is a stated design decision, not a limitation of ambition — it follows the handbook's own guidance (offline/low-bandwidth handling is *strong evidence* for the Digital Solutions & AI track).
-
-## 6. AI transparency statement (as shown in-product)
-
-> Every function on this page is deterministic and explainable: statistical forecasting with reported MAE/RMSE, energy-bookkeeping depletion projection, leave-one-out z-score anomaly screening, and rule-based recommendations whose inputs are printed alongside each insight. No black-box model makes dispatch decisions — the safety-critical dispatch engine is fully deterministic and unit-tested.
+## 5. What would make the AI stronger (roadmap, not claimed)
+Real AMI data → gradient-boosted demand forecasting; outage-hazard models from TCN/DisCo logs; the blend forecaster in the governor; a probabilistic (chance-constrained) governor using the full residual distribution instead of a single k.

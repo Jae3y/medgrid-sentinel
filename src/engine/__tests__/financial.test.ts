@@ -22,7 +22,7 @@ describe("CapEx breakdown", () => {
     expect(c.installUsd).toBeCloseTo(602100 * 0.15, 6); // 90,315
     expect(c.platformUsd).toBe(12000);
     expect(c.totalUsd).toBeCloseTo(704415, 6);
-    expect(c.totalNaira).toBeCloseTo(704415 * 1500, 6);
+    expect(c.totalNaira).toBeCloseTo(704415 * DEFAULT_FINANCIAL.fxNairaPerUsd, 6);
   });
 });
 

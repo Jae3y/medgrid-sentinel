@@ -76,7 +76,7 @@ export function DigitalTwin() {
                   />
                   {l.name}
                 </span>
-                <span className="shrink-0 font-mono text-[11px] text-slate-400">{l.ratedKw} kW</span>
+                <span className="shrink-0 num text-[11px] text-slate-400">{l.ratedKw} kW</span>
               </div>
             ))}
           </div>
@@ -184,7 +184,7 @@ export function DigitalTwin() {
                 <span className={`mt-1 h-1.5 w-1.5 shrink-0 rounded-full ${
                   e.severity === "critical" ? "bg-energy-red" : e.severity === "warning" ? "bg-energy-amber" : "bg-cyan"
                 }`} />
-                <span className="w-24 shrink-0 font-mono text-[10px] text-slate-500">
+                <span className="w-24 shrink-0 num text-[10px] text-slate-500">
                   D{e.day + 1} {fmtHour12(e.hour)}
                 </span>
                 <span className="text-[11px] leading-snug text-slate-300">{e.message}</span>

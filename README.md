@@ -6,6 +6,8 @@
 
 Anneru IAS **Global Energy Hackathon 2026** · **Brief #13 — Power for a city the grid can't protect** · **Track 2 — Digital Solutions & AI** · **Setting B — Non-residential (healthcare)** · solo entry: Jackson Sixtus Abetianbe
 
+**Live demo (runs entirely in your browser, works offline once loaded): https://jae3y.github.io/medgrid-sentinel/**
+
 **Brief success metric (Handbook Appendix B, verbatim):** *"Hours of critical service maintained during a line outage, and diesel litres avoided."*
 
 ---

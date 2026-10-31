@@ -2,8 +2,8 @@
 
 Plan about 75 minutes for both videos, including retakes. Record the **demo** first: the pitch reuses its app clips.
 
-## 0. Optional: a public live link for judges
-Judges can open the app without installing anything if you publish the static build. Ask Claude to set up GitHub Pages (a workflow is prepared), or drag the `out/` folder onto https://app.netlify.com/drop. The link must open without sign-in.
+## 0. Public live link
+The app is published at https://jae3y.github.io/medgrid-sentinel/ (GitHub Pages, redeployed on every push to main). You can record from the live link instead of a local build; the local build below is the fallback if your connection is slow.
 
 ## 1. Prepare the app (5 min)
 ```bash

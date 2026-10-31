@@ -11,10 +11,11 @@
 | Sat 31 Oct 13:38 | ~20.6 | **Day 2 (Claude Code) — Engine v2:** NASA POWER measured weather, fuel logistics, 4 strategies on identical hardware, fuel-runway governor, transfer-break physics, Maiduguri 39-day replay, Monte Carlo with NREL reliability, held-out solar forecaster, full-year 20-yr economics, sizing, 89 tests |
 | Sat 31 Oct 14:30 | ~21.5 | Product v2 UI: Line Outage, Resilience Lab, Fleet, full-year Financials, SMS/USSD, offline PWA static export, E2E |
 | Sat 31 Oct afternoon | ~22–24 | Redesign: night-shift design system, Archivo type, grouped navigation, live 3D microgrid (react-three-fiber) bound to engine state; deck, one-pager, disclosure regenerated from `results/demo-results.json` |
+| Sat 31 Oct ~18:30 | ~25.5 | Published: GitHub Pages + Vercel; report/export layer (Markdown, hourly CSV, JSON), tank-size control, controller switch in the Digital Twin; 12 new tests (101) |
 | Sat 31 Oct evening | 24–32 | Documentation suite, judge Q&A, rubric, portal text, video scripts and runbook; final verification |
 
 ## Verification status (latest)
-- `npm test`: **89/89 passing**
+- `npm test`: **101/101 passing**
 - `npm run build`: static export OK (≈ 454 kB first load; 3D lazy-loaded)
 - `npm run e2e`: every tab driven in headless Chrome, **0 console errors**, 0 px mobile overflow; 3D status-quo vs Sentinel captured
 - `npm run results`: regenerates every published number

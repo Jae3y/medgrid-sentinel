@@ -63,7 +63,7 @@ sec("Proposed solution - what we built and how it works",
     "critical loads first; (2) a clinical ride-through reserve so a failed generator never darkens the ICU; (3) efficient generator cycling. Offline web app + SMS/USSD alerts.")
 sec("Proof of Concept built in the 48 hours",
     f"Replay of the real 39-day outage on NASA POWER measured weather, four controllers on identical hardware/fuel; 300-trial Monte Carlo with NREL generator-failure data; "
-    f"full-year economics; solar forecast scored on held-out 2024; 89 automated tests; reproducible with <font face='Courier'>npm run results</font>.")
+    f"full-year economics; solar forecast scored on held-out 2024; 101 automated tests; reproducible with <font face='Courier'>npm run results</font>.")
 
 rows = [
     [Paragraph("<font color='#FFFFFF'><b>Brief metric (39-day outage, %s L/week diesel)</b></font>" % n0(rep['assumptions']['weeklySupplyLitres']), S["k"]),

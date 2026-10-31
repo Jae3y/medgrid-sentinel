@@ -24,7 +24,7 @@
 | §10 checklist: impact quantified against the brief's metric | 449 → 937 h; 2,841 L; 91,654 L/yr | ✅ |
 | §11: rubric | OFFICIAL_RUBRIC_SELF_ASSESSMENT.md | ✅ |
 | §11 Track 2 strong evidence: working demo, real data, offline/low-bandwidth, feature-phone/USSD | Offline PWA static export; NASA/NREL data; SMS/USSD channel | ✅ |
-| §11 Track 2 red flags: smartphone assumption; AI with no data source; polished UI over no logic | Feature-phone channel; forecaster on held-out real data; 89 tests | ✅ avoided |
+| §11 Track 2 red flags: smartphone assumption; AI with no data source; polished UI over no logic | Feature-phone channel; forecaster on held-out real data; 101 tests | ✅ avoided |
 | §13/§17: AI tools, open source and datasets disclosed | Disclosure statement | ✅ |
 | §14: honesty, privacy | No patient data; no invented partners; limitations stated | ✅ |
 | §17: video ≤ 1080p, < 500 MB, link without sign-in | Runbook §6; checklist | ⏳ user |

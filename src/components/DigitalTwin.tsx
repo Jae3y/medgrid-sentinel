@@ -49,6 +49,21 @@ export function DigitalTwin() {
   return (
     <div className="grid gap-4 xl:grid-cols-5">
       <div className="space-y-4 xl:col-span-2">
+        <Card title="Controller on this hardware" subtitle="Same PV, battery and generator; only the dispatch decisions change. The diesel-only status quo is always computed alongside for comparison.">
+          <div className="grid grid-cols-2 gap-1 rounded-xl bg-navy-950 p-1" role="radiogroup" aria-label="Controller">
+            {([
+              ["sentinel", "MedGrid Sentinel"],
+              ["conventional", "Fixed-rule hybrid"],
+            ] as const).map(([id, label]) => {
+              const on = (config.strategy ?? "conventional") === id;
+              return (
+                <button key={id} role="radio" aria-checked={on} onClick={() => updateConfig((c) => { c.strategy = id; })} className={`rounded-lg px-2 py-2 text-[12.5px] font-semibold ${on ? (id === "sentinel" ? "bg-cyan text-navy-950" : "bg-navy-700 text-white") : "text-slate-400 hover:text-white"}`}>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </Card>
         <Card title="Facility" subtitle={config.facility.name}>
           <Row k="Beds (illustrative)" v={fmtNum(config.facility.beds)} />
           <Row k="Defined circuits" v={config.facility.loads.length} />

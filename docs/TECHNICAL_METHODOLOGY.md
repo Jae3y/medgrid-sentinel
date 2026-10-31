@@ -21,7 +21,7 @@ This is the overview; the equations are in [POWER_SYSTEM_MODEL.md](POWER_SYSTEM_
 | Prices | NERC Band A ₦206.80/kWh; diesel ₦1,950/L (Oct 2026 retail); FX ₦1,335/$ (NFEM Oct 2026); BNEF 2025 storage benchmark | Economics |
 
 ## 4. Validation
-- 89 automated tests (`npm test`): component equations against hand calculations; power balance for every strategy; diesel mass balance; transfer-gap physics; governor behaviour; NREL reproduction; Monte Carlo determinism, monotonicity and dominance; forecaster train/test separation; financial identities (NPV/IRR sign agreement, cumulative cash flow, year-12 replacement, re-pricing equals re-simulation).
+- 101 automated tests (`npm test`): component equations against hand calculations; power balance for every strategy; diesel mass balance; transfer-gap physics; governor behaviour; NREL reproduction; Monte Carlo determinism, monotonicity and dominance; forecaster train/test separation; financial identities (NPV/IRR sign agreement, cumulative cash flow, year-12 replacement, re-pricing equals re-simulation).
 - **Reproducibility:** `npm run results` regenerates every published number. The deck and one-pager scripts read only that file.
 - **E2E:** a headless-Chrome walkthrough of every tab, with zero console errors.
 

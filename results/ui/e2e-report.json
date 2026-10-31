@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:3003",
-  "at": "2026-10-31T14:17:59.709Z",
+  "at": "2026-10-31T17:20:56.067Z",
   "steps": [
     "screenshot mission-hero",
     "screenshot scene-status-quo",
@@ -9,9 +9,12 @@
     "screenshot mission-fuel",
     "screenshot mission-sms",
     "stress toggle changed results: true",
+    "csv export MedGridSentinel_Brief13_hourly_2026-10-31.csv rows=4033",
+    "report export MedGridSentinel_Brief13_report_2026-10-31.md",
     "screenshot resilience",
     "monte carlo completed in browser",
     "screenshot dashboard",
+    "twin controller switch OK",
     "screenshot twin",
     "screenshot scenarios",
     "screenshot financials",

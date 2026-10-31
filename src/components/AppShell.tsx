@@ -120,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             Brief #13 · Track 2 Digital Solutions &amp; AI · Setting B
           </div>
           <div className="num">
-            Engine {fmtNum(sim.steps.length)} steps{lastRunMs > 0 ? `, ${lastRunMs.toFixed(0)} ms` : ""} · 89 tests
+            Engine {fmtNum(sim.steps.length)} steps{lastRunMs > 0 ? `, ${lastRunMs.toFixed(0)} ms` : ""} · 101 tests
           </div>
           <OfflineStatus />
         </div>

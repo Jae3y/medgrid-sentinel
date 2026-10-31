@@ -8,7 +8,7 @@ flowchart LR
     NR[NREL generator reliability]
     PR[Prices: NERC, diesel, FX]
   end
-  subgraph Engine["src/engine (pure TypeScript, deterministic, 89 tests)"]
+  subgraph Engine["src/engine (pure TypeScript, deterministic, 101 tests)"]
     W[measured.ts weather] --> D[dispatch.ts<br/>15-min step · 4 strategies<br/>governor · fuel · failures]
     F[facility.ts tiered loads] --> D
     D --> S[simulate.ts metrics]

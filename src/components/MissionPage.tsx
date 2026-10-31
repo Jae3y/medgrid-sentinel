@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { clsx } from "clsx";
 import { CartesianGrid, Legend, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { AlertTriangle, CheckCircle2, Fuel, MapPin, Radio, ShieldCheck, Smartphone, Sun, Zap } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Download, Fuel, Radio, ShieldCheck, Smartphone } from "lucide-react";
 import {
   compareStrategies,
   smsFeed,
+  hourlyCsv,
+  jsonReport,
+  markdownReport,
   ussdStatus,
   STRATEGIES,
   MAIDUGURI_EVENT,
@@ -14,6 +17,7 @@ import {
   type Strategy,
 } from "@/engine";
 import { missionConfig, useApp } from "@/lib/store";
+import { downloadText } from "@/lib/download";
 import { Badge, Card, Note } from "./ui";
 import { OutageTheatre } from "./OutageTheatre";
 import { fmtNum } from "@/lib/format";
@@ -278,6 +282,34 @@ function SmsPhone({ sim }: { sim: SimResult }) {
   );
 }
 
+function ExportPanel() {
+  const { missionResults, mission, stress } = useApp();
+  if (!missionResults) return null;
+  const supply = mission.weeklySupplyLitres ?? 6000;
+  const scenario = `Maiduguri 330 kV line outage replay, 22 Sep – 31 Oct 2024 (NASA POWER weather); ${fmtNum(supply)} L/week diesel; tank ${fmtNum(mission.tankLitres ?? 10000)} L; PV ${mission.pvKwp} kWp, storage ${mission.batteryKwh} kWh; residual grid ${mission.residualGridHoursPerDay ?? 0} h/day${stress.gensetFailAtRunHours ? `; generator trip at ${stress.gensetFailAtRunHours} run-hours` : ""}${stress.missedDelivery >= 0 ? "; one delivery cancelled" : ""}`;
+  const assumptions = [
+    "Illustrative 250-bed referral hospital (16 tiered circuits, 6,770 kWh/day) — not measured data from a named facility.",
+    "Diesel ₦1,950/L; generator 10 L/h + 0.27 L/kWh; 15 s start-to-transfer.",
+    "Deliveries every 3.5 days at the scheduled hour; the controller does not know future delays.",
+  ];
+  const stamp = new Date().toISOString().slice(0, 10);
+  const items = [
+    { label: "Summary report (.md)", go: () => downloadText(`MedGridSentinel_Brief13_report_${stamp}.md`, markdownReport(missionResults, { title: "MedGrid Sentinel — line-outage resilience report", scenario, assumptions }), "text/markdown;charset=utf-8") },
+    { label: "Hourly data, all controllers (.csv)", go: () => downloadText(`MedGridSentinel_Brief13_hourly_${stamp}.csv`, hourlyCsv(missionResults), "text/csv;charset=utf-8") },
+    { label: "Results + governor decisions (.json)", go: () => downloadText(`MedGridSentinel_Brief13_results_${stamp}.json`, jsonReport(missionResults, { scenario, assumptions }), "application/json") },
+  ];
+  return (
+    <div className="space-y-1.5 border-t border-surface-border/60 pt-3">
+      <div className="label">Export this run</div>
+      {items.map((it) => (
+        <button key={it.label} onClick={it.go} className="flex w-full items-center gap-2 rounded-lg border border-surface-border px-3 py-1.5 text-left text-[12.5px] text-slate-300 hover:border-cyan/50 hover:text-white">
+          <Download size={13} className="text-cyan" /> {it.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function Slider({ label, value, min, max, step, onChange, fmt, hint }: { label: string; value: number; min: number; max: number; step: number; onChange: (v: number) => void; fmt: (v: number) => string; hint?: string }) {
   const [local, setLocal] = useState(value);
   useEffect(() => setLocal(value), [value]);
@@ -360,6 +392,7 @@ export function MissionPage() {
         <Card title="Replay controls" subtitle={`Every change re-runs 4 × ${fmtNum(MAIDUGURI_EVENT.horizonDays * 96)} steps${missionMs > 0 ? ` (${missionMs.toFixed(0)} ms)` : ""}`}>
           <div className="space-y-4">
             <Slider label="Diesel delivered per week" value={supply} min={0} max={16000} step={1000} onChange={(v) => setMission({ weeklySupplyLitres: v })} fmt={(v) => `${fmtNum(v)} L`} hint={`${(supply / 3360).toFixed(1)}× normal weekly use · ₦${fmtNum((supply * 1950) / 1e6, 1)}M/week at ₦1,950/L`} />
+            <Slider label="On-site diesel tank" value={mission.tankLitres ?? 10000} min={4000} max={30000} step={1000} onChange={(v) => setMission({ tankLitres: v })} fmt={(v) => `${fmtNum(v)} L`} hint="Bulk storage on the hospital site (starts 60% full)" />
             <Slider label="Grid hours/day during outage" value={mission.residualGridHoursPerDay ?? 0} min={0} max={12} step={1} onChange={(v) => setMission({ residualGridHoursPerDay: v })} fmt={(v) => `${v} h`} hint="Residual city supply (e.g. emergency gas plant) from 17:00" />
             <div>
               <div className="label mb-1.5">Hardware</div>
@@ -383,8 +416,9 @@ export function MissionPage() {
                 <input type="checkbox" className="h-4 w-4 accent-cyan" checked={stress.missedDelivery >= 0} onChange={(e) => setStress({ missedDelivery: e.target.checked ? 3 : -1 })} />
               </label>
             </div>
+            <ExportPanel />
             <Note>
-              Tank 10,000 L, 60% full at the start; deliveries every 3.5 days. The generator is the same 400 kW set for the hybrid
+              Tank starts 60% full; deliveries every 3.5 days. The generator is the same 400 kW set for the hybrid
               strategies; the status quo gets a larger set sized to the full facility (no PV/battery).
             </Note>
           </div>

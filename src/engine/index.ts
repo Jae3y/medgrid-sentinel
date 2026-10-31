@@ -15,3 +15,4 @@ export * from "./measured";
 export * from "./resilience";
 export * from "./fleet";
 export * from "./alerts";
+export * from "./report";

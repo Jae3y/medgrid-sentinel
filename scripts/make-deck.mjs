@@ -134,7 +134,7 @@ function bullets(s, items, x, y, w, h, size = 12.5) {
   panel(s, 7.15, 4.65, 5.68, 1.95, PANEL2);
   s.addText("The next outage: 14-day Monte Carlo, 300 trials", { x: 7.35, y: 4.75, w: 5.3, h: 0.3, fontFace: F, fontSize: 12, bold: true, color: CYAN, margin: 0 });
   s.addText(`P(Tier-1 kept powered for 14 days), average-reliability generator (NREL data), late/missed deliveries: status quo ${pct(mcN.baseline.pTier1_336h)} · fixed-rule hybrid ${pct(mcN.conventional.pTier1_336h)} · Sentinel ${pct(mcN.sentinel.pTier1_336h)}. Well-maintained set: Sentinel ${pct(mcW.sentinel.pTier1_336h)}.`, { x: 7.35, y: 5.05, w: 5.3, h: 1.0, fontFace: F, fontSize: 11.5, color: TEXT, margin: 0, valign: "top" });
-  s.addText("89 automated tests · power & diesel mass balance every step · NREL '80 % at 2 weeks' reproduced · solar forecast scored on held-out 2024", { x: 7.35, y: 6.05, w: 5.3, h: 0.5, fontFace: F, fontSize: 9.5, color: MUTED, margin: 0 });
+  s.addText("101 automated tests · power & diesel mass balance every step · NREL '80 % at 2 weeks' reproduced · solar forecast scored on held-out 2024", { x: 7.35, y: 6.05, w: 5.3, h: 0.5, fontFace: F, fontSize: 9.5, color: MUTED, margin: 0 });
   s.addText("Illustrative 250-bed reference hospital (16 tiered circuits) — simulation, not field-measured performance. Real data: NASA POWER hourly irradiance & temperature (Maiduguri 2022–24), NREL/TP-5C00-76553 generator reliability, NERC tariff, Oct-2026 diesel prices.", { x: M, y: 5.35, w: 6.4, h: 1.0, fontFace: F, fontSize: 10, color: MUTED, margin: 0, valign: "top" });
 }
 

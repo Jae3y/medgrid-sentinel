@@ -77,6 +77,15 @@ try {
   await page.getByText("Generator trips after 150 run-hours").click();
   await page.waitForTimeout(1200);
   await page.evaluate(() => window.scrollTo(0, 0));
+  // Export: the CSV must actually download with data rows for all four controllers.
+  const [dl] = await Promise.all([page.waitForEvent("download"), page.getByText("Hourly data, all controllers (.csv)").click()]);
+  const dlPath = await dl.path();
+  const csvText = (await import("fs")).readFileSync(dlPath, "utf8");
+  const csvRows = csvText.trim().split(/\r?\n/).length;
+  if (csvRows < 4000) throw new Error(`CSV export too short: ${csvRows} rows`);
+  steps.push(`csv export ${dl.suggestedFilename()} rows=${csvRows}`);
+  const [md] = await Promise.all([page.waitForEvent("download"), page.getByText("Summary report (.md)").click()]);
+  steps.push(`report export ${md.suggestedFilename()}`);
 
   // ---- Resilience Lab ----
   await tab("Resilience lab");
@@ -91,6 +100,11 @@ try {
   await tab("Live dashboard");
   await shot("dashboard");
   await tab("Digital twin");
+  await page.getByRole("radio", { name: "Fixed-rule hybrid" }).click();
+  await page.waitForTimeout(800);
+  await page.getByRole("radio", { name: "MedGrid Sentinel" }).click();
+  await page.waitForTimeout(800);
+  steps.push("twin controller switch OK");
   await shot("twin");
   await tab("Stress scenarios");
   await page.getByRole("button", { name: /G · Generator failure/ }).first().click().catch(() => steps.push("scenario G button not found"));

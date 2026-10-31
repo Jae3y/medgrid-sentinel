@@ -29,6 +29,7 @@ Anneru IAS **Global Energy Hackathon 2026** · **Brief #13 — Power for a city 
 - **Next outage (300-trial Monte Carlo, 14-day outage, NREL average-reliability generator, late/missed deliveries):** P(Tier-1 powered for 14 days) **0% status quo → 3% fixed-rule hybrid → 78% Sentinel** (91% with a well-maintained generator).
 - **Economics (full measured year, 20-year lifecycle):** CapEx **$704k (₦940M)**, savings ₦311M/yr, **payback 3.3 years, IRR 30%**, NPV ₦553M at 18%. Under Energy-as-a-Service the hospital pays **₦20.7M/month** with zero CapEx and keeps 20% of savings from month one (provider IRR 23.6%). Same model as the real NSIA-LUTH cancer-centre microgrid (EM-ONE/RIPLE, 2025).
 - **Low-bandwidth:** fully offline static web app; duty-engineer alerts as single-segment SMS (≤160 GSM-7 chars) + USSD status menu.
+- **Take-away reports:** every replay exports a Markdown summary, an hour-by-hour CSV for all four controllers and a JSON bundle with the governor's decisions.
 
 Simulation, not field-measured performance. The hospital is an illustrative reference model; no named hospital's data is used.
 
@@ -53,7 +54,7 @@ The software's value is **isolated**: all four controllers share one physics eng
 ## Evidence & validation
 
 - **Real data:** NASA POWER hourly irradiance + temperature (Maiduguri 2022–24, 7 more sites); NREL/TP-5C00-76553 generator failure statistics; World Bank Enterprise Survey outage frequency; NERC tariff; Oct-2026 diesel and FX. See [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md).
-- **89 automated tests** (`npm test`), including power balance at every step for every strategy (including fuel-limited and failure steps), diesel mass conservation, reproduction of NREL's "well-maintained generator ≈ 80% reliable over two weeks", the 15-second transfer-break physics, and Monte Carlo determinism and dominance.
+- **101 automated tests** (`npm test`), including power balance at every step for every strategy (including fuel-limited and failure steps), diesel mass conservation, reproduction of NREL's "well-maintained generator ≈ 80% reliable over two weeks", the 15-second transfer-break physics, and Monte Carlo determinism and dominance.
 - **ML on held-out data:** the solar forecaster is trained on 2022–23 and tested on 2024 (RMSE 0.886 kWh/m²/day, 22% better than persistence). It also calibrates the governor: on held-out days the sun delivered ≥70% of forecast on 94.5% of them.
 - **E2E:** `npm run e2e` drives every tab in headless Chrome, including an in-browser Monte Carlo and sizing search, with zero console errors and no mobile overflow.
 
@@ -61,7 +62,7 @@ The software's value is **isolated**: all four controllers share one physics eng
 
 ```bash
 npm install          # Node ≥ 18.17
-npm test             # 89 engine tests (vitest)
+npm test             # 101 engine tests (vitest)
 npm run results      # regenerate results/demo-results.json (≈45 s)
 npm run build        # static export to out/ (no server needed)
 npm run serve        # http://localhost:3003  — works offline once loaded

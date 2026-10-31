@@ -45,7 +45,7 @@ Scores are 1–5 against the official definitions. Internal criteria (data avail
 - **Impact (25%):** the brief's own metric, computed on a documented outage in a named city, with the size of the benefit (+487 h) shown against three alternatives.
 - **Innovation (25%):** the root cause others miss is fuel logistics, not kW. A governor schedules care tiers against the next convoy, and its value is isolated on identical hardware.
 - **Sustainability (25%):** pays back in 3.3 years. EaaS needs no grant and no hospital CapEx; −40% diesel and −246 t CO₂/yr; maintainable with LFP + standard generator + local O&M.
-- **Feasibility (15%):** a working prototype on real data, 89 tests, relevant standards mapped, and a shadow-mode pilot gate.
+- **Feasibility (15%):** a working prototype on real data, 101 tests, relevant standards mapped, and a shadow-mode pilot gate.
 - **Scalability (10%):** replication by configuration only; the 10 site-year fleet screen shows where it pays and where it doesn't.
 
 ## 5. Discrepancy log

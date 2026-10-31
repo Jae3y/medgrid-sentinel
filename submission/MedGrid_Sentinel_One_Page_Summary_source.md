@@ -18,7 +18,7 @@ A hospital-microgrid digital twin (15-min steps, 16 tiered circuits, PV, LFP sto
 
 ## Proof of Concept built in the 48 hours
 
-Replay of the real 39-day outage on NASA POWER measured weather, four controllers on identical hardware/fuel; 300-trial Monte Carlo with NREL generator-failure data; full-year economics; solar forecast scored on held-out 2024; 89 automated tests; reproducible with npm run results.
+Replay of the real 39-day outage on NASA POWER measured weather, four controllers on identical hardware/fuel; 300-trial Monte Carlo with NREL generator-failure data; full-year economics; solar forecast scored on held-out 2024; 101 automated tests; reproducible with npm run results.
 
 | Brief metric (39-day outage, 6,000 L/week diesel) | Status quo (diesel) | Same PV+battery, fixed rules | MedGrid Sentinel |
 |---|---|---|---|

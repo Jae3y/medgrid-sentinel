@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T13:38:12.684Z",
+  "generatedAt": "2026-10-31T14:13:50.110Z",
   "reproduce": "npm run results (deterministic; seeds fixed)",
   "facility": {
     "name": "Reference Secondary Referral Hospital (illustrative)",
@@ -1349,7 +1349,7 @@
     },
     {
       "id": "J",
-      "name": "J · Brief #13 — city feeder collapse",
+      "name": "J · City feeder collapse (12 h)",
       "outageHours": 12.5,
       "criticalHours": 12.5,
       "tier1Hours": 12.5,

@@ -1,33 +1,29 @@
-# Final Video Checklist
+# Final Video & Submission Checklist
 
-Complete this **before** uploading either file. Both videos must satisfy the handbook's rules (§10 + FAQ pp. 28–29).
+## Demo video
+- [ ] 3:00–5:00 long (target 4:15), English, 1080p or lower, MP4, < 500 MB
+- [ ] Shows the **real running product** (not slides) for at least 90% of the time
+- [ ] Brief #13 metric stated, with both numbers visible: critical-service hours (937 vs 449) and diesel litres avoided (2,841)
+- [ ] Status quo vs Sentinel flip shown in the 3D scene
+- [ ] Monte Carlo (300 trials) and Financials shown
+- [ ] Says what was built this weekend and names one limitation (illustrative loads)
+- [ ] Every spoken number was visible on screen when spoken
 
-## Files
+## Pitch video
+- [ ] ≤ 5:00 (target 4:30), English
+- [ ] Problem with one real fact (Maiduguri, 39 days); who is affected; root cause
+- [ ] Solution and a demonstration clip
+- [ ] Cost ($704k), who pays (hospital/ESCO), affordability (zero CapEx, saves 20% from month one)
+- [ ] 6–18 month plan with the shadow-mode gate
+- [ ] Scale (fleet screen, other countries) and community impact (litres, CO₂, breaks avoided)
+- [ ] Team and ask
 
-- [ ] `MedGridSentinel_Brief13_Demo.mp4` — 3–5 minutes (target 4:00)
-- [ ] `MedGridSentinel_Brief13_Pitch.mp4` — up to 5 minutes (target 4:30)
-- [ ] MP4 (H.264), 1080p or lower, **under 500 MB** each
-- [ ] Audio: English, intelligible at laptop volume; no clipping
-
-## Content (handbook rules)
-
-- [ ] Demo video **shows the prototype itself** (not only slides) — it is the judges' source of truth
-- [ ] Pitch video covers: problem solved, solution's value, **and a demonstration**
-- [ ] All numbers narrated are visible on screen and match `results/demo-results.json`
-- [ ] Explicit statement of what was built during the sprint (prior-work disclosure consistent with `DISCLOSURE_STATEMENT`)
-- [ ] Failure/honesty beat included (scenario G) — deficits shown, not hidden
-- [ ] Team slide or closing line (names optional; "team and what you need next" required by pitch structure)
-
-## Playback verification (critical — handbook: "if judges cannot play a video, they cannot score it")
-
-- [ ] Plays in a **fresh incognito/logged-out browser** from the exact link that will be submitted
-- [ ] No sign-in, no permission request, no "access request" screen
-- [ ] Plays on a phone as well as a laptop
-- [ ] Full duration plays without buffering failure on a mid-range connection
-
-## Submission integration
-
-- [ ] File names follow the suggested convention: `TeamName_Brief##_Demo/Pitch.mp4`
-- [ ] Upload target reached **before 4:00 PM WAT Sunday** (official deadline 6:00 PM WAT / 12:00 PM ET)
-- [ ] Confirmation screenshot of the uploaded files retained
-- [ ] Disclosure statement already lists tools used in production (OBS/editor) if asked by the portal form
+## Upload (Handbook §10 · deadline Sun 1 Nov 12:00 PM ET = 6:00 PM WAT; aim for 4:00 PM WAT)
+- [ ] Demo video link opens in a private window without sign-in
+- [ ] Pitch video link opens in a private window without sign-in
+- [ ] Pitch deck: `submission/MedGrid_Sentinel_Pitch_Deck.pdf` (5 slides)
+- [ ] One-page summary: `submission/MedGrid_Sentinel_One_Page_Summary.pdf` (1 page)
+- [ ] Build files: GitHub link (push the latest commits first)
+- [ ] Disclosure: paste the short form from `submission/OFFICIAL_SUBMISSION_TEXT.md`; attach `DISCLOSURE_STATEMENT.pdf` if allowed
+- [ ] Portal text fields from `submission/OFFICIAL_SUBMISSION_TEXT.md`
+- [ ] Screenshot of the portal confirmation

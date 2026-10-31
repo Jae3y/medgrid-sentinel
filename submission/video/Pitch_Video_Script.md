@@ -1,40 +1,16 @@
-# Pitch Video Script — up to 5 minutes (target 4:30)
+# Pitch Video Script — target 4:30 (maximum 5:00)
 
-**File name:** `MedGridSentinel_Brief13_Pitch.mp4` · 1080p or lower · < 500 MB · English
-**Structure (handbook §10 recommended):** problem → solution → demo/evidence → feasibility & cost → scale → community fit → team & next steps. One presenter is sufficient (handbook FAQ); voice-over over the product is permitted.
+File name: `MedGridSentinel_Brief13_Pitch.mp4`. Structure follows Handbook §10 (problem → solution → demo → feasibility & cost → scale → community fit → team & ask). Visuals: the 5-slide deck PDF plus short app clips. A face on camera is optional (Handbook FAQ).
 
-## Script (read verbatim; screen cues in brackets)
+| Time | Visual | Narration |
+|---|---|---|
+| 0:00–0:30 | Slide 1 | "On the 22nd of September 2024, insurgents brought down a tower on the 330 kV line into Maiduguri. The city had no grid power for 39 days. Two years earlier, the state governor walked into two hospitals in the same city that had been dark for days. Their generators worked. They had no diesel. That is Brief 13: power for a city the grid can't protect." |
+| 0:30–0:55 | Slide 1, right panel | "The users are the works engineers and duty managers of referral hospitals like these. The beneficiaries are the patients in the ICU, the theatres, maternity and the cold chain. The payer is hospital management, or an energy-service company paid from the diesel the hospital stops buying. The root cause isn't a small generator. Backup is sized in kilowatts, but a line outage is a fuel-logistics crisis, and nobody decides with numbers which loads the last litres should keep alive." |
+| 0:55–1:30 | Slide 2 | "MedGrid Sentinel is a fuel-aware brain for hospital microgrids. Every hour, its fuel-runway governor compares diesel, battery and forecast solar against what each care tier needs until the next delivery. It defers laundry and admin first, and never the ICU. A clinical reserve in the battery means a failed generator never darkens the ICU, and the generator runs hard and stops early to save fuel. It runs offline and alerts the engineer by SMS on any phone." |
+| 1:30–2:15 | App clip: Line outage replay, flip Status quo ↔ Sentinel at 26 Sept 10:00, then the ledger | "We replayed the real 39-day outage on NASA's measured weather for those dates, with four controllers and the same fuel trucks. At six thousand litres a week the status quo keeps critical services on for 449 of 937 hours. Sentinel keeps all 937 and burns 2,841 fewer litres. On the same solar and battery, the software alone adds 179 hours." |
+| 2:15–2:40 | Slide 3 (Monte Carlo panel) | "Then we ran the next outage three hundred times, with published generator failure rates and late convoys. The chance that life-critical power holds for two weeks goes from zero to seventy-eight percent." |
+| 2:40–3:25 | Slide 4 | "It costs about 704 thousand dollars for a 250-bed hospital: 600 kilowatts of solar, 600 kilowatt-hours of storage and Sentinel. On a full measured year it saves 311 million naira, pays back in 3.3 years and returns 30 percent after the battery is replaced. Under energy-as-a-service, the model already used at the NSIA-LUTH cancer centre in Lagos, the hospital pays nothing upfront and keeps 20 percent of the savings from month one, so nothing is passed on to patients. In months one to three we meter one hospital and run Sentinel in shadow mode. We only proceed if its predictions are within 15 percent. Installation follows in months seven to twelve." |
+| 3:25–4:00 | Slide 5 | "Per hospital, that's 91,654 litres of diesel and 246 tonnes of CO2 avoided every year, and 259 life-critical power breaks a year eliminated. The same engine screens other cities on their own weather. It pays strongly in Maiduguri, Kano, Abuja and Port Harcourt, and less in Lagos, and it tells you so. Moving to Ghana, Kenya or the United States changes the configuration, not the code." |
+| 4:00–4:30 | Slide 5, team panel | "I'm Jackson Sixtus Abetianbe, and I built this solo over the weekend. Everything is in a public repository and every number is reproducible. What we need next is one pilot hospital in north-east Nigeria, a licensed solar partner, three months of metering, and coaching in power systems and health-facility engineering. The generator works. Let's make sure the fuel lasts." |
 
-### 1. The problem (0:00–0:45)
-[Screen: Dashboard showing an islanded bus]
-"In 2024 Nigeria's national grid failed more than twelve times. When it does, a hospital drops onto diesel — a fuel that cost Lagos buyers around fifteen hundred and fifty naira a litre in early 2026, roughly seven times the grid tariff. Keeping an operating theatre alive through one twelve-hour outage burns over a thousand litres. Hospitals are buying solar and batteries — but nobody can tell them, before they spend, whether the design will actually hold the theatres through the next feeder collapse. That's a decision-quality gap. That's what we built against."
-
-### 2. The brief and the community (0:45–1:15)
-[Brief & Metrics tab]
-"We're answering Handbook Brief #13 — power for a city the grid can't protect. Our community: urban Nigerian hospitals on feeders that fail with the national grid. Our user: the facility engineer. Our payer: the hospital, or an energy-service provider under an Energy-as-a-Service contract. The brief's metrics are ours to move: hours of critical service maintained during a line outage, and diesel litres avoided."
-
-### 3. The solution (1:15–1:50)
-[Digital Twin — one-line diagram]
-"MedGrid Sentinel is a digital twin of the hospital microgrid — solar, storage, grid and generator dispatching around tiered clinical loads: theatres, ICU and cold chain first. Underneath it, a deterministic fifteen-minute simulation engine — no black boxes. On top: a scenario lab, a financial engine, and predictive intelligence that forecasts demand and tells the duty manager exactly how long the batteries can hold."
-
-### 4. Evidence (1:50–2:50)
-[Scenario Lab run of Scenario J; then Brief & Metrics]
-"Here's the brief scenario — the feeder collapses at six a.m. Watch the event log: islanding, battery bridging the generator start, tiered shedding of deferrable load. Results from the engine: twelve point five zero of twelve point five islanded hours of critical service — one hundred percent continuity, zero unserved life-critical energy. Diesel: 763 litres against the baseline's 1,295 — forty-one percent avoided. Annualized: 23,910 litres and 64 tonnes of CO₂ a year, 112 million naira saved. And when we fail the system on purpose — generator gone — Sentinel shows the exact hours it gives way. We show deficits. That's the point."
-
-### 5. Feasibility & cost (2:50–3:40)
-[Financials tab]
-"Feasibility: the engine passes 58 unit tests with hand-checked physics; the build is verified; every number is reproducible from the repository with one command. Cost: about 760 million naira — 490 thousand dollars — for the reference design; payback 7.9 years. And here's the honest part: at commercial Nigerian interest rates the project doesn't clear — the Energy-as-a-Service version closes only below 4.6 percent financing. That's not a weakness in the slide — it's the exact subsidy question that real programmes like the NSIA-LUTH cancer-centre microgrid exist to answer. Our tool computes that gap per hospital instead of hiding it. It will even tell you not to buy batteries: for daytime outages, solar-first is optimal; for evening outages, it flips."
-
-### 6. Scale (3:40–4:05)
-[README or architecture view]
-"The engine is configuration-driven: one file per facility. The same model runs a rural clinic today and a teaching hospital tomorrow — tariffs, outage patterns and prices are inputs. Nigeria first, African health systems next, and the same resilience method travels to US hospitals where the economics differ."
-
-### 7. Team & next steps (4:05–4:30)
-[Deployment roadmap]
-"Everything you've seen was built during this sprint. Next: a metering-first pilot with one facility in months one to three, an energy-service partnership by month six, and a live, measured-versus-predicted deployment within the year. We're asking for the pathway — the cohort — to put this in front of one hospital and prove it. MedGrid Sentinel: uninterrupted critical care, priced and engineered before the lights go out."
-
-## Delivery notes
-
-- 140–150 wpm; total ≈ 640 words → ~4:25 at pitch pace. If over 5:00, cut §6 first (scale is also on deck slide 5).
-- Show the product for at least 60% of runtime; slides optional (deck is submitted separately).
-- Numbers on screen must match narration exactly; the checklist file verifies this.
+Timing check: about 610 words, which reads in roughly 4:20 at a calm pace.

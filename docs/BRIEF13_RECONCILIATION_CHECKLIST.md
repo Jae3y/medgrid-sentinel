@@ -17,7 +17,8 @@
 |---|---|---|---|
 | 1 | **How does the partner define "critical service"?** (Only hospitals? Also water/telecom? Tier-1 only, or Tier-1+Tier-2?) | Critical service = Tier-1 (life-critical: OT, ICU, cold chain, oxygen, ED) + Tier-2 (clinical priority) at healthcare facilities | Metric computation is one constant away (`metrics` critical tier set); docs/demo wording updated by the agent in minutes |
 | 2 | **Who does the partner name as user & payer?** | User: facility engineer / duty manager. Payer: hospital or EaaS provider | Business-model narrative and deck slide 4 re-pointed; engine unchanged |
-| 3 | **Any extra constraints?** (e.g., must include community ownership, a specific technology, a city name) | None assumed | Scope note added; sizing/scenario knobs already cover most variants |
+| 3 | **Which city / what kind of line outage?** | Instantiated on Maiduguri (330 kV line vandalised 22 Sep – 31 Oct 2024) | Replay dates and site are configuration (`MAIDUGURI_EVENT`, NASA POWER dataset); the fleet already covers Kano, Abuja, Lagos, Port Harcourt |
+| 4 | **Any extra constraints?** (e.g., community ownership, a specific technology) | None assumed | Scope note added; sizing/scenario knobs cover most variants |
 
 ## After the check
 

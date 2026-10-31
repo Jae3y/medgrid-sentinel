@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   title: "MedGrid Sentinel — Intelligent Hospital Microgrids",
   description:
     "Intelligent hospital microgrid digital twin and energy resilience platform. Predictive Energy Resilience. Uninterrupted Critical Care.",
-  icons: { icon: "/icon.svg" },
-  manifest: "/manifest.webmanifest",
+  icons: { icon: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/icon.svg` },
+  manifest: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/manifest.webmanifest`,
   openGraph: {
     title: "MedGrid Sentinel — Intelligent Hospital Microgrids",
     description:

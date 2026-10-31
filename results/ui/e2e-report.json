@@ -1,6 +1,6 @@
 {
   "base": "http://localhost:3003",
-  "at": "2026-10-31T14:00:35.518Z",
+  "at": "2026-10-31T14:17:59.709Z",
   "steps": [
     "screenshot mission-hero",
     "screenshot scene-status-quo",

@@ -1,74 +1,57 @@
-# Financial Model — with Computed Results
+# Financial Model
 
-All figures below are engine outputs (`results/demo-results.json`, reproducible via `npm run results`); equations in [TECHNICAL_METHODOLOGY.md](TECHNICAL_METHODOLOGY.md) §9.
+Code: `src/engine/financial.ts`. The outputs below come from `results/demo-results.json`. Prices are explicit inputs with sources in [DATA_SOURCES.md](DATA_SOURCES.md).
 
-## 1. System costed (default design)
+## 1. Method
+1. **Operating year, simulated rather than extrapolated.** A full 366-day, 35,136-step simulation of Maiduguri 2024 using NASA POWER measured weather. The grid has stochastic feeder interruptions (1.08/day Poisson, log-normal duration with a 4 h median; frequency matched to the World Bank Enterprise Survey's 32.8 outages per month) plus the documented 39-day line outage. The status quo (diesel only) and the proposed system (PV + storage + Sentinel) see identical conditions. Fuel is unconstrained here so both deliver the same service, which makes this a pure cost comparison. The generator is always serviceable, because failures belong to the resilience analysis.
+2. **Pricing.** Grid at Band A ₦206.80/kWh (NERC, May 2024; ₦207 used); diesel ₦1,950/L; generator O&M ₦3,500 per run-hour. Physics is cached, so a price change re-prices without re-simulating; a test asserts the two give equal results.
+3. **Lifecycle (20 years).** O&M at 1.5% of hardware CapEx per year; Sentinel subscription $4,800/site-yr; PV degradation 0.5%/yr, conservatively applied to *all* savings; battery replacement in year 12 at 60% of today's storage cost, and PCS replacement in year 12 at 70%.
+4. **Ownership.** NPV and IRR on −CapEx followed by net annual flows; payback from cumulative cash.
+5. **EaaS.** A provider owns PV + storage + Sentinel and bears O&M, the subscription and replacements. The hospital pays a fixed fee equal to 80% of its measured savings, so it keeps 20% from month one. The provider's IRR is computed on the same flows. A breakeven financing rate (CRF-based fee equal to savings) is also reported.
 
-300 kWp PV · 600 kWh LFP storage · 250 kW inverter · existing 400 kW genset retained (intelligent dispatch layered on) — for the 250-bed reference hospital (~6,770 kWh/day).
+## 2. CapEx (reference design)
+| Item | Basis | USD |
+|---|---|---:|
+| PV 600 kWp | $650/kWp installed | 390,000 |
+| LFP storage 600 kWh | $260/kWh ≈ 2.2× BNEF 2025 global turnkey average ($117/kWh), for import duty, logistics and security premia | 156,000 |
+| PCS / hybrid inverters 510 kW | $110/kW | 56,100 |
+| EPC & balance of system | 15% of the above | 90,315 |
+| Sentinel edge controller, metering, comms | per site | 12,000 |
+| **Total** | at ₦1,335/$ (NFEM, Oct 2026) | **704,415 = ₦940.4M** |
 
-## 2. CapEx
+## 3. Results
+| Metric | Value |
+|---|---:|
+| Status-quo energy opex | ₦815.8M/yr (diesel ₦450.1M, grid ₦356.3M, generator O&M ₦9.3M) |
+| Sentinel energy opex | ₦504.6M/yr |
+| Year-1 savings | **₦311.2M/yr** |
+| Net after O&M + subscription | ₦290.9M/yr |
+| Payback | **3.3 yr** (3.25) |
+| IRR (20 yr) | **30.0%** |
+| NPV at 18% | **₦553.2M** |
+| NPV at 10% (concessional) | ₦1.40B |
+| Discounted cost of energy | ₦329 → ₦285 /kWh |
+| Diesel avoided | 91,654 L/yr (−39.7%); 246 t CO₂/yr |
+| EaaS fee | ₦248.9M/yr = **₦20.7M/month** |
+| EaaS provider IRR | **23.6%** |
+| Breakeven financing rate (CRF fee = savings, 10 yr) | 28.4% |
+| Energy cost per bed-day (EaaS) | ₦8,940 → ₦8,258 |
 
-| Item | USD | Rate |
-|---|---|---|
-| Solar PV | $240,000 | $800/kWp |
-| Battery storage | $168,000 | $280/kWh |
-| Inverter | $30,000 | $120/kW |
-| Installation & BOS | $52,560 | 12% |
-| **Total** | **$490,560** | **₦760.4M @ ₦1,550/$** |
+## 4. Sensitivity (one at a time; every case keeps NPV positive)
+| Variable | Change | Payback | NPV @18% | IRR |
+|---|---|---:|---:|---:|
+| Diesel price | −30% | 4.0 yr | ₦272.9M | 24.0% |
+| Diesel price | +30% | 2.7 yr | ₦833.4M | 35.9% |
+| Equipment CapEx | +30% | 4.3 yr | ₦246.3M | 22.2% |
+| Equipment CapEx | −20% | 2.6 yr | ₦757.8M | 38.1% |
+| Naira depreciation | +20% ₦/$ | 4.0 yr | ₦338.5M | 24.2% |
+| Solar yield (PR) | −10% | 3.7 yr | ₦383.2M | 26.4% |
+| Line outage | none that year | 3.6 yr | ₦414.5M | 27.1% |
+| Feeder interruptions | halved | 3.6 yr | ₦390.9M | 26.6% |
+| Discount rate | 18% → 10% | 3.3 yr | ₦1.40B | 30.0% |
 
-## 3. Annual operations (mix: 320 normal + 45 outage days of 12.5 islanded hours — editable, with 20/70-day sensitivity)
+## 5. Where it does *not* pay as well (honest)
+The fleet screen at national prices: the Lagos 250-bed case (Band-A-like feeder, weaker sun) pays back in 5.9 years with NPV −₦121.8M at 18%. It is viable but not strong, and would close with concessional capital or a local diesel premium. The tool reports this rather than hiding it.
 
-| | Baseline (grid + diesel only) | Sentinel-managed |
-|---|---|---|
-| Grid energy | ~2,225 MWh | ~1,898 MWh |
-| Diesel | 58,255 L | 34,345 L |
-| **Annual opex** | **₦569.6M** | **₦457.8M** |
-| Blended energy cost | ₦231/kWh | ₦190/kWh |
-
-**Operating savings: ₦111.8M/yr** · diesel avoided **23,910 L/yr** · CO₂ avoided **64.1 t/yr**.
-
-## 4. Investment decision — stated honestly
-
-| Metric | Value | Reading |
-|---|---|---|
-| Simple payback | **7.9 yr** | Within the 20–25 yr life of the PV asset — "pays for itself over its life" is true; fast money it is not |
-| IRR | **4.6%** | Below Nigerian commercial hurdle rates |
-| NPV (10 yr @ 18%) | **−₦326M** | **Negative** at commercial discount rates |
-| LCOE (discounted) | ₦75/kWh | Well below diesel's ~₦480/kWh; above Band A grid ₦210 as a *grid-displacement* play alone |
-| EaaS fee @14% financing | **₦161.0M/yr** (₦328/kWh on asset-delivered energy) | Exceeds the ₦111.8M operating savings at commercial rates |
-| **EaaS breakeven financing rate** | **4.6%** | The service closes with concessional/DFI capital — exactly how the real NSIA-LUTH-class projects are financed |
-| Service cost | ₦1,764/bed-day (~$1.14) | Communicable unit for hospital administrators |
-
-**The strategic reading (this IS the product):** at Band A tariffs, grid-displacement alone does not justify merchant capital; the value case is **resilience (the brief's metric 1) + diesel displacement (metric 2) + concessional financing**. Sentinel computes the exact subsidy gap (₦161M fee vs ₦112M savings → gap closes below 4.6% financing) instead of hiding it — which is precisely what REA-type programmes, DFIs and hospital boards need to see. A tool that only ever said "yes" would be worth less than this one.
-
-## 5. Sensitivity (one-at-a-time, from the engine)
-
-| Variable | Change | Payback | NPV | EaaS fee ₦/kWh (asset) |
-|---|---|---|---|---|
-| Diesel price | −30% | 8.9 yr | −₦376M | 328 |
-| Diesel price | +30% | **7.1 yr** | −₦276M | 328 |
-| Equipment CapEx | +20% | 9.8 yr | −₦492M | ~394 |
-| Equipment CapEx | −20% | **6.1 yr** | −₦161M | ~263 |
-| Solar yield (PR) | −10% | 9.0 yr | −₦379M | 328 |
-| Grid tariff | −20% | 9.3 yr | −₦393M | 328 |
-| Outage frequency | 20 days/yr | 10.0 yr | −₦419M | ~388 |
-| Outage frequency | 70 days/yr | **6.5 yr** | −₦234M | ~312 |
-
-Direction checks are unit-tested (e.g. costlier diesel must improve NPV). Combinations compound: diesel +30% **and** CapEx −20% approach ~5-year payback; diesel +30% **and** 70 outage days are the stress-case upside.
-
-## 6. What the sizing optimizer adds
-
-Ranked by **total annualized cost** (opex + CapEx × CRF(14%,10)) subject to *both* brief metrics (continuity ≥ 11.4 h of 12.5; diesel avoided ≥ 30%):
-
-- **Daytime outage pattern (the brief scenario):** PV-first wins — 400 kWp with **no battery** is optimal (TAC ₦532M; continuity 12.25 h; −43% diesel). The default 300/600 design buys night-time and evening-event resilience the daytime pattern doesn't need.
-- **Evening outage pattern (17:00–23:00, verified run):** the optimum flips to storage-heavy — every top-feasible design includes 800 kWh (best 400 kWp + 800 kWh, TAC ₦600M, continuity 96.9% of islanded hours).
-
-**The right design depends on *when* your feeders fail. Sentinel computes it per feeder instead of guessing — that is the decision-quality story, and it includes telling a hospital when *not* to buy batteries.**
-
-## 7. Commercial structures modelled
-
-1. **Hospital ownership** — full CapEx, full savings, payback 7.9 yr.
-2. **EaaS** — provider-owned; fee ₦161M/yr; closes with concessional capital ≤ 4.6% financing.
-3. **Blended** — concessional or grant capital (REA-type/DFI) lowers the cost base; the engine quantifies exactly how much subsidy closes the gap; **no grant is ever assumed to exist**.
-
-Who pays, who owns, who maintains is explicit in every structure (Financials tab; [BUSINESS_MODEL.md](BUSINESS_MODEL.md)).
+## 6. Not monetised (upside left out on purpose)
+Resilience value (critical hours protected under constrained fuel), avoided equipment damage from 259 transfer breaks per year, avoided generator overhaul deferral, carbon revenue. None of these are in the cash flows.

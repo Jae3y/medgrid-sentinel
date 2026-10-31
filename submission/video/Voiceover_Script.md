@@ -1,16 +1,27 @@
-# Voiceover Script — clean narration track
+# Voice-over Script (read-aloud versions, no stage directions)
 
-Pure narration (no screen cues) for separate audio recording. Same content as the shot scripts; numbered for editing.
+## Demo (≈ 4:15)
+This is MedGrid Sentinel, built this weekend for Brief 13, power for a city the grid can't protect. On the 22nd of September 2024 insurgents cut the 330 kV line into Maiduguri. The city was off the grid for 39 days.
 
-## DEMO (target 4:00)
+Same hospital, same moment, run the way most hospitals run today: grid plus a diesel generator. It's day six. The tank is empty, the generator can't run, and the ICU, theatres and cold chain have no power. The generator didn't fail. The fuel ran out. That happened to two hospitals in this city in 2022.
 
-1. This is MedGrid Sentinel — a digital twin of a 250-bed hospital microgrid: solar, battery, the grid and a diesel generator, dispatching around the loads that keep patients alive. Everything you'll see is computed live by a deterministic fifteen-minute simulation engine — the same engine that passes fifty-eight automated unit tests.
-2. We compete on Handbook Brief number thirteen — power for a city the grid can't protect. Its metrics: hours of critical service maintained during a line outage, and diesel litres avoided. Here's the brief scenario: at six a.m. the city feeder collapses. Watch the event log: the tie opens, the battery assumes the bus instantly, and the generator comes online fifteen minutes later — the battery bridged the start. Theatres, ICU and cold chain come first; deferrable loads shed first.
-3. Through the morning the battery carries the site down from its reserve. As the sun climbs, solar takes over and recharges storage. The generator only runs when the maths says it must — and it runs in its efficient band, not wet-stacking. By eighteen hundred the grid returns; Sentinel waits out a half-hour stability window before re-closing the tie — anti-islanding behaviour, not wishful switching.
-4. The results, straight from the engine: critical service maintained — twelve point five zero of twelve point five islanded hours; one hundred percent; zero unserved life-critical energy. Diesel: seven hundred and sixty-three litres against the diesel-only baseline's one thousand two hundred and ninety-five — forty-one percent avoided in this window. Annualized: nearly twenty-four thousand litres and sixty-four tonnes of CO2 a year, and one hundred and twelve million naira in operating savings. And note scenario G: take the generator away, and Sentinel shows you exactly where solar-plus-storage gives way — the pre-dawn hours. We report deficits; we don't hide them.
-5. This isn't a fixed demo. Change any input — halve the battery — and the twin, the continuity metrics and the economics all recompute. That matters: for daytime outages our optimizer says buy solar, not batteries; for evening outages it flips. The financial engine is equally blunt: payback seven point nine years, and the service model only closes below four point six percent financing — exactly the concessional-capital conversation real Nigerian hospital solar needs.
-6. MedGrid Sentinel: hospital microgrids made predictable, before the money is spent and before the feeder fails. Built this weekend — engine, twin, scenario lab, financials and intelligence — with every number reproducible from the repository.
+Now add 600 kilowatts of solar and a 600 kilowatt-hour battery, run by an ordinary hybrid inverter. It survives today with 2,800 litres left. Sentinel, on the identical hardware, has 3,826 litres, because it has been budgeting fuel against the next delivery since the line went down.
 
-## PITCH (target 4:30)
+Everything in this model is driven by the simulation: the sun from NASA's measured irradiance for these exact dates, the panels, the battery gauge, the diesel level, and the lights in each ward.
 
-Use the seven-section script in `Pitch_Video_Script.md` read straight through (it is written as pure narration with screen cues in brackets to ignore).
+Over the whole outage, with six thousand litres delivered each week, Sentinel keeps critical services on for 937 of 937 hours. The status quo manages 449. It burns 2,841 fewer litres. Life-critical circuits are never interrupted. On the same solar and battery, the software alone adds 179 hours.
+
+Each row is one controller, hour by hour. Red means the ICU and theatres are dark. The fixed-rule hybrid goes dark too, from the 3rd of October. Sentinel never does. It defers laundry, admin and non-critical cooling first, and only when the fuel runway requires it.
+
+This is the honest test. With plenty of fuel every option converges, so we only claim a benefit where the real constraint binds. And when fuel is very short, Sentinel deliberately trades ward hours to keep life-critical circuits on.
+
+Every decision states its arithmetic. The duty engineer gets it as a single SMS, or a USSD menu, on any phone, with no data connection.
+
+One replay is one story. Here the next outage is run three hundred times, with generator failure rates from NREL, late and missing convoys, and three years of real weather. The probability that life-critical power holds for fourteen days: zero for the status quo, three percent for the hybrid, seventy-eight percent with Sentinel.
+
+It pays for itself. 940 million naira, about 704 thousand dollars, saves 311 million naira a year: a 3.3-year payback and a 30 percent IRR after battery replacement. Under energy-as-a-service the hospital pays nothing upfront and saves from month one.
+
+The same engine screens other cities. It's strong in four of them and only viable in Lagos, so it tells you where it pays. Everything here was built this weekend, it runs offline, and every number is reproducible from the repository. Loads are illustrative; the next step is real metering in one hospital.
+
+## Pitch (≈ 4:20)
+See `Pitch_Video_Script.md`; the narration column reads straight through.

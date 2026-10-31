@@ -1,51 +1,30 @@
 # Business Model
 
-## 1. Who, specifically
-
+## Customer, user, payer
 | Role | Who |
 |---|---|
-| **User** | Hospital facility/works engineer & duty manager (runs the twin, reads the depletion forecast, acts on alerts) |
-| **Buyer/Payer — pathway A** | Hospital management (ownership of the physical system) |
-| **Buyer/Payer — pathway B (primary)** | Energy-service provider / developer (owns the assets; hospital pays the EaaS fee) — the structure used by the real NSIA-LUTH-class deployments |
-| **Beneficiary** | Patients: uninterrupted theatres, ICU, cold chain; hospital finance: −₦112M/yr operating cost |
-| **Financing partners** | REA-type programmes, DFIs, climate finance — engaged with the computed subsidy gap (EaaS breakeven 4.6% financing), never with an assumed grant |
-| **Maintenance** | Provider's local technicians (pathway B) or hospital-contracted O&M (pathway A); LiFePO4 + standard genset keep the skill requirement local |
+| Target customer | Federal/state teaching and specialist hospitals, federal medical centres, and large mission/private hospitals in Nigerian cities with unreliable transmission (first wave: North-East and North-West) |
+| User | Works engineer and duty manager (operations); CMD/CFO (investment decision) |
+| Beneficiaries | Patients on life-critical and clinical circuits |
+| Payer | Hospital management, or — recommended — an energy-service company (ESCO) under Energy-as-a-Service |
+| Channel partners | Licensed solar EPCs/ESCOs that already build hospital systems (the NSIA-LUTH model: EM-ONE/RIPLE joint venture, flat monthly fee, PPA) |
 
-## 2. Revenue model (pathway B)
+## How MedGrid Sentinel makes money
+1. **Platform subscription:** $4,800 per site per year, covering the controller, the twin, SMS/USSD alerting and monthly measured-vs-predicted reporting. It's already included in every cash flow in the financial model.
+2. **Edge hardware:** $12,000 per site for the controller, metering and comms, sold through the EPC/ESCO.
+3. **Design studies:** sizing, the Monte Carlo resilience report and the bankability pack for ESCOs and DFIs, priced per project (pilot phase: free, in exchange for data).
 
-- **EaaS service fee** sized from the asset base: ₦161M/yr for the reference design (₦328/kWh on asset-delivered energy at 14% financing; ₦1,764/bed-day).
-- Fee vs operating savings computed per facility **before** contract: Sentinel is the pricing tool.
-- With concessional capital (≤4.6% financing) the fee drops below the ₦112M savings and the hospital is cash-positive from year 1 — how that spread splits between provider and hospital is a commercial negotiation the platform informs.
-- **Platform licensing (scale-up):** per-facility SaaS to energy-service providers (their sizing/pricing/monitoring workbench) and to hospital groups; pricing intentionally not invented now (decided at pilot, months 13–18).
+## Why the ESCO buys it
+The fleet screen tells the ESCO where projects pay (it is selective, not "solar everywhere"). The governor protects the clinical service the ESCO is contracted to keep, and the monthly measured-vs-predicted report de-risks financing. Unit economics for the reference site: the fee is ₦20.7M/month and the provider IRR is 23.6% after O&M, the subscription and replacements.
 
-## 3. Cost structure
+## Why the hospital agrees
+Zero CapEx. The energy bill falls from month one (the hospital keeps 20% of savings: ₦62M/yr). Tier-1 is protected through line outages, and transfer breaks go from 259/yr to 0. Energy cost per bed-day falls from ₦8,940 to ₦8,258, so nothing is passed on to patients.
 
-- Platform development & maintenance (the software this sprint began).
-- Per-facility onboarding: load audit, circuit tiering, metering (months 1–3 of the roadmap).
-- The heavy CapEx (₦760M reference) sits with the **provider/financiers** in pathway B — the platform itself is asset-light.
+## Cost structure (Sentinel the company)
+Engineering (simulation, controls), field integration (metering, commissioning), customer success (monthly reports), compliance (NEMSA, data protection). Variable cost per site is mostly field integration.
 
-## 4. Why customers would pay
+## Go-to-market (6–18 months)
+One shadow-mode pilot (months 1–3) → first EaaS installation with a licensed EPC (months 7–12) → three sites selected by the fleet screen (months 13–18). Customer acquisition goes through ESCO partners and health-ministry/REA programmes; no direct-to-hospital sales force in year 1.
 
-1. **Before CapEx:** "will this design hold my theatres through a 12-hour outage — and what's the cheapest design that does?" (sizing optimizer; including "you don't need that battery" answers).
-2. **Before contracts:** "what EaaS fee is defensible for this feeder's outage pattern?" (fee-vs-savings breakeven).
-3. **During operations:** "how long can storage hold critical loads right now, and when must the generator be ready?" (depletion forecast), plus anomaly screening.
-4. **For financing:** "here is the exact continuity and diesel-avoidance evidence pack a DFI programme asks for" (the metrics are computed, not asserted).
-
-## 5. How it travels (international adaptation)
-
-| What transfers unchanged | What adapts by country |
-|---|---|
-| The engine, tiered-load model, dispatch logic, metric definitions, financial method | Tariffs (MYTO vs US utility rates), diesel/FX prices, outage statistics, equipment standards (UL/IEC), permitting, financing rates (DFI vs commercial), climate (irradiance profiles) |
-
-- **Nigeria → other African markets:** parameter change + data collection; the reference designs re-optimize automatically.
-- **US angle (handbook's dual geography):** energy-resilience economics for US hospitals (outage risk, demand charges) is a different value stack — plausible follow-on, not claimed in this POC.
-- **Rural clinics:** the load library already includes an 80-bed profile; the same engine runs it unchanged.
-
-## 6. Go-to-market (first 6–18 months)
-
-1. **Months 1–3:** one pilot facility; metering-first audit (the honest answer to "simulated data" criticism); identify the feeder's real outage pattern.
-2. **Months 4–6:** engineering design + agreements with an energy-service partner; permitting path.
-3. **Months 7–12:** pilot deployment; **compare measured vs predicted** performance — this comparison is the product's credibility engine.
-4. **Months 13–18:** replicate to additional facilities; publish the measured-vs-predicted evidence; price the SaaS tier.
-
-No partner, pilot or LOI is claimed to exist — these are the plan's dependencies, with the risks registered in [RISK_REGISTER.md](RISK_REGISTER.md).
+## Risks to the model
+Collections from public hospitals (mitigation: fee below savings; escrow/direct debit from federal allocations, as in existing PPAs); FX (USD equipment, naira revenue; the +20% depreciation case still pays back in 4.0 yr); security of assets (on-campus siting and insurance in the fee). The full register is in [RISK_REGISTER.md](RISK_REGISTER.md).

@@ -104,7 +104,7 @@ export const SCENARIOS: ScenarioDef[] = [
   {
     id: "B",
     name: "B · 12-hour line outage",
-    description: "Transmission/feeder outage 06:00–18:00 on day 2 — the Brief #13 headline scenario.",
+    description: "Daytime feeder outage 06:00–18:00 on day 2 — a short-outage reference case (the Brief #13 headline is the 39-day Maiduguri replay).",
     briefScenario: true,
     build: () => {
       const cfg = withGrid(defaultConfig(), [[1, 6, 18]]);
@@ -194,9 +194,9 @@ export const SCENARIOS: ScenarioDef[] = [
   },
   {
     id: "J",
-    name: "J · Brief #13 — city feeder collapse",
+    name: "J · City feeder collapse (12 h)",
     description:
-      "Day-2 national grid disturbance collapsing to a 12-hour city feeder outage 06:00–18:00, day 3 partly cloudy. Sentinel's brief scenario: maximize critical-service hours, minimize diesel.",
+      "Day-2 national grid disturbance collapsing to a 12-hour city feeder outage 06:00–18:00, day 3 partly cloudy — the short-outage companion to the 39-day Maiduguri replay.",
     briefScenario: true,
     build: () => {
       const cfg = withGrid(defaultConfig(), [[1, 6, 18]]);

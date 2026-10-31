@@ -1,22 +1,20 @@
 # Standards & Regulatory Context
 
-## What this POC uses standards for
+**No compliance or certification is claimed.** This page maps which standards govern a real deployment and where the prototype already follows their vocabulary or logic.
 
-The platform is a **decision-support simulation**. Standards inform model structure, vocabulary and thresholds; **no claim of certification, compliance or certified protection is made anywhere in this package.**
+| Standard / rule | Scope | Relevance to Sentinel | Status in the POC |
+|---|---|---|---|
+| **IEC 60364-7-710** | Electrical installations in medical locations (group 0/1/2 rooms, safety power supply changeover times) | The Tier-1 mapping mirrors the "group 2" concept (ICU and theatres). Changeover classes (≤ 0.5 s, ≤ 15 s) motivate counting the 15 s generator transfer break as an interruption and battery-formed islanding as break-free | Modelled conceptually; real design by a licensed engineer |
+| NFPA 99 / NFPA 110 / NEC Art. 517 (U.S.) | Health-care essential electrical systems; emergency power (Type 10 = 10 s transfer) | For the U.S. fleet configuration (Houston); same 10–15 s transfer logic | Referenced for scalability |
+| IEEE 1547-2018 / IEC 62116 | DER interconnection, anti-islanding, ride-through | Islanding/reconnection with a 30-min stability delay; PQ ride-through vs trip events | Simplified state machine, simulated |
+| IEEE 1159 | Power-quality event vocabulary (sag, swell, frequency events) | PQ scenario H and labels | Synthetic events only |
+| IEEE 519 | Harmonics | Not modelled (no waveform model): stated | — |
+| IEC 61724-1 | PV performance monitoring | PR definition and the measured-vs-predicted reporting in the pilot | PR used as an input; monitoring in pilot |
+| IEC 62446-1 | PV system documentation, commissioning, testing | Pilot months 4–12 | Roadmap |
+| IEC 62109-1/-2 | Safety of power converters (inverters/PCS) | Equipment selection | Roadmap |
+| IEC 62619 / IEC 62933 | Safety of industrial lithium cells; BESS safety | LFP container selection | Roadmap |
+| Nigeria: NEMSA (Nigerian Electricity Management Services Agency) | Inspection and certification of electrical installations | Pilot gate in months 4–6 | Roadmap |
+| Nigeria: NERC regulations (mini-grid, embedded generation) | Behind-the-meter supply under EaaS/PPA; tariffs | EaaS structure is behind the meter (no sale to third parties) | Business model |
+| Nigeria Data Protection Act 2023 | Personal data | No patient or personal data is collected; facility energy data is owned by the hospital | By design |
 
-| Standard | Role in this project |
-|---|---|
-| **IEEE 1547** (distributed energy interconnection) | Conceptual basis for the grid-tie state machine: islanding on loss of grid, reconnection only after a stability delay with hysteresis (default 0.5 h). The model implements the *concept* of anti-islanding behaviour in simulation. |
-| **IEEE 1159** (power-quality monitoring) | Vocabulary and thresholds for the PQ module: sag/swell classification and ride-through vs trip behaviour. Simulated telemetry only — no measurements. |
-| **IEEE 519** (harmonics) | **Deliberately not implemented** — THD requires a defined waveform model; faking it would violate the project's honesty rules. Listed as a roadmap item. |
-| **IEC 61724** (PV system performance) | The PV model's performance-ratio framing (PR includes inverter + soiling + temperature + cabling; no double-counted inverter efficiency). |
-| **IEC 62109 / IEC 62619** (inverter & battery safety) | Inform the *assumption set* (LFP chemistry, BMS-managed SOC floors). No hardware is designed or certified here. |
-| **NERC (Nigeria) MYTO tariff framework** | Grid tariff default (Band A ≈ ₦210/kWh) sourced from published orders; flagged for re-verification against the current order at pilot time. |
-| **Nigerian electrical installation practice** | The twin models a facility's *energy flows*, not its wiring design; installation/permitting requirements appear in the deployment roadmap (months 4–6) as partner obligations, not claims. |
-
-## Explicit non-claims
-
-1. Sentinel does **not** control any real breaker, relay or medical equipment, and must never be connected to hospital protection systems.
-2. Simulated voltage/frequency values are model telemetry, not measurements at any facility bus.
-3. "Compliant with IEEE/IEC" is **not** claimed; "structured around" is the strongest true statement.
-4. No medical-device, electrical-contractor or engineering-certification representation is made or implied.
+**Safety boundary:** Sentinel is supervisory. Protection, ATS changeover and inverter grid-forming stay with certified equipment. Sentinel's dispatch commands go through those devices' certified interfaces, after shadow-mode validation.

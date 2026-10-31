@@ -1,67 +1,65 @@
 # System Architecture
 
-## 1. High-level
-
+## 1. Prototype (this repository)
 ```mermaid
 flowchart LR
-  subgraph UI["Next.js 15 · React 19 · Tailwind · Recharts"]
-    D[Dashboard] T[Digital Twin] S[Scenario Lab] F[Financials] I[Intelligence] B[Brief & Metrics] R[Data & Sources]
+  subgraph Data
+    NP[NASA POWER hourly GHI + T2M<br/>10 site-years]
+    NR[NREL generator reliability]
+    PR[Prices: NERC, diesel, FX]
   end
-  ST[(Zustand store — config, sim results, economics)]
-  subgraph ENGINE["Deterministic simulation core — zero UI/network deps"]
-    SC[scenarios / configs] --> SIM[simulate.ts orchestrator]
-    SIM --> DSP[dispatch.ts — 15-min state machine]
-    DSP --> PV[pv.ts] & BAT[battery.ts] & GEN[genset.ts] & GRID[grid + PQ rules]
-    SIM --> MET[metrics aggregation]
-    FIN[financial.ts] --> SIM
-    FCS[forecast.ts] --> MET
-    SZ[sizing.ts] --> SIM & FIN
+  subgraph Engine["src/engine (pure TypeScript, deterministic, 89 tests)"]
+    W[measured.ts weather] --> D[dispatch.ts<br/>15-min step · 4 strategies<br/>governor · fuel · failures]
+    F[facility.ts tiered loads] --> D
+    D --> S[simulate.ts metrics]
+    S --> R[resilience.ts Monte Carlo]
+    S --> E[financial.ts full-year economics]
+    S --> Z[sizing.ts · fleet.ts]
+    S --> A[alerts.ts SMS/USSD]
+    FC[forecast.ts solar ML] -. calibrates .-> D
   end
-  UI --> ST --> ENGINE
-  RES[("results/demo-results.json")] <-- npm run results / tsx
+  subgraph UI["Next.js static export (offline PWA)"]
+    M[Line outage replay + 3D twin]
+    RL[Resilience lab]
+    FI[Financials · Fleet]
+    EV[Evidence pages]
+  end
+  NP --> W
+  NR --> R
+  PR --> E
+  S --> M
+  R --> RL
+  E --> FI
+  Z --> FI
+  A --> M
 ```
+- **No server, no API keys, no runtime network.** The engine and its data ship in the static bundle (≈ 450 kB first load; 3D model lazy-loaded), and a service worker makes it work offline.
+- **Reproducibility:** `npm run results` regenerates `results/demo-results.json`. The deck and one-pager scripts read only that file.
 
-The engine is a pure TypeScript library: no React, no network, no external AI API. It runs identically in the browser (UI) and headless under `tsx` (results snapshot, tests) — which is what makes every number in the documentation reproducible.
+## 2. Pilot deployment (months 1–12)
+```mermaid
+flowchart LR
+  MET[Circuit meters T1/T2/T3<br/>generator fuel sensor<br/>irradiance sensor] --> EDGE
+  INV[Hybrid PCS / BESS controller] <--> EDGE
+  GEN[Generator controller + ATS] <--> EDGE
+  EDGE["Sentinel edge controller<br/>(same engine, runs locally)"] --> SMS[SMS/USSD gateway<br/>duty engineer]
+  EDGE -->|when connected| CLOUD[Fleet dashboard + monthly<br/>measured-vs-predicted report]
+  EDGE -->|shadow mode: recommend only| OPS[Works engineer]
+```
+- **Safety boundary:** protection and ATS stay in certified devices. Sentinel issues set-points (generator start/stop, charge targets, load-group contactor requests for Tier 3/2) only after shadow-mode validation, and Tier-1 is never in a shed group.
+- **Security:** no inbound internet exposure on the edge controller; outbound-only telemetry; signed configuration; hospital data ownership; no patient data.
 
-## 2. Module boundaries
-
-| Module | Responsibility | Key exports |
-|---|---|---|
-| `types.ts` | All contracts: configs, step results, metrics | `SystemConfig`, `StepResult`, `SimResult` |
-| `weather.ts` | Synthetic labelled irradiance + seeded PRNG | `dailyIrradiance`, `mulberry32` |
-| `facility.ts` | Illustrative load library, tier demand | `REFERENCE_HOSPITAL`, `tierDemandAt` |
-| `pv.ts` | PV DC→AC model with inverter cap | `pvPowerAc` |
-| `battery.ts` | SOC bookkeeping, power limits, floors | `applyCharge/Discharge`, `maxCharge/DischargePowerNow` |
-| `genset.ts` | Two-term fuel model | `fuelLph` |
-| `dispatch.ts` | One-step state machine (grid/island/genset/shedding/costs/events) | `stepSim`, `initialRuntime` |
-| `simulate.ts` | Multi-step orchestration, metrics, per-day rollup, baseline builder | `runSimulation`, `buildBaselineConfig`, `compareAgainstBaseline` |
-| `financial.ts` | CapEx, annualization, NPV/IRR, EaaS + breakeven, sensitivity | `evaluateEconomics`, `sensitivity` |
-| `forecast.ts` | Demand forecast evaluation, depletion projection, anomalies | `evaluateForecast`, `forecastDepletion` |
-| `sizing.ts` | Dual-metric grid-search optimizer | `searchSizing` |
-| `scenarios.ts` | Default design + 10 named scenarios | `defaultConfig`, `SCENARIOS` |
-
-## 3. Data flow (one user interaction)
-
-1. User edits an input (e.g. battery kWh) on the Digital Twin tab.
-2. `store.updateConfig` clones the config, applies the mutation, then synchronously:
-   - `runSimulation(config)` → 288 steps (3 days × 96)
-   - `runSimulation(buildBaselineConfig(config))` → diesel-only baseline
-   - `evaluateEconomics(config, fin)` → annualized economics
-3. All seven tabs re-render from the new results; the playback scrubber steps through the same `StepResult[]`.
-4. Nothing is stored server-side; no credentials exist; the app is fully static after build.
-
-## 4. Determinism & reproducibility
-
-- Single seeded PRNG (`mulberry32`) for synthetic noise; energy math has no randomness at all.
-- `runSimulation` twice on the same config → byte-identical step arrays (unit-tested).
-- `npm run results` regenerates `results/demo-results.json` — the canonical numbers file the docs and deck quote.
-
-## 5. Security & safety boundaries
-
-- No backend, no secrets, no patient data, no external APIs in the POC.
-- The engine is decision-support only; no control interfaces exist by design.
-- Next.js runs with strict TypeScript; inputs are clamped at the UI and validated by construction in the engine.
-
-## 6. Deployment
-
-Vercel-compatible static build (`next build` verified, static prerender). Repository + `results/` JSON constitute the build-files deliverable.
+## 3. Module responsibilities
+| Module | Responsibility |
+|---|---|
+| `types.ts` | Contracts, units (kW, kWh, L, h; Δt = 0.25 h) |
+| `facility.ts` | Tiered load library, cached 24-h tier tables |
+| `measured.ts` | NASA POWER datasets, day-of-year mapping |
+| `dispatch.ts` | Grid state machine, the 4 controllers, fuel-runway governor, clinical reserve, cycling, opportunistic solar, fuel limit, failures, transfer gap, events |
+| `simulate.ts` | Runs, metrics (strict maintained-hours), baseline builder, strategy comparison, feeder regime expansion |
+| `resilience.ts` | Monte Carlo sampler and lean runner; chunked browser version |
+| `financial.ts` | Annual config, cached physics with re-pricing, 20-yr cash flows, EaaS, sensitivity |
+| `forecast.ts` | Solar forecaster on held-out data; demand/anomaly (synthetic) |
+| `sizing.ts`, `fleet.ts` | NPV-ranked sizing under brief feasibility; portfolio screen |
+| `alerts.ts` | GSM-7 SMS feed and USSD screen |
+| `components/MicrogridScene.tsx` | react-three-fiber model; every visual is bound to a StepResult field |

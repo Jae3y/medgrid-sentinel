@@ -1,63 +1,53 @@
 # Screen Recording Runbook (Windows)
 
-Everything needed to record both videos in one sitting (~60–75 minutes including retakes).
+Plan about 75 minutes for both videos, including retakes. Record the **demo** first: the pitch reuses its app clips.
+
+## 0. Optional: a public live link for judges
+Judges can open the app without installing anything if you publish the static build. Ask Claude to set up GitHub Pages (a workflow is prepared), or drag the `out/` folder onto https://app.netlify.com/drop. The link must open without sign-in.
 
 ## 1. Prepare the app (5 min)
-
 ```bash
+npm install
 npm run build
-npm start          # serves the production build on http://localhost:3000
+npm run serve
 ```
+Then open **http://localhost:3003**. This is the production static build: no dev overlay, and it works offline.
+- Chrome, window maximised at **1920×1080**, zoom **100%** (`Ctrl+0`), bookmarks bar hidden (`Ctrl+Shift+B`), no other tabs visible.
+- Reload once. Wait for the 3D model to appear (about 2 s). The scene should read **Thu 26 Sept, 10:00** with **Sentinel** selected.
+- If the laptop is slow, close other apps. The 3D scene and the Monte Carlo need roughly 1 GB of free memory.
 
-- Production build only (no dev-mode overlay). Verify: no HMR indicator, page loads fast.
-- Chrome/Edge at **1920×1080**, zoom **100%**, bookmarks bar hidden (`Ctrl+Shift+B`).
-- In Scenario Lab click **Scenario J** once and confirm the sidebar reads "Scenario J".
+## 2. Prepare recording (5 min)
+- **OBS Studio** (free; recommended): Display Capture → 1920×1080, 30 fps, MP4, bitrate around 8,000 kbps, so a 5-minute video is about 300 MB (well under the 500 MB limit). Or use **Xbox Game Bar** (`Win+Alt+R`), which records the active window.
+- Microphone: headset or phone earbuds. Windows → Sound → Input at about 70%. Record a 10 s test and listen back.
+- Focus Assist on; Slack, WhatsApp and email closed; phone silent.
+- Keep `Demo_Video_Script.md` open on a second screen or printed.
 
-## 2. Prepare the environment (5 min)
+## 3. Record the demo (by script row)
+1. Read the row's narration aloud once.
+2. Set the exact screen state (the storyboard lists what must be visible).
+3. Record one row or two rows per take; join them in any editor (Clipchamp, which is built into Windows, is fine).
+4. Replay each take and check that the audio is clear and every narrated number is visible on screen.
+5. Move the cursor slowly; pause 1 s before each click; don't cover the number you're reading.
 
-- **Recorder (built-in):** Xbox Game Bar (`Win+Alt+R`) records the active window — adequate. Better: **OBS Studio** (free) → Display Capture 1920×1080, 30 fps, MP4 (or MKV then remux), audio: microphone + system sound off.
-- **Microphone:** headset or phone earbuds; Windows Settings → Sound → input level ~70%; do a 10-second test.
-- Silence notifications: Focus assist ON; close Slack/WhatsApp; phone on silent.
-- Keep this runbook + the script PDFs on a second screen or printed.
+**Reset tips**
+- To return to the opening moment: click **First blackout**.
+- To reset the controller: click **Sentinel**.
+- The Resilience lab runs automatically with 120 trials on first open. Select **300**, then click **Run Monte Carlo** and wait about 5 s.
+- The fleet table fills over about 5 s. Wait for "10 site-years simulated".
 
-## 3. Record (per the scripts)
-
-1. Read the section narration once aloud (warm-up).
-2. Set the exact screen state per the storyboard row.
-3. Record that section (one continuous take per section — easier to fix than one 5-minute take).
-4. Immediately replay: check audio, cursor visibility, and the **on-screen numbers vs script**.
-5. Repeat. Expect 2–3 takes per section; that's normal.
-
-**Cursor discipline:** move deliberately; pause 1 second before each click; avoid covering the number you're narrating.
-
-## 4. Numbers verification (per take)
-
-Any narrated number must be visible on screen at that moment:
-
-| Number | Where it appears |
+## 4. Numbers you will see (from `results/demo-results.json`)
+| Narrated | Where |
 |---|---|
-| 12.50 h / 100% / 0.00 kWh | Brief & Metrics — metric cards |
-| 763 L vs 1,295 L (−41%) | Brief & Metrics — comparison rows |
-| 23,910 L/yr · 64.1 t/yr · ₦111.8M | Brief & Metrics — annualized cards |
-| ₦760.4M · 7.9 yr · 4.6% · −₦326M | Financials — KPI row |
-| 58 tests | README / docs (screenshot or say over repo view) |
+| Thu 26 Sept, 10:00; tank 0 L (status quo); 2,800 L (hybrid); 3,826 L (Sentinel) | 3D scene HUD |
+| 937 of 937 h; 449 h; 2,841 L; +179 hours | Ledger under the 3D scene |
+| 78% / 3% / 0% (14 days) | Resilience lab, 300 trials |
+| ₦940.4M ($704,415); ₦311.2M; 3.3 yr; ₦553.2M; IRR 30.0%; 91,654 L/yr; 23.6% | Financials KPIs |
+| strong / viable verdicts | Fleet & scale table |
 
-If a number differs on screen: **the app is the truth — re-narrate with the on-screen value** (and note it; it means config drifted).
+## 5. Record the pitch
+Open `submission/MedGrid_Sentinel_Pitch_Deck.pdf` full-screen (`F5` in a PDF viewer, or present the `.pptx`). Record the narration over the slides per `Pitch_Video_Script.md`, and insert the demo clips D2 → D1 and D5 at 1:30. Face cam is optional.
 
-## 5. Assembly (20 min)
-
-- Any editor (CapCut/Clipchamp/Premiere): stitch section takes in script order; trim head/tail silence.
-- Optional: light background music at −25 dB under narration only (judges score content; music must never reduce intelligibility).
-- Add the end-card from the storyboard (a plain title frame is fine).
-- Export: **MP4, H.264, 1080p, ≤ 500 MB** (a 4–5 min mostly-static screencast lands ≈ 60–150 MB at 8 Mbps).
-- File names: `MedGridSentinel_Brief13_Demo.mp4` and `MedGridSentinel_Brief13_Pitch.mp4`.
-
-## 6. Upload plan
-
-- Prefer **file upload** to the submission portal. If links are used: YouTube **unlisted** or Google Drive **"anyone with the link"** — then verify in a logged-out incognito browser that playback starts with **no sign-in** (handbook FAQ p. 28: if judges can't play it, they can't score it).
-
-## 7. Contingencies
-
-- Noisy environment → record narration separately (voice-over over screen recording is explicitly permitted, handbook p. 29).
-- App misbehaves mid-take → `npm start` restarts clean; scenarios are deterministic, so re-takes are identical.
-- Time pressure → the demo video is the higher-value artifact (judges treat it as the source of truth); record it first, in one 5-minute take if needed.
+## 6. Export & upload
+- Export MP4 H.264, 1080p or lower, under 500 MB, 3–5 min (demo) and ≤ 5 min (pitch).
+- Name the files `MedGridSentinel_Brief13_Demo.mp4` and `MedGridSentinel_Brief13_Pitch.mp4`.
+- Upload to YouTube (Unlisted) or Google Drive ("Anyone with the link"). **Test the link in a private window**.

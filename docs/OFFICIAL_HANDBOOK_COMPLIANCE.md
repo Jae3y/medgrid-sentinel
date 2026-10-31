@@ -1,71 +1,34 @@
-# Official Handbook Compliance
+# Official Handbook Compliance (GEH Innovator Handbook, 34 pp.)
 
-Mapping of the Innovator Handbook (`GEH_Innovator_Handbook.pdf`, 34 pp.) to this project. The handbook is the source of truth; where the master execution prompt or external research differed, the handbook was followed and the discrepancy logged in [BRIEF_SELECTION_AND_STRATEGY.md](BRIEF_SELECTION_AND_STRATEGY.md) §4.
+| Handbook requirement | Where satisfied | Status |
+|---|---|---|
+| §5: one brief, one track, one setting | Brief #13 · Track 2 · Setting B, in every artifact | ✅ |
+| §5: realistic within 6–18 months, adaptable across contexts | DEPLOYMENT_ROADMAP.md; Fleet tab; deck slide 4–5 | ✅ |
+| §6: who (user and payer) | Brief tab Q&A; one-pager; deck slide 1 | ✅ |
+| §6: what fails and why (root cause) | Fuel logistics, not kW; deck slide 1; Brief tab | ✅ |
+| §6: what changes in 6–18 months, by whom | Roadmap; deck slide 4 | ✅ |
+| §6: cost and payment path | $704k; EaaS ₦20.7M/month; deck slide 4; Financials tab | ✅ |
+| §6: how it travels | Fleet tab (10 site-years); deck slide 5 | ✅ |
+| §6: biggest risk and early test | Shadow-mode gate ±15%; RISK_REGISTER.md | ✅ |
+| §6: what was built this weekend | Disclosure; git history; Brief tab | ✅ |
+| §7: feature freeze at hour 32 | Hour 32 = Sat 31 Oct ~8 PM ET / Sun 1 Nov 01:00 WAT. Features finished before that; later commits are polish, docs and artifacts | ✅ |
+| §7: "make sure it shows your brief's metric moving" | Line outage tab: supply slider, stress toggles, controller switch, 3D replay | ✅ |
+| §8: English; solo entry allowed | ✅ |
+| §10: demo video 3–5 min, showing the POC | Script, storyboard and runbook prepared; **recording by the team** | ⏳ user |
+| §10: pitch video ≤ 5 min | Script prepared; **recording by the team** | ⏳ user |
+| §10: pitch deck PDF ≤ 5 slides | submission/MedGrid_Sentinel_Pitch_Deck.pdf (5 slides) + .pptx | ✅ |
+| §10: one-page summary PDF | submission/MedGrid_Sentinel_One_Page_Summary.pdf (1 page; Appendix A fields) | ✅ |
+| §10: build files | Public GitHub repo; code, models, calculations, data, tests | ✅ (push latest) |
+| §10: disclosure statement | submission/DISCLOSURE_STATEMENT.txt/.pdf + portal short form | ✅ |
+| §10 checklist: unit cost, who pays, lowest-income affordability | Deck slide 4; one-pager; Financials (per bed-day) | ✅ |
+| §10 checklist: impact quantified against the brief's metric | 449 → 937 h; 2,841 L; 91,654 L/yr | ✅ |
+| §11: rubric | OFFICIAL_RUBRIC_SELF_ASSESSMENT.md | ✅ |
+| §11 Track 2 strong evidence: working demo, real data, offline/low-bandwidth, feature-phone/USSD | Offline PWA static export; NASA/NREL data; SMS/USSD channel | ✅ |
+| §11 Track 2 red flags: smartphone assumption; AI with no data source; polished UI over no logic | Feature-phone channel; forecaster on held-out real data; 89 tests | ✅ avoided |
+| §13/§17: AI tools, open source and datasets disclosed | Disclosure statement | ✅ |
+| §14: honesty, privacy | No patient data; no invented partners; limitations stated | ✅ |
+| §17: video ≤ 1080p, < 500 MB, link without sign-in | Runbook §6; checklist | ⏳ user |
+| §17: suggested file names | MedGridSentinel_Brief13_Demo.mp4 / _Pitch.mp4 | ✅ |
 
-## Section 5 — Problem Statement, Briefs & Tracks
-
-| Requirement | Status |
-|---|---|
-| One problem brief of the 16 | ✅ Brief #13 (locked; decision matrix documented) |
-| One challenge track of 5 | ✅ Track 2 — Digital Solutions & AI |
-| One setting (A/B) | ✅ B — Non-residential (healthcare) |
-| Success metrics read by judges first | ✅ Verbatim metric extracted; every feature mapped to it; metric definition documented |
-| Solutions realistic within 6–18 months, adaptable across contexts | ✅ [DEPLOYMENT_ROADMAP.md](DEPLOYMENT_ROADMAP.md); [BUSINESS_MODEL.md](BUSINESS_MODEL.md) § international adaptation |
-
-## Section 6 — Framing Your Response (questions every submission must answer on screen)
-
-| Question | Where answered |
-|---|---|
-| Who, specifically? (user ≠ payer) | Brief & Metrics tab; [BUSINESS_MODEL.md](BUSINESS_MODEL.md) §1 |
-| What fails today, and why? (root cause) | Brief & Metrics tab; [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md) §1 |
-| What changes in 6–18 months? | [DEPLOYMENT_ROADMAP.md](DEPLOYMENT_ROADMAP.md); pitch deck slide 4 |
-| What does it cost? (unit cost + payment path) | Financials tab; ₦760.4M CapEx; EaaS fee ₦161M/yr; ₦1,764/bed-day; deck slide 4 |
-| How does it travel? | [BUSINESS_MODEL.md](BUSINESS_MODEL.md) §5; deck slide 5 |
-| What could go wrong? | [RISK_REGISTER.md](RISK_REGISTER.md); deck slide 5; one-pager risk line |
-| What did you build this weekend? | [BUILD_PROGRESS.md](BUILD_PROGRESS.md); disclosure statement; pitch closing |
-
-## Section 7 — 48-hour sprint plan
-
-Features freeze honoured by construction: the scope shipped at hour ~4 of the sprint is the P0/P1 set defined in the master prompt; no speculative features were added after freeze planning. Simulation-first order followed (engine before dashboard, per §7 Day-1 guidance). Determinism and coach-checkpoint material prepared in [COACH_PREP.md](COACH_PREP.md).
-
-## Section 8 — Eligibility & process
-
-- 18+, one team, English submissions, no fees — ✅ confirmed.
-- **Solo entry: Jackson Sixtus Abetianbe** (permitted per §8); handbook-recommended cross-disciplinary roles mapped in [COACH_PREP.md](COACH_PREP.md) § roles.
-
-## Section 10 — Deliverables & submission (six deliverables)
-
-| # | Deliverable | Requirement | Artifact | Status |
-|---|---|---|---|---|
-| 1 | Demo video | MP4/link, 3–5 min, shows the actual POC | `submission/video/Demo_Video_Script.md` + runbook | 📝 prepared — **recording reserved for the team** |
-| 2 | Pitch video | MP4/link, ≤ 5 min, problem/value/demonstration | `submission/video/Pitch_Video_Script.md` + runbook | 📝 prepared — **recording reserved for the team** |
-| 3 | Pitch deck | PDF, ≤ 5 slides | `submission/MedGrid_Sentinel_Pitch_Deck.pptx` + `.pdf` | ✅ generated |
-| 4 | One-page summary | PDF, exactly 1 page, Appendix A fields | `submission/MedGrid_Sentinel_One_Page_Summary.pdf` (+ editable source) | ✅ generated |
-| 5 | Build files | Link (GitHub/Drive) | this repository; `docs/`, `results/demo-results.json` | ✅ ready to push/upload |
-| 6 | Disclosure statement | Short form in portal | `submission/DISCLOSURE_STATEMENT.txt` / `.pdf` | ✅ drafted |
-
-Videos: MP4 or link, 1080p or lower, < 500 MB, links open without sign-in, English — encoded in `submission/video/Screen_Recording_Runbook.md` and `Final_Video_Checklist.md`.
-
-Judging-review order honoured (brief → demo → pitch → summary → disclosure → build files): all six artifacts tell one consistent story sourced from `results/demo-results.json`.
-
-## Section 11 — Judging criteria
-
-Official formula respected: `Total = 20 × (0.25·Impact + 0.25·Innovation + 0.25·Sustainability + 0.15·Feasibility + 0.10·Scalability)`. Evidence-based self-assessment (never self-awarded 5s without evidence): [OFFICIAL_RUBRIC_SELF_ASSESSMENT.md](OFFICIAL_RUBRIC_SELF_ASSESSMENT.md).
-
-Track-specific strong evidence (p. 18, Digital Solutions & AI): working demo ✅ · real or realistic data (clearly-labelled synthetic; engine accepts measured data) ✅ · offline/low-bandwidth handling (no external API dependency in core) ✅ · feature-phone/USSD reach — ❌ out of POC scope, roadmap item (documented honestly).
-
-## Section 13 — Tools, AI, disclosure
-
-AI tools, open-source code and public datasets are permitted with licenses and disclosure ✅ — complete disclosure drafted; AI usage disclosed per-function ([AI_AND_FORECASTING_METHODOLOGY.md](AI_AND_FORECASTING_METHODOLOGY.md) § transparency).
-
-## Section 14 — Conduct
-
-No fabricated data, partners, pilots or team members anywhere in this package. Synthetic/illustrative values are labelled as such everywhere they appear. No personal data processed.
-
-## Appendix A — Solution outline template
-
-Filled from the live model on the Brief & Metrics tab and in the one-page summary.
-
-## Appendix B — Problem briefs
-
-Brief #13 metrics govern; full brief text pending kick-off release (logged).
+## Deadline
+Sunday 1 Nov 2026, 12:00 PM ET. US DST ends at 02:00 ET that morning, so the deadline is in EST (UTC−5): **17:00 UTC = 18:00 WAT**. Internal target: all six deliverables uploaded by **16:00 WAT**.

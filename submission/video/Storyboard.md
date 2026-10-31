@@ -1,29 +1,28 @@
-# Video Storyboard
+# Storyboard (both videos)
 
-Shared by both videos. Times in seconds from each video's start.
+## Demo (4:15) — real product, screen capture only
+| # | Time | Frame | Must be visible |
+|---|---|---|---|
+| D1 | 0:00 | 3D scene, Thu 26 Sept 10:00, Sentinel | Lit hospital, solar 389 kW, battery 66% · +35 kW |
+| D2 | 0:20 | Same moment, **Status quo** | Red windows, rooftop cross dark, tank **0 L**, "Generator · unavailable", line **down** |
+| D3 | 0:45 | **Fixed-rule hybrid** → **Sentinel** | Diesel on site **2,800** → **3,826** |
+| D4 | 1:05 | Play for ~8 s | Clock advancing, pulses moving, tally rising |
+| D5 | 1:25 | Metric ledger | 937 of 937 h · 2,841 L · 937 of 937 h · +179 |
+| D6 | 1:55 | Service ribbon + strategy cards | Red cells in status quo/hybrid rows; Sentinel row with no red |
+| D7 | 2:25 | Tank chart + supply curve (Tier 1 toggle) | Lines converging at ≥ 14k L/week |
+| D8 | 2:50 | Decision log + phone mock | Governor messages with arithmetic; SMS ≤ 160 chars; USSD screen |
+| D9 | 3:10 | Resilience lab, 300 trials | 14-day: Sentinel 78%, status quo 0%, hybrid 3% |
+| D10 | 3:40 | Financials KPIs | ₦940.4M · ₦311.2M · 3.3 yr · ₦553.2M (IRR 30.0%) · 91,654 L/yr · 23.6% |
+| D11 | 4:00 | Fleet table | strong ×8, viable ×2 (Lagos) |
 
-| # | Shot | Screen / visual | On-screen numbers to verify | Duration | Notes |
-|---|---|---|---|---|---|
-| S1 | Cold open | Dashboard, islanded bus, flows animating | SOC %, kW values | 0:00–0:10 | Play mode ON for animation |
-| S2 | Problem frame | Scenario Lab grid or dashboard | — | 0:10–0:25 | Demo: show outage; Pitch: narration over dashboard |
-| S3 | Run scenario J | Click "Run scenario"; event log scrolls | Event timestamps 06:00 / 06:15 | 10–15 s | Slow scroll; pause on islanding + genset events |
-| S4 | Day-2 charts | Demand vs supply stack; SOC line | — | 15–20 s | Hover tooltip once for depth |
-| S5 | Results | Brief & Metrics comparison rows | 12.50/12.5 h · 100% · 0.00 kWh · 763 vs 1,295 L · −41% | 20–25 s | The money shot — hold on screen |
-| S6 | Annualized | Same tab, annualized KPIs | 23,910 L/yr · 64.1 t · ₦111.8M | 10 s | |
-| S7 | Honesty beat | Scenario Lab — scenario G event log | continuity < 100%, deficit events | 10–12 s | "We show deficits" moment |
-| S8 | Live edit | Twin: battery 600→300, revert | KPIs re-render | 12–15 s | Do the change slowly |
-| S9 | Economics | Financials KPIs + sensitivity | 7.9 yr · 4.6% · ₦760.4M | 15–20 s | Pause on breakeven line |
-| S10 | Scale & close | README/architecture or roadmap | 58 tests · `npm run results` | 10–15 s | End on logo/wordmark frame |
-
-**Product-screen share target:** ≥ 60% of total runtime in both videos.
-
-## Lower-third suggestions (optional)
-
-- `MEDGRID SENTINEL · Brief #13 · Track 2 Digital Solutions & AI`
-- `All values from the deterministic simulation engine — reproducible via npm run results`
-- `Illustrative facility profile · 58 unit tests · production build verified`
-
-## End-card (both videos)
-
-MEDGRID SENTINEL — Intelligent Hospital Microgrids. Predictive Energy Resilience. Uninterrupted Critical Care.
-`MedGridSentinel_Brief13` · Global Energy Hackathon 2026 (Anneru IAS)
+## Pitch (4:30) — deck slides + two app clips
+| # | Time | Frame |
+|---|---|---|
+| P1 | 0:00 | Slide 1 (problem, facts) |
+| P2 | 0:30 | Slide 1 right panel (who / root cause) |
+| P3 | 0:55 | Slide 2 (solution) |
+| P4 | 1:30 | App clip: D2 → D1 flip, then D5 ledger (reuse the demo footage) |
+| P5 | 2:15 | Slide 3 Monte Carlo panel |
+| P6 | 2:40 | Slide 4 (cost, who pays, 6–18 months) |
+| P7 | 3:25 | Slide 5 (impact, fleet) |
+| P8 | 4:00 | Slide 5 team & ask (optional: face cam) |

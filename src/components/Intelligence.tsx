@@ -6,6 +6,7 @@ import { evaluateForecast, forecastDepletion } from "@/engine";
 import { AXIS_PROPS, GRID_PROPS, LEGEND_STYLE, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 import { fmtHour12, fmtNum } from "@/lib/format";
 import { Badge, Card, Kpi, Note, Row } from "./ui";
+import { SolarForecastCard } from "./SolarForecastCard";
 import {
   CartesianGrid,
   Legend,
@@ -91,8 +92,9 @@ export function Intelligence() {
 
   return (
     <div className="space-y-4">
+      <SolarForecastCard />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={<Radar size={18} />} label="Forecast MAE (held-out day)" value={`${fmtNum(forecast.scheduleAwareMAE)} kW`} sub={`naive persistence: ${fmtNum(forecast.persistenceMAE)} kW`} tone="cyan" />
+        <Kpi icon={<Radar size={18} />} label="Demand MAE (synthetic day)" value={`${fmtNum(forecast.scheduleAwareMAE)} kW`} sub={`naive persistence: ${fmtNum(forecast.persistenceMAE)} kW`} tone="cyan" />
         <Kpi icon={<Radar size={18} />} label="Forecast RMSE" value={`${fmtNum(forecast.scheduleAwareRMSE)} kW`} sub={`naive persistence: ${fmtNum(forecast.persistenceRMSE)} kW`} />
         <Kpi icon={<TrendingDown size={18} />} label="Usable storage now" value={`${fmtNum(depletion.usableKwhNow)} kWh`} sub={depletion.autonomyHours >= 12 ? "covers next 12 h" : `${depletion.autonomyHours.toFixed(1)} h autonomy`} tone={depletion.autonomyHours >= 12 ? "good" : "warn"} />
         <Kpi icon={<Sparkles size={18} />} label="Anomalies flagged" value={`${forecast.anomalies.length}`} sub="leave-one-out z ≥ 3" tone={forecast.anomalies.length ? "warn" : "default"} />
@@ -110,7 +112,7 @@ export function Intelligence() {
                 <XAxis dataKey="hour" interval={2} unit="h" {...AXIS_PROPS} />
                 <YAxis unit=" kW" width={58} {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
-                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Legend {...LEGEND_STYLE} />
                 <Line type="monotone" dataKey="measured" name="Held-out actual" stroke="#F8FAFC" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="forecast" name="Sentinel forecast" stroke="#22D3EE" strokeWidth={2} strokeDasharray="5 3" dot={false} />
               </LineChart>

@@ -6,6 +6,9 @@ import { scenarioById } from "@/engine";
 import { clsx } from "clsx";
 import {
   Activity,
+  Dice5,
+  Network,
+  Siren,
   BatteryCharging,
   BookOpenCheck,
   BrainCircuit,
@@ -15,12 +18,16 @@ import {
   Timer,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { OfflineStatus } from "./OfflineStatus";
 
 const TABS: { id: TabId; label: string; icon: React.ReactNode }[] = [
+  { id: "mission", label: "Line Outage · Brief #13", icon: <Siren size={16} /> },
+  { id: "resilience", label: "Resilience Lab", icon: <Dice5 size={16} /> },
   { id: "dashboard", label: "Dashboard", icon: <Activity size={16} /> },
   { id: "twin", label: "Digital Twin", icon: <BatteryCharging size={16} /> },
   { id: "scenarios", label: "Scenario Lab", icon: <FlaskConical size={16} /> },
   { id: "financials", label: "Financials", icon: <Landmark size={16} /> },
+  { id: "fleet", label: "Fleet & Scale", icon: <Network size={16} /> },
   { id: "intelligence", label: "Intelligence", icon: <BrainCircuit size={16} /> },
   { id: "brief", label: "Brief & Metrics", icon: <BookOpenCheck size={16} /> },
   { id: "sources", label: "Data & Sources", icon: <ScrollText size={16} /> },
@@ -92,7 +99,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           ))}
         </nav>
         <div className="space-y-2 border-t border-surface-border/70 p-3 text-[11px] leading-relaxed text-slate-500">
-          {scenario && (
+          {scenario && tab !== "mission" && tab !== "resilience" && tab !== "fleet" && (
             <div className="rounded-lg border border-surface-border/60 bg-navy-950/60 px-2.5 py-2">
               <div className="text-[10px] font-semibold uppercase tracking-wider text-cyan">
                 Active scenario · {scenario.id}
@@ -110,13 +117,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <br />
             Track 2 · Digital Solutions & AI · Setting B
             <br />
-            Brief #13 · {config.facility.beds}-bed reference hospital
+            Brief #13 · Maiduguri line outage · {config.facility.beds}-bed reference hospital
           </div>
           <div className="num rounded-lg border border-surface-border/60 bg-navy-950/60 px-2.5 py-2 font-mono text-[10px] text-slate-500">
             engine · {fmtNum(sim.steps.length)} steps{lastRunMs > 0 ? ` · ${lastRunMs.toFixed(0)} ms` : ""}
             <br />
-            deterministic · seed {config.seed} · 58 tests
+            deterministic · seed {config.seed} · 89 tests
           </div>
+          <OfflineStatus />
         </div>
       </aside>
 

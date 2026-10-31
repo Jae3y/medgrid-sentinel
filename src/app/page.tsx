@@ -8,12 +8,18 @@ import { Financials } from "@/components/Financials";
 import { Intelligence } from "@/components/Intelligence";
 import { BriefPage } from "@/components/BriefPage";
 import { SourcesPage } from "@/components/SourcesPage";
+import { MissionPage } from "@/components/MissionPage";
+import { ResiliencePage } from "@/components/ResiliencePage";
+import { FleetPage } from "@/components/FleetPage";
 import { useApp } from "@/lib/store";
 
 export default function Home() {
   const tab = useApp((s) => s.tab);
   return (
     <AppShell>
+      {tab === "mission" && <MissionPage />}
+      {tab === "resilience" && <ResiliencePage />}
+      {tab === "fleet" && <FleetPage />}
       {tab === "dashboard" && <Dashboard />}
       {tab === "twin" && <DigitalTwin />}
       {tab === "scenarios" && <ScenarioLab />}

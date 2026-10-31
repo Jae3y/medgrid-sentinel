@@ -17,7 +17,7 @@ export function Card({
   right?: ReactNode;
 }) {
   return (
-    <div className={clsx("card", className)}>
+    <div className={clsx("card p-4", className)}>
       {(title || right) && (
         <div className="mb-3 flex items-start justify-between gap-3">
           <div>

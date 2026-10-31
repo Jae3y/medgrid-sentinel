@@ -134,7 +134,7 @@ export function ScenarioLab() {
                 <XAxis dataKey="name" {...AXIS_PROPS} />
                 <YAxis unit=" L" width={58} {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} cursor={{ fill: "rgba(34,211,238,0.06)" }} />
-                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Legend {...LEGEND_STYLE} />
                 <Bar dataKey="Baseline diesel (L)" fill="#F59E0B" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="Sentinel diesel (L)" fill="#22D3EE" radius={[3, 3, 0, 0]} />
               </BarChart>

@@ -1,0 +1,11 @@
+{
+  "name": "MedGrid Sentinel",
+  "short_name": "Sentinel",
+  "description": "Hospital microgrid digital twin and fuel-aware energy resilience — runs fully offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#060D1F",
+  "theme_color": "#060D1F",
+  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

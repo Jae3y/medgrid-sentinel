@@ -1,177 +1,213 @@
 /**
- * Generates results/demo-results.json — the canonical, reproducible output snapshot
- * used by the documentation, pitch deck and one-page summary. Run: npm run results
+ * Generates results/demo-results.json — the canonical, reproducible snapshot used by the
+ * documentation, pitch deck, one-page summary and video scripts. Run: npm run results
+ * Every number quoted anywhere in the submission must trace to this file.
  */
 
 import { writeFileSync, mkdirSync } from "fs";
 import { join } from "path";
 import {
-  compareAgainstBaseline,
+  compareStrategies,
+  lineOutageConfig,
+  DEFAULT_LINE_OUTAGE,
+  MAIDUGURI_EVENT,
+  STRATEGIES,
   SCENARIOS,
   runSimulation,
+  buildBaselineConfig,
   evaluateEconomics,
   DEFAULT_FINANCIAL,
-  annualize,
-  evaluateForecast,
+  sensitivity,
   searchSizing,
-  capexBreakdown,
+  runMonteCarlo,
+  RELIABILITY_CLASSES,
+  singleGensetReliability,
+  evaluateSolarForecast,
+  FLEET_SITES,
+  ARCHETYPES,
+  evaluateSite,
+  fleetCurve,
+  defaultConfig,
+  annualConfig,
+  smsFeed,
   REFERENCE_HOSPITAL,
   dailyEnergyKwh,
+  tierTable,
 } from "../src/engine";
 
-const brief = SCENARIOS.find((s) => s.id === "B")!;
-const cfg = brief.build();
-const { proposed, baseline } = compareAgainstBaseline(cfg);
-const fin = DEFAULT_FINANCIAL;
-const econ = evaluateEconomics(cfg, fin);
-const ann = { b: annualize(baseline, fin).annual, p: annualize(proposed, fin).annual };
-const forecast = evaluateForecast(REFERENCE_HOSPITAL.loads, 7);
-const sizing = searchSizing(cfg, {
-  pvValues: [0, 100, 150, 200, 250, 300, 400],
-  batteryValues: [0, 200, 400, 600, 800, 1000],
-  criticalHoursTarget: 11.4,
-});
+const t0 = Date.now();
+const r1 = (v: number, d = 0) => Number(v.toFixed(d));
+const log = (s: string) => console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] ${s}`);
 
+// ---------- Brief #13 replay ----------
+const outageH = MAIDUGURI_EVENT.outageDays * 24;
+const replay = (weekly: number) => {
+  const res = compareStrategies(lineOutageConfig({ weeklySupplyLitres: weekly }));
+  const row: Record<string, unknown> = {};
+  for (const s of STRATEGIES) {
+    const m = res[s.id].metrics;
+    row[s.id] = {
+      criticalHours: r1(m.criticalMaintainedHours, 2),
+      tier1Hours: r1(m.tier1MaintainedHours, 2),
+      dieselLitres: r1(m.dieselLitres),
+      fuelOutHours: r1(m.fuelOutHours, 2),
+      tier1Interruptions: m.tier1Interruptions,
+      deferredMWh: r1(m.deferredKwh / 1000, 1),
+      gensetHours: r1(m.gensetRuntimeH, 2),
+      litresPerCriticalHour: r1(m.litresPerCriticalHour, 1),
+      pvUsedMWh: r1(m.pvUsedKwh / 1000, 1),
+    };
+  }
+  return { res, row };
+};
+const headline = replay(DEFAULT_LINE_OUTAGE.weeklySupplyLitres);
+log("replay done");
+const supplyCurve = [0, 2000, 4000, 6000, 8000, 10000, 12000, 14000, 16000].map((w) => {
+  const { row } = replay(w);
+  return { weeklySupplyLitres: w, ...Object.fromEntries(Object.entries(row).map(([k, v]) => [k, { criticalHours: (v as { criticalHours: number }).criticalHours, tier1Hours: (v as { tier1Hours: number }).tier1Hours, dieselLitres: (v as { dieselLitres: number }).dieselLitres }])) };
+});
+log("supply curve done");
+const stress = (() => {
+  const cfg = { ...lineOutageConfig(), reliability: { failToStartOnOutage: [], runFailureAtRunHours: [150], repairHours: 72 } };
+  const res = compareStrategies(cfg);
+  return Object.fromEntries(STRATEGIES.map((s) => [s.id, { criticalHours: r1(res[s.id].metrics.criticalMaintainedHours, 2), tier1Hours: r1(res[s.id].metrics.tier1MaintainedHours, 2), dieselLitres: r1(res[s.id].metrics.dieselLitres) }]));
+})();
+const sms = smsFeed(headline.res.sentinel, 8).map((a) => a.text);
+
+// ---------- Normal-year diesel (for the "x normal weekly use" framing) ----------
+const normalYear = runSimulation(annualConfig(defaultConfig(), { ...DEFAULT_FINANCIAL, lineOutageDays: 0 }, "baseline"));
+const normalWeeklyLitres = normalYear.metrics.dieselLitres / (normalYear.metrics.horizonHours / 168);
+log("normal year done");
+
+// ---------- Economics ----------
+const cfg = defaultConfig();
+const econ = evaluateEconomics(cfg, DEFAULT_FINANCIAL);
+const sens = sensitivity(cfg, DEFAULT_FINANCIAL);
+log("economics done");
+const concessional = evaluateEconomics(cfg, { ...DEFAULT_FINANCIAL, discountRate: 0.1 });
+
+// ---------- Monte Carlo ----------
+const mc = Object.fromEntries(
+  RELIABILITY_CLASSES.map((c) => {
+    const r = runMonteCarlo({ trials: 300, reliabilityClassId: c.id, outageHours: 336 });
+    return [
+      c.id,
+      {
+        label: c.label,
+        trials: 300,
+        outageHours: 336,
+        nrelSingleGensetR336: r1(singleGensetReliability(c, 336), 3),
+        byStrategy: Object.fromEntries(
+          Object.entries(r.byStrategy).map(([k, v]) => [
+            k,
+            {
+              pTier1_72h: r1(v.survival[72], 3),
+              pTier1_168h: r1(v.survival[168], 3),
+              pTier1_336h: r1(v.survival[336], 3),
+              pZeroBreaks: r1(v.pZeroBreaks, 3),
+              meanTier1Hours: r1(v.meanTier1Hours, 1),
+              meanCriticalHours: r1(v.meanCriticalHours, 1),
+              p10CriticalHours: v.p10CriticalHours,
+              p50CriticalHours: v.p50CriticalHours,
+              p90CriticalHours: v.p90CriticalHours,
+              meanDieselLitres: r1(v.meanDieselLitres),
+              meanGensetRunHours: r1(v.meanGensetRunHours, 1),
+            },
+          ])
+        ),
+      },
+    ];
+  })
+);
+log("monte carlo done");
+
+// ---------- Forecast, sizing, fleet ----------
+const solar = evaluateSolarForecast();
+const sizing = searchSizing(cfg);
+log("sizing done");
+const fleet = ARCHETYPES.flatMap((a) => FLEET_SITES.map((s) => evaluateSite(s, a)));
+log("fleet done");
+
+// ---------- Legacy 3-day stress scenarios (Scenario Lab) ----------
 const scenarioTable = SCENARIOS.map((s) => {
   const c = s.build();
   const r = runSimulation(c);
-  const bl = runSimulation(
-    // baseline mirror
-    { ...structuredClone(c), pv: { kwp: 0, performanceRatio: 0.78 }, battery: { ...c.battery, nominalKwh: 0 }, inverter: { ratedKw: 0 }, islandOnSeverePQ: false, peakShaveKw: null }
-  );
+  const bl = runSimulation(buildBaselineConfig(c));
   const m = r.metrics;
   return {
     id: s.id,
     name: s.name,
-    outageHours: +m.outageHours.toFixed(2),
-    criticalServiceHours: +m.criticalServiceHours.toFixed(2),
-    continuity: m.outageHours > 0 ? +(m.criticalServiceHours / m.outageHours).toFixed(3) : 1,
-    dieselLitres: +m.dieselLitres.toFixed(0),
-    baselineDieselLitres: +bl.metrics.dieselLitres.toFixed(0),
-    dieselAvoidedPct: bl.metrics.dieselLitres > 0 ? +((1 - m.dieselLitres / bl.metrics.dieselLitres) * 100).toFixed(1) : null,
-    unservedKwh: +(m.unservedKwh[1] + m.unservedKwh[2] + m.unservedKwh[3]).toFixed(1),
-    opexNaira: +m.opexNaira.toFixed(0),
+    outageHours: r1(m.outageHours, 2),
+    criticalHours: r1(m.criticalMaintainedHours, 2),
+    tier1Hours: r1(m.tier1MaintainedHours, 2),
+    baselineCriticalHours: r1(bl.metrics.criticalMaintainedHours, 2),
+    dieselLitres: r1(m.dieselLitres),
+    baselineDieselLitres: r1(bl.metrics.dieselLitres),
+    tier1Interruptions: m.tier1Interruptions,
+    baselineTier1Interruptions: bl.metrics.tier1Interruptions,
+    unservedKwh: r1(m.unservedKwh[1] + m.unservedKwh[2] + m.unservedKwh[3], 1),
   };
 });
 
+const tiers = tierTable(REFERENCE_HOSPITAL.loads);
 const result = {
   generatedAt: new Date().toISOString(),
-  engine: "deterministic 15-min step model, 3-day horizon, seed 42; all values reproducible via `npm run results`",
+  reproduce: "npm run results (deterministic; seeds fixed)",
   facility: {
-    name: cfg.facility.name,
-    beds: cfg.facility.beds,
-    dailyEnergyKwh: +cfg.facility.loads.reduce((s, l) => s + dailyEnergyKwh(l), 0).toFixed(0),
-    tierKw: {
-      t1: +cfg.facility.loads.filter((l) => l.tier === 1).reduce((s, l) => s + l.ratedKw, 0).toFixed(0),
-      t2: +cfg.facility.loads.filter((l) => l.tier === 2).reduce((s, l) => s + l.ratedKw, 0).toFixed(0),
-      t3: +cfg.facility.loads.filter((l) => l.tier === 3).reduce((s, l) => s + l.ratedKw, 0).toFixed(0),
+    name: REFERENCE_HOSPITAL.name,
+    beds: REFERENCE_HOSPITAL.beds,
+    dailyEnergyKwh: r1(REFERENCE_HOSPITAL.loads.reduce((s, l) => s + dailyEnergyKwh(l), 0)),
+    tierAvgKw: {
+      t1: r1(tiers.reduce((s, d) => s + d[1], 0) / 24, 1),
+      t2: r1(tiers.reduce((s, d) => s + d[2], 0) / 24, 1),
+      t3: r1(tiers.reduce((s, d) => s + d[3], 0) / 24, 1),
     },
   },
-  systemDesign: {
-    pvKwp: cfg.pv.kwp,
-    batteryKwh: cfg.battery.nominalKwh,
-    inverterKw: cfg.inverter.ratedKw,
-    gensetKw: cfg.genset.ratedKw,
+  referenceDesign: { pvKwp: cfg.pv.kwp, batteryKwh: cfg.battery.nominalKwh, inverterKw: cfg.inverter.ratedKw, gensetKw: cfg.genset.ratedKw, statusQuoGensetKw: buildBaselineConfig(cfg).genset.ratedKw },
+  brief13Replay: {
+    event: MAIDUGURI_EVENT,
+    outageHours: outageH,
+    assumptions: { ...DEFAULT_LINE_OUTAGE, deliveriesEveryDays: 3.5, dieselNairaPerLitre: cfg.genset.fuelNairaPerLitre },
+    normalYearWeeklyDieselLitres: r1(normalWeeklyLitres),
+    supplyMultipleOfNormal: r1(DEFAULT_LINE_OUTAGE.weeklySupplyLitres / normalWeeklyLitres, 2),
+    results: headline.row,
+    withGeneratorTripAt150h: stress,
+    supplyCurve,
+    sampleSms: sms,
   },
-  briefScenario_B: {
-    description: brief.description,
-    proposed: {
-      outageHours: +proposed.metrics.outageHours.toFixed(2),
-      criticalServiceHours: +proposed.metrics.criticalServiceHours.toFixed(2),
-      continuityPct: +((proposed.metrics.criticalServiceHours / proposed.metrics.outageHours) * 100).toFixed(1),
-      tier1UnservedKwh: +proposed.metrics.unservedKwh[1].toFixed(2),
-      dieselLitres: +proposed.metrics.dieselLitres.toFixed(0),
-      gensetRuntimeH: +proposed.metrics.gensetRuntimeH.toFixed(1),
-      pvUsedKwh: +proposed.metrics.pvUsedKwh.toFixed(0),
-      renewableShare: +proposed.metrics.renewableShare.toFixed(3),
-      opexNaira: +proposed.metrics.opexNaira.toFixed(0),
-      co2Kg: +proposed.metrics.co2Kg.toFixed(0),
-      totalDemandKwh: +proposed.metrics.totalDemandKwh.toFixed(0),
-    },
-    baseline: {
-      dieselLitres: +baseline.metrics.dieselLitres.toFixed(0),
-      gensetRuntimeH: +baseline.metrics.gensetRuntimeH.toFixed(1),
-      opexNaira: +baseline.metrics.opexNaira.toFixed(0),
-      co2Kg: +baseline.metrics.co2Kg.toFixed(0),
-      criticalServiceHours: +baseline.metrics.criticalServiceHours.toFixed(2),
-    },
-    comparison: {
-      dieselAvoidedLitres3day: +(baseline.metrics.dieselLitres - proposed.metrics.dieselLitres).toFixed(0),
-      dieselAvoidedPct: +((1 - proposed.metrics.dieselLitres / baseline.metrics.dieselLitres) * 100).toFixed(1),
-      opexSavingPct3day: +((1 - proposed.metrics.opexNaira / baseline.metrics.opexNaira) * 100).toFixed(1),
-    },
+  monteCarlo14Day: mc,
+  annualEconomics: {
+    site: DEFAULT_FINANCIAL.siteDatasetId,
+    feeder: DEFAULT_FINANCIAL.feeder,
+    lineOutageDays: DEFAULT_FINANCIAL.lineOutageDays,
+    capex: Object.fromEntries(Object.entries(econ.capex).map(([k, v]) => [k, r1(v)])),
+    baseline: Object.fromEntries(Object.entries(econ.baselineAnnual).map(([k, v]) => [k, r1(v as number, 1)])),
+    proposed: Object.fromEntries(Object.entries(econ.proposedAnnual).map(([k, v]) => [k, r1(v as number, 1)])),
+    annualSavingsNaira: r1(econ.annualSavingsNaira),
+    netAnnualBenefitNaira: r1(econ.netAnnualBenefitNaira),
+    paybackYears: econ.simplePaybackYears ? r1(econ.simplePaybackYears, 2) : null,
+    npv20yAt18pct: r1(econ.npvNaira),
+    npv20yAt10pct: r1(concessional.npvNaira),
+    irr: econ.irr !== null ? r1(econ.irr, 4) : null,
+    lcoeNairaPerKwh: r1(econ.lcoeNairaPerKwh),
+    baselineLcoeNairaPerKwh: r1(econ.baselineLcoeNairaPerKwh),
+    dieselLitresAvoidedPerYear: r1(econ.dieselLitresAvoidedPerYear),
+    dieselAvoidedPct: r1(econ.dieselAvoidedPct, 3),
+    co2TonnesAvoidedPerYear: r1(econ.co2TonnesAvoidedPerYear, 1),
+    gensetHoursAvoidedPerYear: r1(econ.gensetHoursAvoidedPerYear),
+    eaasAnnualFeeNaira: r1(econ.eaasAnnualFeeNaira),
+    eaasMonthlyFeeNaira: r1(econ.eaasAnnualFeeNaira / 12),
+    eaasProviderIrr: econ.eaasProviderIrr !== null ? r1(econ.eaasProviderIrr, 4) : null,
+    eaasBreakevenFinancingRate: econ.eaasBreakevenFinancingRate !== null ? r1(econ.eaasBreakevenFinancingRate, 4) : null,
+    energyCostPerBedDay: { baseline: r1(econ.baselineEnergyCostPerBedDayNaira), proposedEaaS: r1(econ.proposedEnergyCostPerBedDayNaira) },
+    sensitivity: sens.map((s) => ({ ...s, npvNaira: r1(s.npvNaira), paybackYears: s.paybackYears ? r1(s.paybackYears, 1) : null, irr: s.irr !== null ? r1(s.irr, 3) : null })),
   },
-  annualized: {
-    mix: "320 normal days + 45 outage days (12.5 islanded hours each, incl. 30-min reconnection delay)",
-    baselineOpexNaira: +ann.b.opexNaira.toFixed(0),
-    proposedOpexNaira: +ann.p.opexNaira.toFixed(0),
-    annualSavingsNaira: +econ.annualSavingsNaira.toFixed(0),
-    dieselLitresBaseline: +ann.b.dieselLitres.toFixed(0),
-    dieselLitresProposed: +ann.p.dieselLitres.toFixed(0),
-    dieselLitresAvoided: +econ.dieselLitresAvoidedPerYear.toFixed(0),
-    co2TonnesAvoided: +econ.co2TonnesAvoidedPerYear.toFixed(1),
-    criticalServiceHoursPerYear: +ann.p.criticalServiceHours.toFixed(0),
-  },
-  economics: {
-    capex: {
-      pvUsd: +econ.capex.pvUsd.toFixed(0),
-      storageUsd: +econ.capex.storageUsd.toFixed(0),
-      inverterUsd: +econ.capex.inverterUsd.toFixed(0),
-      installUsd: +econ.capex.installUsd.toFixed(0),
-      totalUsd: +econ.capex.totalUsd.toFixed(0),
-      totalNaira: +econ.capex.totalNaira.toFixed(0),
-    },
-    simplePaybackYears: econ.simplePaybackYears ? +econ.simplePaybackYears.toFixed(1) : null,
-    npvNaira10y: +econ.npvNaira.toFixed(0),
-    irr: econ.irr ? +(econ.irr * 100).toFixed(1) : null,
-    lcoeNairaPerKwh: +econ.lcoeNairaPerKwh.toFixed(0),
-    eaasTariffNairaPerKwh: +econ.eaasTariffNairaPerKwh.toFixed(0),
-    eaasAssetTariffNairaPerKwh: +econ.eaasAssetTariffNairaPerKwh.toFixed(0),
-    eaasAnnualFeeNaira: +econ.eaasAnnualFeeNaira.toFixed(0),
-    eaasBreakevenFinancingRatePct: econ.eaasBreakevenFinancingRate
-      ? +(econ.eaasBreakevenFinancingRate * 100).toFixed(1)
-      : null,
-    baselineBlendedNairaPerKwh: +econ.baselineBlendedCostNairaPerKwh.toFixed(0),
-    serviceTariffPerBedDayNaira: econ.serviceTariffPerBedDayNaira
-      ? +econ.serviceTariffPerBedDayNaira.toFixed(0)
-      : null,
-    sensitivity: econ_sens(),
-  },
-  forecasting: {
-    persistenceMAE: forecast.persistenceMAE,
-    persistenceRMSE: forecast.persistenceRMSE,
-    scheduleAwareMAE: forecast.scheduleAwareMAE,
-    scheduleAwareRMSE: forecast.scheduleAwareRMSE,
-    anomalies: forecast.anomalies.length,
-  },
-  sizingSearch: {
-    target: sizing.target,
-    best: sizing.best,
-    top: sizing.candidates.slice(0, 6),
-  },
-  scenarios: scenarioTable,
+  solarForecast: { ...solar, series: undefined },
+  sizing: { target: sizing.target, best: sizing.best, candidates: sizing.candidates },
+  fleet: { rows: fleet, costCurve: fleetCurve(econ.capex.totalUsd) },
+  scenarioLab: scenarioTable,
 };
 
-function econ_sens() {
-  // sensitivity() re-runs the economics 8 times; reuse it directly
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { sensitivity } = require("../src/engine/financial") as typeof import("../src/engine/financial");
-  return sensitivity(cfg, fin).map((r) => ({
-    variable: r.variable,
-    change: r.change,
-    paybackYears: r.paybackYears ? +r.paybackYears.toFixed(1) : null,
-    npvNaira: +r.npvNaira.toFixed(0),
-    eaasTariffNairaPerKwh: +r.eaasTariffNairaPerKwh.toFixed(0),
-  }));
-}
-
-mkdirSync("results", { recursive: true });
-writeFileSync(join("results", "demo-results.json"), JSON.stringify(result, null, 2));
-console.log("Wrote results/demo-results.json");
-console.log("— Brief scenario B —");
-console.log(`  outage ${proposed.metrics.outageHours.toFixed(1)} h · critical continuity ${proposed.metrics.criticalServiceHours.toFixed(2)} h · T1 unserved ${proposed.metrics.unservedKwh[1].toFixed(2)} kWh`);
-console.log(`  diesel ${proposed.metrics.dieselLitres.toFixed(0)} L vs baseline ${baseline.metrics.dieselLitres.toFixed(0)} L (−${result.briefScenario_B.comparison.dieselAvoidedPct}%)`);
-console.log("— Annualized —");
-console.log(`  savings ${econ.annualSavingsNaira.toLocaleString()} ₦/yr · diesel avoided ${econ.dieselLitresAvoidedPerYear.toFixed(0)} L/yr · CO₂ ${econ.co2TonnesAvoidedPerYear.toFixed(1)} t/yr`);
-console.log("— Economics —");
-console.log(`  CapEx ${econ.capex.totalNaira.toLocaleString()} ₦ · payback ${econ.simplePaybackYears?.toFixed(1)} yr · NPV ${econ.npvNaira.toLocaleString()} ₦ · EaaS ${econ.eaasTariffNairaPerKwh.toFixed(0)} ₦/kWh vs blended baseline ${econ.baselineBlendedCostNairaPerKwh.toFixed(0)} ₦/kWh`);
+mkdirSync(join(__dirname, "..", "results"), { recursive: true });
+writeFileSync(join(__dirname, "..", "results", "demo-results.json"), JSON.stringify(result, null, 2));
+log(`wrote results/demo-results.json`);

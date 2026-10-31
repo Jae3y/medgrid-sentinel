@@ -1,19 +1,26 @@
 {
+  "base": "http://localhost:3003",
+  "at": "2026-10-31T13:30:03.000Z",
   "steps": [
-    "dashboard playback OK",
-    "tab:twin OK",
-    "twin live recompute OK",
-    "tab:scenarios OK",
-    "scenario B run OK",
-    "tab:scenarios2 OK",
-    "tab:financials OK",
-    "sizing search OK",
-    "tab:intelligence OK",
-    "tab:brief OK",
-    "tab:sources OK",
-    "tab:scenarios3 OK",
-    "hero dashboard OK",
-    "twin baseline text captured (5 chars)"
+    "screenshot mission-hero",
+    "screenshot mission-ribbon",
+    "screenshot mission-fuel",
+    "screenshot mission-sms",
+    "stress toggle changed results: true",
+    "screenshot resilience",
+    "monte carlo completed in browser",
+    "screenshot dashboard",
+    "screenshot twin",
+    "screenshot scenarios",
+    "screenshot financials",
+    "sizing search completed in browser",
+    "screenshot fleet",
+    "screenshot intelligence",
+    "screenshot brief",
+    "screenshot sources",
+    "mobile horizontal overflow px: 0",
+    "screenshot mobile-mission"
   ],
-  "errors": []
+  "errors": [],
+  "pass": true
 }

@@ -1,369 +1,1364 @@
 {
-  "generatedAt": "2026-10-30T18:28:49.667Z",
-  "engine": "deterministic 15-min step model, 3-day horizon, seed 42; all values reproducible via `npm run results`",
+  "generatedAt": "2026-10-31T13:28:15.282Z",
+  "reproduce": "npm run results (deterministic; seeds fixed)",
   "facility": {
     "name": "Reference Secondary Referral Hospital (illustrative)",
     "beds": 250,
     "dailyEnergyKwh": 6770,
-    "tierKw": {
-      "t1": 120,
-      "t2": 165,
-      "t3": 165
+    "tierAvgKw": {
+      "t1": 86.1,
+      "t2": 103.5,
+      "t3": 92.5
     }
   },
-  "systemDesign": {
-    "pvKwp": 300,
+  "referenceDesign": {
+    "pvKwp": 600,
     "batteryKwh": 600,
-    "inverterKw": 250,
-    "gensetKw": 400
+    "inverterKw": 510,
+    "gensetKw": 400,
+    "statusQuoGensetKw": 450
   },
-  "briefScenario_B": {
-    "description": "Transmission/feeder outage 06:00–18:00 on day 2 — the Brief #13 headline scenario.",
-    "proposed": {
-      "outageHours": 12.5,
-      "criticalServiceHours": 12.5,
-      "continuityPct": 100,
-      "tier1UnservedKwh": 0,
-      "dieselLitres": 763,
-      "gensetRuntimeH": 12.3,
-      "pvUsedKwh": 4180,
-      "renewableShare": 0.206,
-      "opexNaira": 4100380,
-      "co2Kg": 2045,
-      "totalDemandKwh": 20309
+  "brief13Replay": {
+    "event": {
+      "city": "Maiduguri, Borno State, Nigeria",
+      "line": "Gombe–Damaturu–Maiduguri 330 kV",
+      "vandalised": "2024-09-22",
+      "restored": "2024-10-31",
+      "simStart": "2024-09-20",
+      "outageStartDay": 2,
+      "outageDays": 39,
+      "horizonDays": 42
+    },
+    "outageHours": 936,
+    "assumptions": {
+      "strategy": "sentinel",
+      "weeklySupplyLitres": 6000,
+      "tankLitres": 10000,
+      "initialFuelFrac": 0.6,
+      "residualGridHoursPerDay": 0,
+      "pvKwp": 600,
+      "batteryKwh": 600,
+      "inverterKw": 510,
+      "gensetKw": 400,
+      "missedDeliveries": [],
+      "deliveriesEveryDays": 3.5,
+      "dieselNairaPerLitre": 1950
+    },
+    "normalYearWeeklyDieselLitres": 3360,
+    "supplyMultipleOfNormal": 1.79,
+    "results": {
+      "baseline": {
+        "criticalHours": 449.25,
+        "tier1Hours": 450.5,
+        "dieselLitres": 39000,
+        "fuelOutHours": 488.5,
+        "tier1Interruptions": 12,
+        "deferredMWh": 0,
+        "gensetHours": 450.75,
+        "litresPerCriticalHour": 86.8,
+        "pvUsedMWh": 0
+      },
+      "baseline_rationed": {
+        "criticalHours": 637.75,
+        "tier1Hours": 639,
+        "dieselLitres": 39000,
+        "fuelOutHours": 300,
+        "tier1Interruptions": 11,
+        "deferredMWh": 86.6,
+        "gensetHours": 639,
+        "litresPerCriticalHour": 61.2,
+        "pvUsedMWh": 0
+      },
+      "conventional": {
+        "criticalHours": 757.25,
+        "tier1Hours": 797.75,
+        "dieselLitres": 39000,
+        "fuelOutHours": 231.5,
+        "tier1Interruptions": 21,
+        "deferredMWh": 0,
+        "gensetHours": 588,
+        "litresPerCriticalHour": 51.5,
+        "pvUsedMWh": 108.4
+      },
+      "sentinel": {
+        "criticalHours": 936.5,
+        "tier1Hours": 936.5,
+        "dieselLitres": 36159,
+        "fuelOutHours": 0,
+        "tier1Interruptions": 0,
+        "deferredMWh": 49.5,
+        "gensetHours": 382.75,
+        "litresPerCriticalHour": 38.6,
+        "pvUsedMWh": 107.9
+      }
+    },
+    "withGeneratorTripAt150h": {
+      "baseline": {
+        "criticalHours": 450.5,
+        "tier1Hours": 451.75,
+        "dieselLitres": 39000
+      },
+      "baseline_rationed": {
+        "criticalHours": 638,
+        "tier1Hours": 639,
+        "dieselLitres": 39000
+      },
+      "conventional": {
+        "criticalHours": 757.75,
+        "tier1Hours": 792.75,
+        "dieselLitres": 39000
+      },
+      "sentinel": {
+        "criticalHours": 873.25,
+        "tier1Hours": 912,
+        "dieselLitres": 35905
+      }
+    },
+    "supplyCurve": [
+      {
+        "weeklySupplyLitres": 0,
+        "baseline": {
+          "criticalHours": 68.75,
+          "tier1Hours": 68.75,
+          "dieselLitres": 6000
+        },
+        "baseline_rationed": {
+          "criticalHours": 98.5,
+          "tier1Hours": 98.5,
+          "dieselLitres": 6000
+        },
+        "conventional": {
+          "criticalHours": 314.75,
+          "tier1Hours": 426,
+          "dieselLitres": 6000
+        },
+        "sentinel": {
+          "criticalHours": 168.75,
+          "tier1Hours": 762,
+          "dieselLitres": 6000
+        }
+      },
+      {
+        "weeklySupplyLitres": 2000,
+        "baseline": {
+          "criticalHours": 192.25,
+          "tier1Hours": 194.75,
+          "dieselLitres": 17000
+        },
+        "baseline_rationed": {
+          "criticalHours": 276,
+          "tier1Hours": 276.25,
+          "dieselLitres": 17000
+        },
+        "conventional": {
+          "criticalHours": 459.25,
+          "tier1Hours": 551,
+          "dieselLitres": 17000
+        },
+        "sentinel": {
+          "criticalHours": 303.25,
+          "tier1Hours": 936.5,
+          "dieselLitres": 16195
+        }
+      },
+      {
+        "weeklySupplyLitres": 4000,
+        "baseline": {
+          "criticalHours": 322,
+          "tier1Hours": 324.25,
+          "dieselLitres": 28000
+        },
+        "baseline_rationed": {
+          "criticalHours": 454.75,
+          "tier1Hours": 456.25,
+          "dieselLitres": 28000
+        },
+        "conventional": {
+          "criticalHours": 610,
+          "tier1Hours": 675.25,
+          "dieselLitres": 28000
+        },
+        "sentinel": {
+          "criticalHours": 499.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 26484
+        }
+      },
+      {
+        "weeklySupplyLitres": 6000,
+        "baseline": {
+          "criticalHours": 449.25,
+          "tier1Hours": 450.5,
+          "dieselLitres": 39000
+        },
+        "baseline_rationed": {
+          "criticalHours": 637.75,
+          "tier1Hours": 639,
+          "dieselLitres": 39000
+        },
+        "conventional": {
+          "criticalHours": 757.25,
+          "tier1Hours": 797.75,
+          "dieselLitres": 39000
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 36159
+        }
+      },
+      {
+        "weeklySupplyLitres": 8000,
+        "baseline": {
+          "criticalHours": 577.25,
+          "tier1Hours": 578.5,
+          "dieselLitres": 50000
+        },
+        "baseline_rationed": {
+          "criticalHours": 813.25,
+          "tier1Hours": 814.25,
+          "dieselLitres": 49857
+        },
+        "conventional": {
+          "criticalHours": 897.5,
+          "tier1Hours": 908,
+          "dieselLitres": 49373
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 46147
+        }
+      },
+      {
+        "weeklySupplyLitres": 10000,
+        "baseline": {
+          "criticalHours": 702.75,
+          "tier1Hours": 704,
+          "dieselLitres": 61000
+        },
+        "baseline_rationed": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 57293
+        },
+        "conventional": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 52109
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 50661
+        }
+      },
+      {
+        "weeklySupplyLitres": 12000,
+        "baseline": {
+          "criticalHours": 825.75,
+          "tier1Hours": 827.75,
+          "dieselLitres": 71459
+        },
+        "baseline_rationed": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 57293
+        },
+        "conventional": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 52109
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 50661
+        }
+      },
+      {
+        "weeklySupplyLitres": 14000,
+        "baseline": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 80676
+        },
+        "baseline_rationed": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 57293
+        },
+        "conventional": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 52109
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 50661
+        }
+      },
+      {
+        "weeklySupplyLitres": 16000,
+        "baseline": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 80676
+        },
+        "baseline_rationed": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 57293
+        },
+        "conventional": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 52109
+        },
+        "sentinel": {
+          "criticalHours": 936.5,
+          "tier1Hours": 936.5,
+          "dieselLitres": 50661
+        }
+      }
+    ],
+    "sampleSms": [
+      "MGS 24/10 12:00 FUEL RUNWAY: FULL SERVICE restored. Diesel 2525L, batt 100%. ICU/OT/cold chain protected.",
+      "MGS 24/10 22:00 Diesel received. Tank 4977L. Runway recalculated.",
+      "MGS 24/10 22:00 FUEL RUNWAY: Tier3 (HVAC/laundry/admin) DEFERRED. Diesel 4977L, batt 90%. ICU/OT/cold chain protected.",
+      "MGS 27/10 15:00 FUEL RUNWAY: FULL SERVICE restored. Diesel 2931L, batt 93%. ICU/OT/cold chain protected.",
+      "MGS 28/10 10:00 Diesel received. Tank 4783L. Runway recalculated.",
+      "MGS 28/10 10:00 FUEL RUNWAY: Tier3 (HVAC/laundry/admin) DEFERRED. Diesel 4783L, batt 62%. ICU/OT/cold chain protected.",
+      "MGS 31/10 00:30 GRID BACK, tie closed. Batt 52%. Diesel 2841L. Restoring normal mode.",
+      "MGS 31/10 22:00 Diesel received. Tank 5841L. Runway recalculated."
+    ]
+  },
+  "monteCarlo14Day": {
+    "well": {
+      "label": "Well-maintained (Fehr data)",
+      "trials": 300,
+      "outageHours": 336,
+      "nrelSingleGensetR336": 0.816,
+      "byStrategy": {
+        "baseline": {
+          "pTier1_72h": 0.527,
+          "pTier1_168h": 0,
+          "pTier1_336h": 0,
+          "pZeroBreaks": 0,
+          "meanTier1Hours": 168,
+          "meanCriticalHours": 167.7,
+          "p10CriticalHours": 126.25,
+          "p50CriticalHours": 167.75,
+          "p90CriticalHours": 209.75,
+          "meanDieselLitres": 14499,
+          "meanGensetRunHours": 168.1
+        },
+        "conventional": {
+          "pTier1_72h": 0.847,
+          "pTier1_168h": 0.437,
+          "pTier1_336h": 0.043,
+          "pZeroBreaks": 0.043,
+          "meanTier1Hours": 284.8,
+          "meanCriticalHours": 272.6,
+          "p10CriticalHours": 226.25,
+          "p50CriticalHours": 273.75,
+          "p90CriticalHours": 321.25,
+          "meanDieselLitres": 14130,
+          "meanGensetRunHours": 214.9
+        },
+        "sentinel": {
+          "pTier1_72h": 0.983,
+          "pTier1_168h": 0.97,
+          "pTier1_336h": 0.91,
+          "pZeroBreaks": 0.91,
+          "meanTier1Hours": 334.4,
+          "meanCriticalHours": 276.7,
+          "p10CriticalHours": 206,
+          "p50CriticalHours": 286.25,
+          "p90CriticalHours": 336,
+          "meanDieselLitres": 12407,
+          "meanGensetRunHours": 130.4
+        }
+      }
+    },
+    "nrc": {
+      "label": "Average (NRC data)",
+      "trials": 300,
+      "outageHours": 336,
+      "nrelSingleGensetR336": 0.586,
+      "byStrategy": {
+        "baseline": {
+          "pTier1_72h": 0.473,
+          "pTier1_168h": 0,
+          "pTier1_336h": 0,
+          "pZeroBreaks": 0,
+          "meanTier1Hours": 165.4,
+          "meanCriticalHours": 165.1,
+          "p10CriticalHours": 122.5,
+          "p50CriticalHours": 165.75,
+          "p90CriticalHours": 209.75,
+          "meanDieselLitres": 14246,
+          "meanGensetRunHours": 165.5
+        },
+        "conventional": {
+          "pTier1_72h": 0.78,
+          "pTier1_168h": 0.377,
+          "pTier1_336h": 0.033,
+          "pZeroBreaks": 0.033,
+          "meanTier1Hours": 279.9,
+          "meanCriticalHours": 266.9,
+          "p10CriticalHours": 218.75,
+          "p50CriticalHours": 269,
+          "p90CriticalHours": 316.25,
+          "meanDieselLitres": 13612,
+          "meanGensetRunHours": 207
+        },
+        "sentinel": {
+          "pTier1_72h": 0.95,
+          "pTier1_168h": 0.873,
+          "pTier1_336h": 0.777,
+          "pZeroBreaks": 0.777,
+          "meanTier1Hours": 330.5,
+          "meanCriticalHours": 272.5,
+          "p10CriticalHours": 200,
+          "p50CriticalHours": 278,
+          "p90CriticalHours": 336,
+          "meanDieselLitres": 12013,
+          "meanGensetRunHours": 126
+        }
+      }
+    },
+    "poor": {
+      "label": "Poorly maintained (Hong Kong data)",
+      "trials": 300,
+      "outageHours": 336,
+      "nrelSingleGensetR336": 0.004,
+      "byStrategy": {
+        "baseline": {
+          "pTier1_72h": 0.15,
+          "pTier1_168h": 0,
+          "pTier1_336h": 0,
+          "pZeroBreaks": 0,
+          "meanTier1Hours": 141.9,
+          "meanCriticalHours": 141.8,
+          "p10CriticalHours": 90.5,
+          "p50CriticalHours": 145,
+          "p90CriticalHours": 192.75,
+          "meanDieselLitres": 12205,
+          "meanGensetRunHours": 141.9
+        },
+        "conventional": {
+          "pTier1_72h": 0.34,
+          "pTier1_168h": 0.04,
+          "pTier1_336h": 0,
+          "pZeroBreaks": 0,
+          "meanTier1Hours": 241.6,
+          "meanCriticalHours": 219.6,
+          "p10CriticalHours": 166.25,
+          "p50CriticalHours": 223.75,
+          "p90CriticalHours": 271.25,
+          "meanDieselLitres": 10104,
+          "meanGensetRunHours": 153
+        },
+        "sentinel": {
+          "pTier1_72h": 0.623,
+          "pTier1_168h": 0.363,
+          "pTier1_336h": 0.113,
+          "pZeroBreaks": 0.113,
+          "meanTier1Hours": 305,
+          "meanCriticalHours": 231.2,
+          "p10CriticalHours": 153.75,
+          "p50CriticalHours": 241.5,
+          "p90CriticalHours": 293,
+          "meanDieselLitres": 10024,
+          "meanGensetRunHours": 103.7
+        }
+      }
+    }
+  },
+  "annualEconomics": {
+    "site": "maiduguri_2024",
+    "feeder": {
+      "outagesPerDay": 1.08,
+      "medianDurationHours": 4,
+      "sigma": 0.8
+    },
+    "lineOutageDays": 39,
+    "capex": {
+      "pvUsd": 390000,
+      "storageUsd": 156000,
+      "inverterUsd": 56100,
+      "platformUsd": 12000,
+      "installUsd": 90315,
+      "totalUsd": 704415,
+      "totalNaira": 1056622500
     },
     "baseline": {
-      "dieselLitres": 1295,
-      "gensetRuntimeH": 12.3,
-      "opexNaira": 5391252,
-      "co2Kg": 3469,
-      "criticalServiceHours": 12.25
+      "opexNaira": 815768121.4,
+      "servedKwh": 2477386.1,
+      "demandKwh": 2477691.9,
+      "dieselLitres": 230843.6,
+      "gridKwh": 1721196.9,
+      "pvKwh": 0,
+      "gensetRuntimeH": 2667.3,
+      "outageHours": 2667.3,
+      "criticalMaintainedHours": 2667.3,
+      "tier1Interruptions": 259,
+      "gridCostNaira": 356287760.9,
+      "dieselCostNaira": 450144985.5,
+      "maintenanceNaira": 9335375
     },
-    "comparison": {
-      "dieselAvoidedLitres3day": 531,
-      "dieselAvoidedPct": 41,
-      "opexSavingPct3day": 23.9
-    }
-  },
-  "annualized": {
-    "mix": "320 normal days + 45 outage days (12.5 islanded hours each, incl. 30-min reconnection delay)",
-    "baselineOpexNaira": 569580416,
-    "proposedOpexNaira": 457775729,
-    "annualSavingsNaira": 111804687,
-    "dieselLitresBaseline": 58255,
-    "dieselLitresProposed": 34345,
-    "dieselLitresAvoided": 23910,
-    "co2TonnesAvoided": 64.1,
-    "criticalServiceHoursPerYear": 563
-  },
-  "economics": {
-    "capex": {
-      "pvUsd": 240000,
-      "storageUsd": 168000,
-      "inverterUsd": 30000,
-      "installUsd": 52560,
-      "totalUsd": 490560,
-      "totalNaira": 760368000
+    "proposed": {
+      "opexNaira": 504600213,
+      "servedKwh": 2477691.9,
+      "demandKwh": 2477691.9,
+      "dieselLitres": 139189.9,
+      "gridKwh": 1103122.6,
+      "pvKwh": 926849.6,
+      "gensetRuntimeH": 1381,
+      "outageHours": 2667.3,
+      "criticalMaintainedHours": 2667.3,
+      "tier1Interruptions": 0,
+      "gridCostNaira": 228346388.1,
+      "dieselCostNaira": 271420324.9,
+      "maintenanceNaira": 4833500
     },
-    "simplePaybackYears": 7.9,
-    "npvNaira10y": -326251276,
-    "irr": 4.6,
-    "lcoeNairaPerKwh": 75,
-    "eaasTariffNairaPerKwh": 65,
-    "eaasAssetTariffNairaPerKwh": 328,
-    "eaasAnnualFeeNaira": 160980202,
-    "eaasBreakevenFinancingRatePct": 4.6,
-    "baselineBlendedNairaPerKwh": 231,
-    "serviceTariffPerBedDayNaira": 1764,
+    "annualSavingsNaira": 311167908,
+    "netAnnualBenefitNaira": 288388571,
+    "paybackYears": 3.69,
+    "npv20yAt18pct": 420540693,
+    "npv20yAt10pct": 1250957016,
+    "irr": 0.2621,
+    "lcoeNairaPerKwh": 295,
+    "baselineLcoeNairaPerKwh": 329,
+    "dieselLitresAvoidedPerYear": 91654,
+    "dieselAvoidedPct": 0.397,
+    "co2TonnesAvoidedPerYear": 245.6,
+    "gensetHoursAvoidedPerYear": 1286,
+    "eaasAnnualFeeNaira": 248934327,
+    "eaasMonthlyFeeNaira": 20744527,
+    "eaasProviderIrr": 0.2047,
+    "eaasBreakevenFinancingRate": 0.2416,
+    "energyCostPerBedDay": {
+      "baseline": 8940,
+      "proposedEaaS": 8258
+    },
     "sensitivity": [
       {
         "variable": "Diesel price",
         "change": "−30%",
-        "paybackYears": 8.9,
-        "npvNaira": -376217729,
-        "eaasTariffNairaPerKwh": 65
+        "paybackYears": 4.5,
+        "npvNaira": 140287878,
+        "irr": 0.208,
+        "eaasTariffNairaPerKwh": 83.15820388519806
       },
       {
         "variable": "Diesel price",
         "change": "+30%",
-        "paybackYears": 7.1,
-        "npvNaira": -276284822,
-        "eaasTariffNairaPerKwh": 65
+        "paybackYears": 3.1,
+        "npvNaira": 700793507,
+        "irr": 0.315,
+        "eaasTariffNairaPerKwh": 117.7822978265713
       },
       {
         "variable": "Equipment CapEx",
-        "change": "+20%",
-        "paybackYears": 9.8,
-        "npvNaira": -491993513,
-        "eaasTariffNairaPerKwh": 78
+        "change": "+30%",
+        "paybackYears": 4.9,
+        "npvNaira": 75731708,
+        "irr": 0.192,
+        "eaasTariffNairaPerKwh": 100.47025085588466
       },
       {
         "variable": "Equipment CapEx",
         "change": "−20%",
-        "paybackYears": 6.1,
-        "npvNaira": -160509038,
-        "eaasTariffNairaPerKwh": 52
+        "paybackYears": 2.9,
+        "npvNaira": 650413349,
+        "irr": 0.335,
+        "eaasTariffNairaPerKwh": 100.47025085588466
+      },
+      {
+        "variable": "Naira depreciation",
+        "change": "+20% ₦/$",
+        "paybackYears": 4.5,
+        "npvNaira": 179360081,
+        "irr": 0.21,
+        "eaasTariffNairaPerKwh": 100.47025085588466
       },
       {
         "variable": "Solar yield (PR)",
         "change": "−10%",
-        "paybackYears": 9,
-        "npvNaira": -379031755,
-        "eaasTariffNairaPerKwh": 65
+        "paybackYears": 4.2,
+        "npvNaira": 250590023,
+        "irr": 0.23,
+        "eaasTariffNairaPerKwh": 89.97189427879658
       },
       {
-        "variable": "Grid tariff",
-        "change": "−20%",
-        "paybackYears": 9.3,
-        "npvNaira": -393432289,
-        "eaasTariffNairaPerKwh": 65
+        "variable": "Line outage",
+        "change": "none this year",
+        "paybackYears": 4.1,
+        "npvNaira": 281899415,
+        "irr": 0.236,
+        "eaasTariffNairaPerKwh": 91.90596821487729
       },
       {
-        "variable": "Outage frequency",
-        "change": "45 → 20 days/yr",
-        "paybackYears": 10,
-        "npvNaira": -418804829,
-        "eaasTariffNairaPerKwh": 70
+        "variable": "Feeder interruptions",
+        "change": "halved",
+        "paybackYears": 4.1,
+        "npvNaira": 258296562,
+        "irr": 0.231,
+        "eaasTariffNairaPerKwh": 90.44795005376518
       },
       {
-        "variable": "Outage frequency",
-        "change": "45 → 70 days/yr",
-        "paybackYears": 6.5,
-        "npvNaira": -233697722,
-        "eaasTariffNairaPerKwh": 61
+        "variable": "Discount rate",
+        "change": "18% → 10%",
+        "paybackYears": 3.7,
+        "npvNaira": 1250957016,
+        "irr": 0.262,
+        "eaasTariffNairaPerKwh": 100.47025085588466
       }
     ]
   },
-  "forecasting": {
-    "persistenceMAE": 8.6,
-    "persistenceRMSE": 10.4,
-    "scheduleAwareMAE": 8.1,
-    "scheduleAwareRMSE": 9.7,
-    "anomalies": 9
+  "solarForecast": {
+    "trainYears": [
+      "maiduguri_2022",
+      "maiduguri_2023"
+    ],
+    "testYear": "maiduguri_2024",
+    "testDays": 363,
+    "meanTestKwhM2": 5.748,
+    "models": [
+      {
+        "id": "persistence",
+        "label": "Persistence",
+        "description": "Tomorrow = today (naive baseline)",
+        "maeKwhM2": 0.73,
+        "rmseKwhM2": 1.131,
+        "maePct": 0.127,
+        "skill": -0.241
+      },
+      {
+        "id": "persistence3",
+        "label": "3-day persistence mean",
+        "description": "Mean of the last three days (used live by the governor)",
+        "maeKwhM2": 0.644,
+        "rmseKwhM2": 0.95,
+        "maePct": 0.112,
+        "skill": -0.043
+      },
+      {
+        "id": "climatology",
+        "label": "Climatology",
+        "description": "Same ±7-day window averaged over 2022–2023",
+        "maeKwhM2": 0.632,
+        "rmseKwhM2": 0.911,
+        "maePct": 0.11,
+        "skill": 0
+      },
+      {
+        "id": "blend",
+        "label": "Learned blend (OLS)",
+        "description": "a·3-day mean + b·climatology + c, fitted on 2022–2023 only",
+        "maeKwhM2": 0.612,
+        "rmseKwhM2": 0.886,
+        "maePct": 0.107,
+        "skill": 0.028
+      }
+    ],
+    "blend": {
+      "a": 0.192,
+      "b": 0.83,
+      "c": -0.131
+    },
+    "confidenceCoverage": [
+      {
+        "k": 0.5,
+        "coverage": 0.981
+      },
+      {
+        "k": 0.6,
+        "coverage": 0.964
+      },
+      {
+        "k": 0.7,
+        "coverage": 0.945
+      },
+      {
+        "k": 0.8,
+        "coverage": 0.917
+      },
+      {
+        "k": 0.9,
+        "coverage": 0.818
+      },
+      {
+        "k": 1,
+        "coverage": 0.548
+      }
+    ]
   },
-  "sizingSearch": {
-    "target": "≥ 11.4 critical-service hours of the 12.5 islanded hours AND ≥ 30% diesel avoided vs baseline; ranked by total annualized cost (opex + CapEx × CRF 14%, 10 yr)",
+  "sizing": {
+    "target": "Tier-1 maintained for all 936 h AND critical service ≥ 99% of hours in the Maiduguri replay at 6,000 L/week; feasible designs ranked by 20-yr NPV at 18%",
     "best": {
-      "pvKwp": 400,
-      "batteryKwh": 0,
-      "criticalServiceHours": 12.25,
-      "outageHours": 12.5,
-      "criticalServiceFraction": 0.98,
-      "dieselLitres3Days": 739,
-      "dieselAvoidedPct": 0.429,
-      "annualOpexNaira": 412761223,
-      "capexNaira": 622182400,
-      "totalAnnualizedCostNaira": 532042013,
-      "renewableShare": 0.275,
+      "pvKwp": 600,
+      "batteryKwh": 300,
+      "inverterKw": 510,
+      "criticalServiceHours": 936.5,
+      "tier1Hours": 936.5,
+      "outageHours": 936,
+      "criticalServiceFraction": 1.001,
+      "replayDieselLitres": 36445,
+      "dieselAvoidedPct": 0.357,
+      "annualOpexNaira": 522967340,
+      "capexNaira": 922072500,
+      "npvNaira": 479523536,
+      "paybackYears": 3.41221755242809,
+      "totalAnnualizedCostNaira": 699741124,
+      "renewableShare": 0.467,
       "feasible": true
     },
-    "top": [
+    "candidates": [
       {
-        "pvKwp": 400,
-        "batteryKwh": 0,
-        "criticalServiceHours": 12.25,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.98,
-        "dieselLitres3Days": 739,
-        "dieselAvoidedPct": 0.429,
-        "annualOpexNaira": 412761223,
-        "capexNaira": 622182400,
-        "totalAnnualizedCostNaira": 532042013,
-        "renewableShare": 0.275,
+        "pvKwp": 600,
+        "batteryKwh": 300,
+        "inverterKw": 510,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 36445,
+        "dieselAvoidedPct": 0.357,
+        "annualOpexNaira": 522967340,
+        "capexNaira": 922072500,
+        "npvNaira": 479523536,
+        "paybackYears": 3.41221755242809,
+        "totalAnnualizedCostNaira": 699741124,
+        "renewableShare": 0.467,
         "feasible": true
       },
       {
-        "pvKwp": 300,
-        "batteryKwh": 0,
-        "criticalServiceHours": 12.25,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.98,
-        "dieselLitres3Days": 878,
+        "pvKwp": 600,
+        "batteryKwh": 600,
+        "inverterKw": 510,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 36159,
+        "dieselAvoidedPct": 0.397,
+        "annualOpexNaira": 504600213,
+        "capexNaira": 1056622500,
+        "npvNaira": 420540693,
+        "paybackYears": 3.691173325497448,
+        "totalAnnualizedCostNaira": 707169054,
+        "renewableShare": 0.459,
+        "feasible": true
+      },
+      {
+        "pvKwp": 600,
+        "batteryKwh": 900,
+        "inverterKw": 510,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 35975,
+        "dieselAvoidedPct": 0.424,
+        "annualOpexNaira": 496215171,
+        "capexNaira": 1191172500,
+        "npvNaira": 309382484,
+        "paybackYears": 4.075259403149768,
+        "totalAnnualizedCostNaira": 724579069,
+        "renewableShare": 0.459,
+        "feasible": true
+      },
+      {
+        "pvKwp": 600,
+        "batteryKwh": 1200,
+        "inverterKw": 510,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 35700,
+        "dieselAvoidedPct": 0.449,
+        "annualOpexNaira": 489112308,
+        "capexNaira": 1325722500,
+        "npvNaira": 191522451,
+        "paybackYears": 4.464042963138649,
+        "totalAnnualizedCostNaira": 743271263,
+        "renewableShare": 0.462,
+        "feasible": true
+      },
+      {
+        "pvKwp": 450,
+        "batteryKwh": 900,
+        "inverterKw": 380,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 36085,
         "dieselAvoidedPct": 0.322,
-        "annualOpexNaira": 451966021,
-        "capexNaira": 468720000,
-        "totalAnnualizedCostNaira": 541825992,
-        "renewableShare": 0.206,
+        "annualOpexNaira": 574424963,
+        "capexNaira": 998317500,
+        "npvNaira": 110987576,
+        "paybackYears": 4.59530179158831,
+        "totalAnnualizedCostNaira": 765815946,
+        "renewableShare": 0.387,
         "feasible": true
       },
       {
-        "pvKwp": 400,
-        "batteryKwh": 200,
-        "criticalServiceHours": 12.35,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.988,
-        "dieselLitres3Days": 707,
-        "dieselAvoidedPct": 0.454,
-        "annualOpexNaira": 415115531,
-        "capexNaira": 719398400,
-        "totalAnnualizedCostNaira": 553033945,
-        "renewableShare": 0.275,
+        "pvKwp": 450,
+        "batteryKwh": 1200,
+        "inverterKw": 400,
+        "criticalServiceHours": 936.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 1.001,
+        "replayDieselLitres": 36133,
+        "dieselAvoidedPct": 0.345,
+        "annualOpexNaira": 567972660,
+        "capexNaira": 1136662500,
+        "npvNaira": -14689550,
+        "paybackYears": 5.137415237539388,
+        "totalAnnualizedCostNaira": 785886253,
+        "renewableShare": 0.386,
         "feasible": true
+      },
+      {
+        "pvKwp": 450,
+        "batteryKwh": 600,
+        "inverterKw": 380,
+        "criticalServiceHours": 917.25,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.98,
+        "replayDieselLitres": 36329,
+        "dieselAvoidedPct": 0.293,
+        "annualOpexNaira": 584241935,
+        "capexNaira": 863767500,
+        "npvNaira": 214661234,
+        "paybackYears": 4.116552486062454,
+        "totalAnnualizedCostNaira": 749837861,
+        "renewableShare": 0.387,
+        "feasible": false
+      },
+      {
+        "pvKwp": 450,
+        "batteryKwh": 300,
+        "inverterKw": 380,
+        "criticalServiceHours": 828.75,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.885,
+        "replayDieselLitres": 36695,
+        "dieselAvoidedPct": 0.256,
+        "annualOpexNaira": 601244583,
+        "capexNaira": 729217500,
+        "npvNaira": 280776069,
+        "paybackYears": 3.736425936289841,
+        "totalAnnualizedCostNaira": 741045452,
+        "renewableShare": 0.397,
+        "feasible": false
       },
       {
         "pvKwp": 300,
-        "batteryKwh": 200,
-        "criticalServiceHours": 12.35,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.988,
-        "dieselLitres3Days": 839,
-        "dieselAvoidedPct": 0.352,
-        "annualOpexNaira": 453837911,
-        "capexNaira": 565936000,
-        "totalAnnualizedCostNaira": 562335506,
-        "renewableShare": 0.206,
-        "feasible": true
-      },
-      {
-        "pvKwp": 400,
-        "batteryKwh": 400,
-        "criticalServiceHours": 12.45,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.996,
-        "dieselLitres3Days": 658,
-        "dieselAvoidedPct": 0.492,
-        "annualOpexNaira": 416260593,
-        "capexNaira": 816614400,
-        "totalAnnualizedCostNaira": 572816631,
-        "renewableShare": 0.275,
-        "feasible": true
+        "batteryKwh": 1200,
+        "inverterKw": 400,
+        "criticalServiceHours": 613.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.655,
+        "replayDieselLitres": 36289,
+        "dieselAvoidedPct": 0.255,
+        "annualOpexNaira": 642726595,
+        "capexNaira": 968475000,
+        "npvNaira": -223729464,
+        "paybackYears": 6.490657370755786,
+        "totalAnnualizedCostNaira": 828396366,
+        "renewableShare": 0.292,
+        "feasible": false
       },
       {
         "pvKwp": 300,
-        "batteryKwh": 400,
-        "criticalServiceHours": 12.45,
-        "outageHours": 12.5,
-        "criticalServiceFraction": 0.996,
-        "dieselLitres3Days": 800,
-        "dieselAvoidedPct": 0.382,
-        "annualOpexNaira": 455762925,
-        "capexNaira": 663152000,
-        "totalAnnualizedCostNaira": 582898143,
-        "renewableShare": 0.206,
-        "feasible": true
+        "batteryKwh": 900,
+        "inverterKw": 300,
+        "criticalServiceHours": 606.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.648,
+        "replayDieselLitres": 36432,
+        "dieselAvoidedPct": 0.229,
+        "annualOpexNaira": 650089013,
+        "capexNaira": 814950000,
+        "npvNaira": -85142689,
+        "paybackYears": 5.635906071171563,
+        "totalAnnualizedCostNaira": 806325963,
+        "renewableShare": 0.292,
+        "feasible": false
+      },
+      {
+        "pvKwp": 300,
+        "batteryKwh": 600,
+        "inverterKw": 260,
+        "criticalServiceHours": 587.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.628,
+        "replayDieselLitres": 36302,
+        "dieselAvoidedPct": 0.197,
+        "annualOpexNaira": 660730720,
+        "capexNaira": 672810000,
+        "npvNaira": 23053520,
+        "paybackYears": 4.929203989268366,
+        "totalAnnualizedCostNaira": 789717507,
+        "renewableShare": 0.294,
+        "feasible": false
+      },
+      {
+        "pvKwp": 300,
+        "batteryKwh": 300,
+        "inverterKw": 260,
+        "criticalServiceHours": 440.5,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.471,
+        "replayDieselLitres": 36585,
+        "dieselAvoidedPct": 0.169,
+        "annualOpexNaira": 673551613,
+        "capexNaira": 538260000,
+        "npvNaira": 111025977,
+        "paybackYears": 4.270616466352299,
+        "totalAnnualizedCostNaira": 776743343,
+        "renewableShare": 0.307,
+        "feasible": false
+      },
+      {
+        "pvKwp": 150,
+        "batteryKwh": 1200,
+        "inverterKw": 400,
+        "criticalServiceHours": 186,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.199,
+        "replayDieselLitres": 36803,
+        "dieselAvoidedPct": 0.164,
+        "annualOpexNaira": 717184826,
+        "capexNaira": 800287500,
+        "npvNaira": -431223768,
+        "paybackYears": 10.343257931884743,
+        "totalAnnualizedCostNaira": 870610776,
+        "renewableShare": 0.167,
+        "feasible": false
+      },
+      {
+        "pvKwp": 150,
+        "batteryKwh": 900,
+        "inverterKw": 300,
+        "criticalServiceHours": 179,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.191,
+        "replayDieselLitres": 36792,
+        "dieselAvoidedPct": 0.136,
+        "annualOpexNaira": 724773435,
+        "capexNaira": 646762500,
+        "npvNaira": -293819272,
+        "paybackYears": 8.910754818821129,
+        "totalAnnualizedCostNaira": 848766564,
+        "renewableShare": 0.168,
+        "feasible": false
+      },
+      {
+        "pvKwp": 150,
+        "batteryKwh": 600,
+        "inverterKw": 200,
+        "criticalServiceHours": 154,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.165,
+        "replayDieselLitres": 36965,
+        "dieselAvoidedPct": 0.106,
+        "annualOpexNaira": 734875294,
+        "capexNaira": 493237500,
+        "npvNaira": -169551279,
+        "paybackYears": 7.559951179939994,
+        "totalAnnualizedCostNaira": 829435601,
+        "renewableShare": 0.169,
+        "feasible": false
+      },
+      {
+        "pvKwp": 150,
+        "batteryKwh": 300,
+        "inverterKw": 150,
+        "criticalServiceHours": 120,
+        "tier1Hours": 936.5,
+        "outageHours": 936,
+        "criticalServiceFraction": 0.128,
+        "replayDieselLitres": 37065,
+        "dieselAvoidedPct": 0.084,
+        "annualOpexNaira": 744740751,
+        "capexNaira": 349200000,
+        "npvNaira": -55089348,
+        "paybackYears": 6.023530068351051,
+        "totalAnnualizedCostNaira": 811687119,
+        "renewableShare": 0.18,
+        "feasible": false
       }
     ]
   },
-  "scenarios": [
+  "fleet": {
+    "rows": [
+      {
+        "siteId": "maiduguri",
+        "site": "Maiduguri, Borno (NG)",
+        "regime": "conflict-affected corridor",
+        "archetype": "250-bed referral hospital",
+        "annualGhiKwhM2": 2104,
+        "specificYieldKwhPerKwp": 1545,
+        "capexUsd": 704415,
+        "annualSavingsNaira": 311167908,
+        "paybackYears": 3.691173325497448,
+        "npvNaira": 420540693,
+        "irr": 0.2621154704861287,
+        "dieselAvoidedLitres": 91654,
+        "dieselAvoidedPct": 0.39703799083728974,
+        "co2AvoidedT": 246,
+        "tier1BreaksAvoided": 259,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "kano",
+        "site": "Kano (NG)",
+        "regime": "typical feeder",
+        "archetype": "250-bed referral hospital",
+        "annualGhiKwhM2": 2127,
+        "specificYieldKwhPerKwp": 1571,
+        "capexUsd": 704415,
+        "annualSavingsNaira": 288408719,
+        "paybackYears": 4.010497833242973,
+        "npvNaira": 301580668,
+        "irr": 0.2393582225054517,
+        "dieselAvoidedLitres": 71774,
+        "dieselAvoidedPct": 0.4085486965165699,
+        "co2AvoidedT": 192,
+        "tier1BreaksAvoided": 300,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "abuja",
+        "site": "Abuja (NG)",
+        "regime": "typical feeder",
+        "archetype": "250-bed referral hospital",
+        "annualGhiKwhM2": 1913,
+        "specificYieldKwhPerKwp": 1428,
+        "capexUsd": 704415,
+        "annualSavingsNaira": 261200427,
+        "paybackYears": 4.474832375037687,
+        "npvNaira": 159365632,
+        "irr": 0.21172741420543206,
+        "dieselAvoidedLitres": 64492,
+        "dieselAvoidedPct": 0.3670989656155247,
+        "co2AvoidedT": 173,
+        "tier1BreaksAvoided": 300,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "portharcourt",
+        "site": "Port Harcourt (NG)",
+        "regime": "typical feeder",
+        "archetype": "250-bed referral hospital",
+        "annualGhiKwhM2": 1542,
+        "specificYieldKwhPerKwp": 1172,
+        "capexUsd": 704415,
+        "annualSavingsNaira": 214160660,
+        "paybackYears": 5.593132897768987,
+        "npvNaira": -86506558,
+        "irr": 0.16231443336030893,
+        "dieselAvoidedLitres": 52795,
+        "dieselAvoidedPct": 0.30051911370150675,
+        "co2AvoidedT": 141,
+        "tier1BreaksAvoided": 300,
+        "verdict": "viable"
+      },
+      {
+        "siteId": "lagos",
+        "site": "Lagos (NG)",
+        "regime": "Band A urban",
+        "archetype": "250-bed referral hospital",
+        "annualGhiKwhM2": 1714,
+        "specificYieldKwhPerKwp": 1302,
+        "capexUsd": 704415,
+        "annualSavingsNaira": 182034937,
+        "paybackYears": 6.745151983995613,
+        "npvNaira": -254424520,
+        "irr": 0.12664355091976887,
+        "dieselAvoidedLitres": 15740,
+        "dieselAvoidedPct": 0.3880191430887432,
+        "co2AvoidedT": 42,
+        "tier1BreaksAvoided": 137,
+        "verdict": "viable"
+      },
+      {
+        "siteId": "maiduguri",
+        "site": "Maiduguri, Borno (NG)",
+        "regime": "conflict-affected corridor",
+        "archetype": "80-bed general hospital",
+        "annualGhiKwhM2": 2104,
+        "specificYieldKwhPerKwp": 1545,
+        "capexUsd": 254409,
+        "annualSavingsNaira": 128062749,
+        "paybackYears": 3.328684878634527,
+        "npvNaira": 210443930,
+        "irr": 0.29276942568612674,
+        "dieselAvoidedLitres": 40399,
+        "dieselAvoidedPct": 0.41138294697052924,
+        "co2AvoidedT": 108,
+        "tier1BreaksAvoided": 259,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "kano",
+        "site": "Kano (NG)",
+        "regime": "typical feeder",
+        "archetype": "80-bed general hospital",
+        "annualGhiKwhM2": 2127,
+        "specificYieldKwhPerKwp": 1571,
+        "capexUsd": 254409,
+        "annualSavingsNaira": 115737121,
+        "paybackYears": 3.7310614360371814,
+        "npvNaira": 146019093,
+        "irr": 0.25903862329743654,
+        "dieselAvoidedLitres": 31552,
+        "dieselAvoidedPct": 0.4220379620382564,
+        "co2AvoidedT": 85,
+        "tier1BreaksAvoided": 300,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "abuja",
+        "site": "Abuja (NG)",
+        "regime": "typical feeder",
+        "archetype": "80-bed general hospital",
+        "annualGhiKwhM2": 1913,
+        "specificYieldKwhPerKwp": 1428,
+        "capexUsd": 254409,
+        "annualSavingsNaira": 105204021,
+        "paybackYears": 4.160941930382992,
+        "npvNaira": 90963627,
+        "irr": 0.22976795903585445,
+        "dieselAvoidedLitres": 28557,
+        "dieselAvoidedPct": 0.3819788112777245,
+        "co2AvoidedT": 77,
+        "tier1BreaksAvoided": 300,
+        "verdict": "strong"
+      },
+      {
+        "siteId": "portharcourt",
+        "site": "Port Harcourt (NG)",
+        "regime": "typical feeder",
+        "archetype": "80-bed general hospital",
+        "annualGhiKwhM2": 1542,
+        "specificYieldKwhPerKwp": 1172,
+        "capexUsd": 254409,
+        "annualSavingsNaira": 86999151,
+        "paybackYears": 5.1969232795500755,
+        "npvNaira": -4191417,
+        "irr": 0.17764849463892063,
+        "dieselAvoidedLitres": 23710,
+        "dieselAvoidedPct": 0.3171428170545415,
+        "co2AvoidedT": 64,
+        "tier1BreaksAvoided": 300,
+        "verdict": "viable"
+      },
+      {
+        "siteId": "lagos",
+        "site": "Lagos (NG)",
+        "regime": "Band A urban",
+        "archetype": "80-bed general hospital",
+        "annualGhiKwhM2": 1714,
+        "specificYieldKwhPerKwp": 1302,
+        "capexUsd": 254409,
+        "annualSavingsNaira": 67011945,
+        "paybackYears": 7.155366321337241,
+        "npvNaira": -108662561,
+        "irr": 0.1163360329799229,
+        "dieselAvoidedLitres": 6942,
+        "dieselAvoidedPct": 0.40187019153416814,
+        "co2AvoidedT": 19,
+        "tier1BreaksAvoided": 137,
+        "verdict": "viable"
+      }
+    ],
+    "costCurve": [
+      {
+        "sites": 1,
+        "factor": 1,
+        "capexPerSiteUsd": 704415
+      },
+      {
+        "sites": 2,
+        "factor": 0.94,
+        "capexPerSiteUsd": 662150
+      },
+      {
+        "sites": 5,
+        "factor": 0.8661733317809088,
+        "capexPerSiteUsd": 610145
+      },
+      {
+        "sites": 10,
+        "factor": 0.8142029318740542,
+        "capexPerSiteUsd": 573537
+      },
+      {
+        "sites": 20,
+        "factor": 0.765350755961611,
+        "capexPerSiteUsd": 539125
+      },
+      {
+        "sites": 50,
+        "factor": 0.75,
+        "capexPerSiteUsd": 528311
+      },
+      {
+        "sites": 100,
+        "factor": 0.75,
+        "capexPerSiteUsd": 528311
+      }
+    ]
+  },
+  "scenarioLab": [
     {
       "id": "A",
       "name": "A · Normal operations",
       "outageHours": 4,
-      "criticalServiceHours": 4,
-      "continuity": 1,
-      "dieselLitres": 80,
-      "baselineDieselLitres": 321,
-      "dieselAvoidedPct": 75.1,
-      "unservedKwh": 3.7,
-      "opexNaira": 3446614
+      "criticalHours": 4,
+      "tier1Hours": 4,
+      "baselineCriticalHours": 4,
+      "dieselLitres": 0,
+      "baselineDieselLitres": 364,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 2,
+      "unservedKwh": 0
     },
     {
       "id": "B",
       "name": "B · 12-hour line outage",
       "outageHours": 12.5,
-      "criticalServiceHours": 12.5,
-      "continuity": 1,
-      "dieselLitres": 763,
-      "baselineDieselLitres": 1295,
-      "dieselAvoidedPct": 41,
-      "unservedKwh": 4.6,
-      "opexNaira": 4100380
+      "criticalHours": 12.5,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 12.5,
+      "dieselLitres": 380,
+      "baselineDieselLitres": 1312,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "C",
       "name": "C · 24-hour extended outage",
       "outageHours": 24.5,
-      "criticalServiceHours": 24.49,
-      "continuity": 0.999,
-      "dieselLitres": 1523,
-      "baselineDieselLitres": 2084,
-      "dieselAvoidedPct": 26.9,
-      "unservedKwh": 14.6,
-      "opexNaira": 4792627
+      "criticalHours": 24.5,
+      "tier1Hours": 24.5,
+      "baselineCriticalHours": 24.5,
+      "dieselLitres": 1134,
+      "baselineDieselLitres": 2100,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "D",
       "name": "D · Low solar (overcast)",
       "outageHours": 6.5,
-      "criticalServiceHours": 6.5,
-      "continuity": 1,
-      "dieselLitres": 484,
-      "baselineDieselLitres": 675,
-      "dieselAvoidedPct": 28.2,
-      "unservedKwh": 25.5,
-      "opexNaira": 4369442
+      "criticalHours": 6.5,
+      "tier1Hours": 6.5,
+      "baselineCriticalHours": 6.5,
+      "dieselLitres": 544,
+      "baselineDieselLitres": 702,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "E",
       "name": "E · Battery degradation",
       "outageHours": 12.5,
-      "criticalServiceHours": 12.46,
-      "continuity": 0.997,
-      "dieselLitres": 797,
-      "baselineDieselLitres": 1295,
-      "dieselAvoidedPct": 38.5,
-      "unservedKwh": 19.6,
-      "opexNaira": 4126151
+      "criticalHours": 12.5,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 12.5,
+      "dieselLitres": 412,
+      "baselineDieselLitres": 1312,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "F",
       "name": "F · Demand surge (+30%)",
       "outageHours": 12.5,
-      "criticalServiceHours": 12.48,
-      "continuity": 0.998,
-      "dieselLitres": 1101,
-      "baselineDieselLitres": 1422,
-      "dieselAvoidedPct": 22.6,
-      "unservedKwh": 65.4,
-      "opexNaira": 5626271
+      "criticalHours": 12.5,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 12.5,
+      "dieselLitres": 784,
+      "baselineDieselLitres": 1668,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "G",
       "name": "G · Generator failure",
       "outageHours": 12.5,
-      "criticalServiceHours": 8.88,
-      "continuity": 0.71,
+      "criticalHours": 7,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 0,
       "dieselLitres": 0,
       "baselineDieselLitres": 0,
-      "dieselAvoidedPct": null,
-      "unservedKwh": 2367.1,
-      "opexNaira": 2874518
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "H",
       "name": "H · Power-quality disturbance",
       "outageHours": 2.5,
-      "criticalServiceHours": 2.5,
-      "continuity": 1,
-      "dieselLitres": 32,
+      "criticalHours": 2.5,
+      "tier1Hours": 2.5,
+      "baselineCriticalHours": 0,
+      "dieselLitres": 0,
       "baselineDieselLitres": 0,
-      "dieselAvoidedPct": null,
-      "unservedKwh": 3.2,
-      "opexNaira": 3403522
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 0,
+      "unservedKwh": 0
     },
     {
       "id": "I",
       "name": "I · Undersized system",
       "outageHours": 12.5,
-      "criticalServiceHours": 12.4,
-      "continuity": 0.992,
-      "dieselLitres": 1028,
-      "baselineDieselLitres": 1295,
-      "dieselAvoidedPct": 20.6,
-      "unservedKwh": 29.6,
-      "opexNaira": 4743770
+      "criticalHours": 12.5,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 12.5,
+      "dieselLitres": 1103,
+      "baselineDieselLitres": 1312,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     },
     {
       "id": "J",
       "name": "J · Brief #13 — city feeder collapse",
       "outageHours": 12.5,
-      "criticalServiceHours": 12.5,
-      "continuity": 1,
-      "dieselLitres": 763,
-      "baselineDieselLitres": 1295,
-      "dieselAvoidedPct": 41,
-      "unservedKwh": 4.6,
-      "opexNaira": 4100380
+      "criticalHours": 12.5,
+      "tier1Hours": 12.5,
+      "baselineCriticalHours": 12.5,
+      "dieselLitres": 380,
+      "baselineDieselLitres": 1312,
+      "tier1Interruptions": 0,
+      "baselineTier1Interruptions": 1,
+      "unservedKwh": 0
     }
   ]
 }

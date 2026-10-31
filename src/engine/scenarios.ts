@@ -68,6 +68,8 @@ export function defaultConfig(): SystemConfig {
     islandOnSeverePQ: true,
     peakShaveKw: null,
     seed: 42,
+    strategy: "sentinel",
+    sentinel: DEFAULT_SENTINEL_POLICY,
   };
 }
 

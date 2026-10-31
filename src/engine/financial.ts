@@ -121,6 +121,10 @@ export function annualConfig(cfg: SystemConfig, fin: FinancialConfig, strategy: 
     pv: { ...cfg.pv, tempCoeffPerC: cfg.pv.tempCoeffPerC ?? -0.0035, noctC: cfg.pv.noctC ?? 45, performanceRatio: cfg.pv.tempCoeffPerC === undefined ? Math.min(0.86, cfg.pv.performanceRatio + 0.04) : cfg.pv.performanceRatio },
     grid: { ...cfg.grid, available: true, outageWindows: windows },
     feederRegime: fin.feeder,
+    // Operating economics assume a serviceable generator and no demand surge: failures and
+    // surges are resilience questions (Line Outage / Resilience tabs), not the cost baseline.
+    genset: { ...cfg.genset, failed: false },
+    loadScale: 1,
     pqEvents: [],
     fuel: undefined,
     reliability: undefined,

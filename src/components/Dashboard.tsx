@@ -201,7 +201,7 @@ export function Dashboard() {
                 <XAxis dataKey="t" interval={11} {...AXIS_PROPS} />
                 <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
-                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Legend {...LEGEND_STYLE} />
                 <Area type="monotone" dataKey="pv" name="Solar" stackId="src" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
                 <Area type="monotone" dataKey="grid" name="Grid" stackId="src" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />
                 <Area type="monotone" dataKey="battery" name="Battery" stackId="src" stroke="#7DE9F7" strokeWidth={1.5} fill="url(#gradBattery)" />
@@ -269,7 +269,7 @@ export function Dashboard() {
                 <XAxis dataKey="t" interval={11} {...AXIS_PROPS} />
                 <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
                 <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
-                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Legend {...LEGEND_STYLE} />
                 <Area type="monotone" dataKey="unserved" name="Unserved" stroke="#EF4444" strokeWidth={1.4} fill="url(#gradUnserved)" />
                 <Area type="monotone" dataKey="pv" name="Solar" stackId="mix" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
                 <Area type="monotone" dataKey="grid" name="Grid" stackId="mix" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />

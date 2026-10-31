@@ -199,7 +199,8 @@ export function assessRunway(
 ): GovernorAssessment {
   const pol = cfg.sentinel ?? DEFAULT_SENTINEL_POLICY;
   const t = rt.t;
-  let horizon = pol.maxHorizonHours;
+  // Without a fuel-logistics schedule the outage end is unknown: plan one day ahead.
+  let horizon = cfg.fuel ? pol.maxHorizonHours : pol.minHorizonHours;
   if (cfg.fuel && cfg.fuel.deliveryEveryDays > 0) {
     // Next delivery the hospital EXPECTS (it does not know about future delays or misses).
     let k = rt.nextDeliveryIdx;
@@ -375,7 +376,7 @@ export function stepSim(cfg: SystemConfig, rtIn: DispatchRuntime, input: StepInp
   const [f1, f2, f3] = LEVEL_FRACTIONS[rt.serviceLevel];
   const target: TierDemand = { 1: demand[1] * f1, 2: demand[2] * f2, 3: demand[3] * f3 };
   const deferred: TierDemand = { 1: 0, 2: demand[2] - target[2], 3: demand[3] - target[3] };
-  const targetTotal = target[1] + target[2] + target[3];
+  let targetTotal = target[1] + target[2] + target[3];
 
   let pvToLoad = Math.min(pvCapped, targetTotal);
   let pvSurplus = pvCapped - pvToLoad;
@@ -560,6 +561,22 @@ export function stepSim(cfg: SystemConfig, rtIn: DispatchRuntime, input: StepInp
   if (hasBatt && pvSurplus > 0) {
     pvToBatt = Math.min(pvSurplus, Math.max(0, maxChargePowerNow(batt, rt.socKwh) - gridToBatt - gensetToBatt));
     pvSurplus -= pvToBatt;
+  }
+
+  // ---------- Opportunistic solar ----------
+  // PV that would otherwise be curtailed is free: it serves policy-deferred loads
+  // (Tier 2 first, then Tier 3) without touching the fuel runway or the battery.
+  if (rt.islanded && pvSurplus > 1e-9 && deferred[2] + deferred[3] > 0) {
+    const o2 = Math.min(pvSurplus, deferred[2]);
+    deferred[2] -= o2;
+    target[2] += o2;
+    pvSurplus -= o2;
+    const o3 = Math.min(pvSurplus, deferred[3]);
+    deferred[3] -= o3;
+    target[3] += o3;
+    pvSurplus -= o3;
+    pvToLoad += o2 + o3;
+    targetTotal += o2 + o3;
   }
 
   // ---------- SOC bookkeeping ----------

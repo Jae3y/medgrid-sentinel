@@ -49,12 +49,14 @@ describe("extended outage (scenario C)", () => {
 describe("generator failure (scenario G)", () => {
   it("stays honest about what storage + solar alone can carry", () => {
     const sim = runSimulation(scenarioById("G").build());
-    // Without the generator the 06:00–09:00 window (before PV ramps) cannot be fully
-    // served from a 600 kWh pack — Sentinel must show that deficit, not hide it.
-    const unserved =
-      sim.metrics.unservedKwh[1] + sim.metrics.unservedKwh[2] + sim.metrics.unservedKwh[3];
-    expect(unserved).toBeGreaterThan(0);
-    expect(sim.metrics.criticalServiceHours).toBeLessThan(12.5);
+    // Without the generator, storage + solar cannot carry the whole hospital through the
+    // outage. Sentinel must protect Tier-1 completely and SHOW what it gave up (deferred or
+    // unserved Tier-2/3 energy, fewer critical-service hours) — never hide it.
+    const gaveUp =
+      sim.metrics.unservedKwh[2] + sim.metrics.unservedKwh[3] + sim.metrics.deferredKwh;
+    expect(gaveUp).toBeGreaterThan(0);
+    expect(sim.metrics.criticalMaintainedHours).toBeLessThan(sim.metrics.outageHours);
+    expect(sim.metrics.tier1MaintainedHours).toBeGreaterThanOrEqual(sim.metrics.outageHours);
   });
 });
 

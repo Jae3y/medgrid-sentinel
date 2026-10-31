@@ -1,101 +1,125 @@
 "use client";
 
+import { useEffect } from "react";
+import { Target } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { fmtKwh, fmtNaira, fmtNum, fmtPct } from "@/lib/format";
-import { Badge, Card, Kpi, Note, Row } from "./ui";
-import { BookOpenCheck, Scale, Target } from "lucide-react";
+import { MAIDUGURI_EVENT } from "@/engine";
+import { Badge, Card, Note } from "./ui";
+import { fmtNaira, fmtNum, fmtPct, fmtUsd } from "@/lib/format";
+
+function QA({ q, children }: { q: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-surface-border/70 bg-navy-950/50 p-3.5">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan">{q}</div>
+      <div className="mt-1.5 text-[13px] leading-relaxed text-slate-300">{children}</div>
+    </div>
+  );
+}
 
 export function BriefPage() {
-  const { sim, baseline, econ } = useApp();
-  const m = sim.metrics;
-  const b = baseline.metrics;
-  const dieselAvoided = b.dieselLitres - m.dieselLitres;
+  const { missionResults, econ, econBusy, ensureEcon, mission } = useApp();
+  useEffect(() => {
+    if (!econ && !econBusy) ensureEcon();
+  }, [econ, econBusy, ensureEcon]);
+  const r = missionResults!;
+  const s = r.sentinel.metrics;
+  const b = r.baseline.metrics;
+  const outageH = s.outageHours;
+  const supply = mission.weeklySupplyLitres ?? 6000;
 
   return (
-    <div className="space-y-4">
-      <Card
-        title="Official problem brief — locked"
-        subtitle="Anneru IAS Global Energy Hackathon 2026 · Appendix B (Innovator Handbook p. 34)"
-        right={<Badge tone="cyan"><BookOpenCheck size={11} /> Track 2 · Digital Solutions & AI · Setting B</Badge>}
-      >
-        <div className="grid gap-3 md:grid-cols-3">
-          <div className="rounded-xl border border-cyan/30 bg-navy-800/60 p-4">
-            <div className="label text-cyan">Brief #13</div>
-            <div className="text-lg font-bold text-white">Power for a city the grid can&apos;t protect</div>
-            <p className="mt-1 text-xs text-slate-400">
-              Full partner brief text is released at the Kick-off; the published success metrics
-              below are from the Innovator Handbook and govern this build.
-            </p>
+    <div className="space-y-5">
+      <div className="card p-5">
+        <div className="flex flex-wrap gap-2">
+          <Badge tone="cyan">Brief #13</Badge>
+          <Badge>Track 2 · Digital Solutions &amp; AI</Badge>
+          <Badge>Setting B · Non-residential (healthcare)</Badge>
+          <Badge>Solo entry · Jackson Sixtus Abetianbe</Badge>
+        </div>
+        <h2 className="mt-3 text-xl font-bold text-white">Power for a city the grid can&apos;t protect</h2>
+        <div className="mt-3 rounded-xl border border-cyan/30 bg-cyan/5 p-4">
+          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-cyan"><Target size={13} /> Success metric — Handbook Appendix B, verbatim</div>
+          <p className="mt-1 text-base font-semibold text-white">“Hours of critical service maintained during a line outage, and diesel litres avoided.”</p>
+        </div>
+        <div className="mt-4 grid gap-3 md:grid-cols-3">
+          <div className="rounded-xl border border-surface-border bg-navy-950/50 p-3">
+            <div className="label">Critical-service hours maintained</div>
+            <div className="num text-2xl font-bold text-white">{fmtNum(b.criticalMaintainedHours)} → <span className="text-energy-green">{fmtNum(s.criticalMaintainedHours)}</span> <span className="text-sm text-slate-400">/ {fmtNum(outageH)} h</span></div>
+            <div className="text-xs text-slate-400">39-day Maiduguri line outage, {fmtNum(supply)} L/week diesel supply</div>
           </div>
-          <div className="rounded-xl border border-surface-border bg-surface/60 p-4">
-            <div className="label">Success metric 1</div>
-            <div className="text-sm font-semibold text-white">
-              Hours of critical service maintained during a line outage
-            </div>
-            <p className="mt-1 text-xs text-slate-400">
-              Our definition (documented): energy-weighted hours where Tier-1 (life-critical) +
-              Tier-2 (clinical priority) demand is ≥99% served, across all islanded hours.
-            </p>
+          <div className="rounded-xl border border-surface-border bg-navy-950/50 p-3">
+            <div className="label">Diesel litres avoided</div>
+            <div className="num text-2xl font-bold text-energy-green">{fmtNum(b.dieselLitres - s.dieselLitres)} L <span className="text-sm text-slate-400">in the outage</span></div>
+            <div className="text-xs text-slate-400">{econ ? `${fmtNum(econ.dieselLitresAvoidedPerYear)} L/yr (−${fmtPct(econ.dieselAvoidedPct, 0)}) across a full measured year` : "annual figure computing…"}</div>
           </div>
-          <div className="rounded-xl border border-surface-border bg-surface/60 p-4">
-            <div className="label">Success metric 2</div>
-            <div className="text-sm font-semibold text-white">Diesel litres avoided</div>
-            <p className="mt-1 text-xs text-slate-400">
-              Simulated litres vs the diesel-only backup baseline over identical scenarios and
-              an explicit 45-outage-day annual mix.
-            </p>
+          <div className="rounded-xl border border-surface-border bg-navy-950/50 p-3">
+            <div className="label">Life-critical (Tier-1) hours</div>
+            <div className="num text-2xl font-bold text-white">{fmtNum(b.tier1MaintainedHours)} → <span className="text-energy-green">{fmtNum(s.tier1MaintainedHours)}</span></div>
+            <div className="text-xs text-slate-400">Tier-1 interruptions {b.tier1Interruptions} → {s.tier1Interruptions}</div>
           </div>
         </div>
+      </div>
+
+      <Card title="The seven questions judges cannot ask live (Handbook §6) — answered with computed numbers">
+        <div className="grid gap-3 lg:grid-cols-2">
+          <QA q="Who, specifically? User and payer">
+            <b>Users:</b> the works engineer and duty manager of a referral hospital in a city whose transmission line is repeatedly cut —
+            Maiduguri, Borno (330 kV line vandalised 22 Sep 2024, restored 31 Oct 2024; also 2021). <b>Beneficiaries:</b> the patients in its
+            ICU, theatres, maternity and cold chain. <b>Payer:</b> the hospital management (federal/state teaching or specialist hospital
+            budget) — or, under EaaS, an energy-service company that is repaid from the diesel the hospital no longer buys.
+          </QA>
+          <QA q="What fails today, and why? (root cause)">
+            The generator is not the weak link — the <b>fuel supply chain</b> is. Hospitals size backup in kW, but a multi-week line outage is
+            an energy-logistics problem: diesel need roughly quadruples while deliveries, budgets and convoys do not. In Dec 2022 two Maiduguri
+            hospitals sat dark for days with working generators and empty tanks (ICIR). Nobody decides, in advance and quantitatively,
+            which loads the remaining litres should protect.
+          </QA>
+          <QA q="What did we build, and how does it work?">
+            A deterministic 15-minute hospital microgrid engine plus a predictive controller. Its <b>fuel-runway governor</b> compares diesel +
+            battery + forecast solar against the energy each service tier needs until the next expected delivery, and defers the least critical
+            loads first; a <b>clinical ride-through reserve</b> keeps the ICU powered through generator failures; <b>generator cycling</b> cuts
+            low-load run-hours. Validated on real NASA POWER weather, published generator reliability data and a held-out solar forecast test.
+          </QA>
+          <QA q="What does it cost, and who pays?">
+            {econ ? (
+              <>
+                Reference design 600 kWp + 600 kWh + 510 kW PCS + Sentinel: <b>{fmtUsd(econ.capex.totalUsd)}</b> ({fmtNaira(econ.capex.totalNaira)}).
+                Savings {fmtNaira(econ.annualSavingsNaira)}/yr → payback <b>{econ.simplePaybackYears?.toFixed(1)} yr</b>, IRR {econ.irr !== null ? fmtPct(econ.irr) : "n/a"}.
+                Under EaaS the hospital pays {fmtNaira(econ.eaasAnnualFeeNaira / 12)}/month, zero CapEx, and still saves 20 % from month one;
+                energy cost per bed-day falls ₦{fmtNum(econ.baselineEnergyCostPerBedDayNaira)} → ₦{fmtNum(econ.proposedEnergyCostPerBedDayNaira)} —
+                nothing is passed to the lowest-income patients.
+              </>
+            ) : (
+              "Computing the full-year economics…"
+            )}
+          </QA>
+          <QA q="What changes in 6–18 months?">
+            M1–3: metering + load audit at one Maiduguri-class hospital (Sentinel runs in shadow mode on real data). M4–6: engineering design,
+            EaaS term sheet with a licensed installer. M7–12: install PV + storage, Sentinel controls dispatch, SMS alerts live; measured vs
+            predicted reported monthly. M13–18: second and third sites using the fleet screen. Detailed in the deployment roadmap.
+          </QA>
+          <QA q="How does it travel?">
+            Only configuration changes: measured weather (the same NASA POWER pipeline), load profile, tariffs, feeder regime and local standards.
+            The Fleet tab runs 10 site-years: strong in Maiduguri, Kano and Abuja; viable but weaker in Lagos and Port Harcourt — the tool says
+            where it pays instead of claiming it pays everywhere.
+          </QA>
+          <QA q="What could go wrong — and how we test it early">
+            <b>Biggest risk: modelled loads differ from the real hospital</b> (tiering, demand, generator condition). Test in month 1–3 by
+            running Sentinel in shadow mode on circuit-level metering before any capital is committed; the plan only proceeds if measured
+            vs predicted daily energy error is within ±15 %. Second risk: theft/vandalism of panels in an insecure city — mitigated by
+            on-campus siting and insurance in the EaaS fee.
+          </QA>
+          <QA q="What existed before the event vs this weekend?">
+            Nothing existed before 30 Oct 2026, 12:00 PM ET. A first prototype was built on 30 Oct with another AI coding model; on 31 Oct the
+            engine was rebuilt (real weather, fuel logistics, four strategies, Monte Carlo, annual economics, forecasting on held-out data) — see
+            the git history and disclosure statement.
+          </QA>
+        </div>
         <Note>
-          Named community: hospitals and clinics in Nigerian urban centres served by feeders that
-          fail during national grid disturbances (12+ grid collapses recorded in 2024 by
-          industry/media counts; NERC&apos;s official count is lower — see Data &amp; Sources). Named
-          user: the hospital facility/works engineer. Named payer: hospital management or an
-          energy-service provider under EaaS.
+          Simulation, not field-measured performance. The hospital is an illustrative 250-bed referral profile (16 tiered circuits); no named
+          hospital&apos;s data is used or implied. Full Brief #13 text is released at kick-off: if the partner defines “critical service” differently,
+          only the tier mapping changes — the engine computes both metrics generically.
         </Note>
-      </Card>
-
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Kpi icon={<Target size={18} />} label="Metric 1 — critical service" value={`${m.criticalServiceHours.toFixed(2)} / ${m.outageHours.toFixed(1)} h`} sub="maintained in active scenario" tone={m.unservedKwh[1] < 1 ? "good" : "warn"} />
-        <Kpi icon={<Scale size={18} />} label="Metric 2 — diesel avoided (3-day run)" value={`${fmtNum(dieselAvoided)} L`} sub={`${fmtPct(dieselAvoided / Math.max(1, b.dieselLitres))} vs baseline`} tone="good" />
-        <Kpi label="Annualized diesel avoided" value={`${fmtNum(econ.dieselLitresAvoidedPerYear)} L`} sub="320 normal + 45 outage days" tone="good" />
-        <Kpi label="Annualized CO₂ avoided" value={`${fmtNum(econ.co2TonnesAvoidedPerYear, 1)} t`} sub="2.68 kg CO₂/L diesel" tone="good" />
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        <Card title="Baseline vs Sentinel — active scenario" subtitle="Same loads, same outage schedule; only the system differs">
-          <Row k="Critical-service hours in outages" v={`${m.criticalServiceHours.toFixed(2)} h vs ${b.criticalServiceHours.toFixed(2)} h`} mono />
-          <Row k="Diesel litres (72 h)" v={`${m.dieselLitres.toFixed(0)} L vs ${b.dieselLitres.toFixed(0)} L`} mono />
-          <Row k="Generator runtime" v={`${m.gensetRuntimeH.toFixed(1)} h vs ${b.gensetRuntimeH.toFixed(1)} h`} mono />
-          <Row k="Grid energy" v={`${fmtKwh(m.gridKwh)} vs ${fmtKwh(b.gridKwh)}`} mono />
-          <Row k="Operating cost (72 h)" v={`${fmtNaira(m.opexNaira)} vs ${fmtNaira(b.opexNaira)}`} mono />
-          <Row k="CO₂ (72 h)" v={`${fmtNum(m.co2Kg)} kg vs ${fmtNum(b.co2Kg)} kg`} mono />
-          <Row k="Unserved Tier-1 energy" v={`${m.unservedKwh[1].toFixed(2)} kWh — reported honestly, never hidden`} mono />
-        </Card>
-
-        <Card title="Appendix A — solution outline" subtitle="The handbook's one-page template, filled from the live model">
-          <Row k="Challenge track & setting" v="Track 2 (Digital Solutions & AI) · Setting B (non-residential)" />
-          <Row k="Community & target user" v="Urban Nigerian hospitals on unreliable feeders; facility engineer (user), hospital/EaaS provider (payer)" />
-          <Row k="The problem" v="Grid collapses force hospitals onto diesel; fuel logistics and cost threaten continuity of surgery, ICU and cold chain" />
-          <Row k="Proposed solution" v="Digital twin + intelligent dispatch for hospital microgrids: PV + battery + genset orchestrated to maximize critical-service hours per diesel litre" />
-          <Row k="48-hour POC" v="This application: deterministic 15-min simulation engine (57 tests), digital twin, 10-scenario lab, financial engine, predictive intelligence" />
-          <Row k="Brief metric moved" v={`Critical-service hours: ${m.criticalServiceHours.toFixed(2)} h maintained; diesel cut ${fmtPct(dieselAvoided / Math.max(1, b.dieselLitres))} in the outage scenario`} />
-          <Row k="Estimated cost & who pays" v={`${fmtNaira(econ.capex.totalNaira)} CapEx; hospital-owned or EaaS at ${fmtNum(econ.eaasTariffNairaPerKwh)} ₦/kWh`} />
-          <Row k="6–18 month deployment" v="M1–3 facility audit → M4–6 engineering + agreements → M7–12 pilot with an energy-service partner → M13–18 replication" />
-          <Row k="Biggest risk" v="Simulated (not measured) facility data — mitigated by the pilot's metering-first design; see Assumptions & Limitations" />
-          <Row k="Prior work disclosure" v="All features built during the sprint; see disclosure statement in the submission package" />
-        </Card>
-      </div>
-
-      <Card title="How to read the numbers">
-        <p className="text-xs leading-relaxed text-slate-300">
-          Every figure in this application is computed by the deterministic engine in{" "}
-          <span className="font-mono text-cyan">src/engine/</span> from the documented equations in{" "}
-          <span className="font-mono">docs/POWER_SYSTEM_MODEL.md</span> — nothing is hard-coded
-          copy. The active scenario&apos;s results recompute live when you change any input on the
-          Digital Twin tab. Facility loads, tariffs and prices are illustrative defaults labelled
-          as such; the engine itself is data-agnostic and accepts measured facility data.
-        </p>
       </Card>
     </div>
   );

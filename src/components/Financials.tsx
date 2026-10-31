@@ -1,255 +1,241 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { clsx } from "clsx";
 import { useApp } from "@/lib/store";
 import { fmtNaira, fmtNairaFull, fmtNum, fmtPct, fmtUsd } from "@/lib/format";
 import { Card, Kpi, Note, Row } from "./ui";
-import { searchSizing, sensitivity } from "@/engine";
+import { searchSizingAsync, sensitivity, type SensitivityRow, type SizingResult } from "@/engine";
 import { AreaGradients, AXIS_PROPS, GRID_PROPS, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
-import {
-  Area,
-  AreaChart,
-  CartesianGrid,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Area, Bar, ComposedChart, CartesianGrid, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function Financials() {
-  const { config, econ, fin, setFin } = useApp();
-  const [sizing, setSizing] = useState<ReturnType<typeof searchSizing> | null>(null);
-  const sens = useMemo(() => sensitivity(config, fin), [config, fin]);
-
-  const cashflow: { year: number; cumulative: number }[] = [];
-  {
-    let cum = -econ.capex.totalNaira;
-    cashflow.push({ year: 0, cumulative: cum });
-    for (let y = 1; y <= fin.analysisYears; y++) {
-      cum += econ.annualSavingsNaira - econ.capex.totalNaira * fin.omPctOfCapexPerYear;
-      cashflow.push({ year: y, cumulative: cum });
-    }
-  }
-
-  const runSizing = () => {
-    setSizing(searchSizing(config, { criticalHoursTarget: 11.4 }));
-  };
-
+function Skeleton({ label }: { label: string }) {
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-        <Kpi label="System CapEx" value={fmtNaira(econ.capex.totalNaira)} sub={fmtUsd(econ.capex.totalUsd)} tone="cyan" />
-        <Kpi
-          label="Annual opex savings"
-          value={fmtNaira(econ.annualSavingsNaira)}
-          sub="grid + diesel + genset O&M avoided"
-          tone="good"
-        />
-        <Kpi
-          label="Simple payback"
-          value={econ.simplePaybackYears ? `${fmtNum(econ.simplePaybackYears, 1)} yr` : "n/a"}
-          sub="CapEx ÷ net annual savings"
-        />
-        <Kpi
-          label="NPV (10 yr @ 18%)"
-          value={fmtNaira(econ.npvNaira)}
-          tone={econ.npvNaira > 0 ? "good" : "bad"}
-          sub={econ.irr ? `IRR ${fmtPct(econ.irr)}` : "IRR n/a"}
-        />
-        <Kpi label="Diesel avoided" value={`${fmtNum(econ.dieselLitresAvoidedPerYear)} L/yr`} sub={`${fmtNum(econ.co2TonnesAvoidedPerYear, 1)} t CO₂/yr`} tone="good" />
-        <Kpi
-          label="EaaS fee (provider financing)"
-          value={`${fmtNaira(econ.eaasAnnualFeeNaira)}/yr`}
-          sub={`closes ≤ ${econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"} financing · ${fmtNum(econ.eaasAssetTariffNairaPerKwh)} ₦/kWh asset`}
-          tone="warn"
-        />
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-3">
-        <Card title="CapEx breakdown" subtitle="Editable engineering assumptions feed the whole model">
-          <Row k="Solar PV" v={`${fmtUsd(econ.capex.pvUsd)} · ${fin.capexUsdPerKwp.toLocaleString()} $/kWp`} mono />
-          <Row k="Battery storage" v={`${fmtUsd(econ.capex.storageUsd)} · ${fin.capexUsdPerKwhStorage.toLocaleString()} $/kWh`} mono />
-          <Row k="Inverter" v={`${fmtUsd(econ.capex.inverterUsd)} · ${fin.capexUsdPerInverterKw.toLocaleString()} $/kW`} mono />
-          <Row k="Installation & BOS" v={`${fmtUsd(econ.capex.installUsd)} · ${(fin.installOverheadPct * 100).toFixed(0)}%`} mono />
-          <Row k="Total" v={`${fmtUsd(econ.capex.totalUsd)} = ${fmtNairaFull(econ.capex.totalNaira)}`} mono />
-          <div className="mt-3 space-y-2 border-t border-surface-border pt-3">
-            <FinField label="Diesel price (₦/L)" value={config.genset.fuelNairaPerLitre} step={25} onChange={() => {}} disabled />
-            <FinField label="FX rate (₦/$)" value={fin.fxNairaPerUsd} step={25} onChange={(v) => setFin({ fxNairaPerUsd: v })} />
-            <FinField label="CapEx $/kWp" value={fin.capexUsdPerKwp} step={25} onChange={(v) => setFin({ capexUsdPerKwp: v })} />
-            <FinField label="CapEx $/kWh" value={fin.capexUsdPerKwhStorage} step={10} onChange={(v) => setFin({ capexUsdPerKwhStorage: v })} />
-            <FinField label="Outage days / year" value={fin.annualOutageDays} step={5} onChange={(v) => setFin({ annualOutageDays: v })} />
-            <FinField label="Discount rate" value={fin.discountRate} step={0.01} onChange={(v) => setFin({ discountRate: v })} />
-          </div>
-          <Note>
-            Diesel price is set on the Digital Twin tab. Outage-day mix (45/yr) is an explicit
-            assumption: ~12 national grid disturbances (2024 media/industry counts) plus local
-            feeder trips. All inputs are editable; every output recomputes.
-          </Note>
-        </Card>
-
-        <Card title="Cumulative cash flow — ownership" subtitle={`10-year horizon, ${fmtPct(fin.discountRate)} discount rate, O&M ${fmtPct(fin.omPctOfCapexPerYear)}/yr`}>
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={cashflow} margin={{ top: 5, right: 5, bottom: 0, left: -8 }}>
-                <AreaGradients />
-                <CartesianGrid {...GRID_PROPS} />
-                <XAxis dataKey="year" unit="y" {...AXIS_PROPS} />
-                <YAxis tickFormatter={(v: number) => `${(v / 1e6).toFixed(0)}M`} width={58} {...AXIS_PROPS} />
-                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} formatter={(v: number) => fmtNairaFull(v)} />
-                <Area type="monotone" dataKey="cumulative" name="Cumulative" stroke="#34D399" strokeWidth={2} fill="url(#gradCash)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="mt-2 space-y-0.5">
-            <Row k="Annual grid energy (proposed)" v={`${fmtNum(econ.proposedAnnual.gridKwh)} kWh`} mono />
-            <Row k="Annual solar to load" v={`${fmtNum(econ.proposedAnnual.pvKwh)} kWh`} mono />
-            <Row k="Annual diesel (proposed vs baseline)" v={`${fmtNum(econ.proposedAnnual.dieselLitres)} vs ${fmtNum(econ.baselineAnnual.dieselLitres)} L`} mono />
-            <Row k="LCOE (discounted)" v={`${fmtNum(econ.lcoeNairaPerKwh)} ₦/kWh`} mono />
-          </div>
-        </Card>
-
-        <Card title="Commercial structures" subtitle="Who owns, who pays, who maintains">
-          <div className="space-y-2 text-xs leading-relaxed">
-            <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
-              <div className="font-bold text-white">1 · Hospital ownership</div>
-              Hospital finances CapEx ({fmtNaira(econ.capex.totalNaira)}); keeps all savings;
-              bears O&M ({fmtNaira(econ.capex.totalNaira * fin.omPctOfCapexPerYear)}/yr) and
-              replacement risk. Payback {econ.simplePaybackYears ? `${fmtNum(econ.simplePaybackYears, 1)} yr` : "n/a"}.
-            </div>
-            <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
-              <div className="font-bold text-white">2 · Energy-as-a-Service (EaaS)</div>
-              Provider owns and maintains the assets; hospital keeps buying grid power for the
-              remainder. Fee {fmtNaira(econ.eaasAnnualFeeNaira)}/yr at{" "}
-              {fmtPct(fin.financingRate)} financing vs operating savings{" "}
-              {fmtNaira(econ.annualSavingsNaira)}/yr — the gap closes at financing below{" "}
-              <span className="font-mono text-cyan">
-                {econ.eaasBreakevenFinancingRate
-                  ? fmtPct(econ.eaasBreakevenFinancingRate)
-                  : "n/a"}
-              </span>
-              , i.e. with concessional or development-finance capital. That breakeven number is
-              precisely what REA-type and DFI programmes need to see.
-            </div>
-            <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
-              <div className="font-bold text-white">3 · Blended / grant-supported</div>
-              Concessional capital (e.g. REA-type programmes or development finance) lowers the
-              cost base; the platform quantifies exactly how much subsidy is needed — it is never
-              assumed to exist.
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 xl:grid-cols-2">
-        <Card title="Sensitivity analysis" subtitle="One-at-a-time variations on the four decision-critical inputs">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="text-left text-slate-400">
-                  <th className="py-1.5 pr-2">Variable</th>
-                  <th className="py-1.5 pr-2">Change</th>
-                  <th className="py-1.5 pr-2">Payback (yr)</th>
-                  <th className="py-1.5 pr-2">NPV</th>
-                  <th className="py-1.5 pr-2">EaaS ₦/kWh</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sens.map((r, i) => (
-                  <tr key={i} className="border-t border-surface-border/50 text-slate-200">
-                    <td className="py-1.5 pr-2">{r.variable}</td>
-                    <td className="py-1.5 pr-2 font-mono">{r.change}</td>
-                    <td className="py-1.5 pr-2 font-mono">{r.paybackYears ? fmtNum(r.paybackYears, 1) : "n/a"}</td>
-                    <td className={`py-1.5 pr-2 font-mono ${r.npvNaira > 0 ? "text-energy-green" : "text-energy-red"}`}>
-                      {fmtNaira(r.npvNaira)}
-                    </td>
-                    <td className="py-1.5 pr-2 font-mono">{fmtNum(r.eaasTariffNairaPerKwh)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-
-        <Card
-          title="Sizing optimizer"
-          subtitle="Exhaustive grid search: PV × battery against the active scenario's outage, ranked by diesel then opex"
-          right={
-            <button
-              onClick={runSizing}
-              className="rounded-md bg-cyan/15 px-3 py-1.5 text-xs font-semibold text-cyan ring-1 ring-cyan/40 hover:bg-cyan/25"
-            >
-              Run search
-            </button>
-          }
-        >
-          {sizing ? (
-            <>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="text-left text-slate-400">
-                      <th className="py-1.5 pr-2">kWp</th>
-                      <th className="py-1.5 pr-2">kWh</th>
-                      <th className="py-1.5 pr-2">Critical h</th>
-                      <th className="py-1.5 pr-2">Diesel (3 d)</th>
-                      <th className="py-1.5 pr-2">Opex /yr</th>
-                      <th className="py-1.5 pr-2">CapEx</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sizing.candidates.slice(0, 8).map((c, i) => (
-                      <tr key={i} className={`border-t border-surface-border/50 ${sizing.best === c ? "text-cyan" : "text-slate-200"}`}>
-                        <td className="py-1.5 pr-2 font-mono">{c.pvKwp}</td>
-                        <td className="py-1.5 pr-2 font-mono">{c.batteryKwh}</td>
-                        <td className="py-1.5 pr-2 font-mono">{c.criticalServiceHours.toFixed(2)}</td>
-                        <td className="py-1.5 pr-2 font-mono">{c.dieselLitres3Days}</td>
-                        <td className="py-1.5 pr-2 font-mono">{fmtNaira(c.annualOpexNaira)}</td>
-                        <td className="py-1.5 pr-2 font-mono">{fmtNaira(c.capexNaira)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <Note>
-                Target: {sizing.target}. Best: {sizing.best?.pvKwp} kWp + {sizing.best?.batteryKwh} kWh.
-                A transparent exhaustive search over an explicit grid — not a claim of global optimality.
-              </Note>
-            </>
-          ) : (
-            <p className="text-sm text-slate-400">
-              Run the search to rank PV/battery combinations against the active scenario.
-            </p>
-          )}
-        </Card>
-      </div>
+    <div className="card flex h-40 items-center justify-center gap-3 text-sm text-slate-400">
+      <span className="h-2 w-2 animate-pulse rounded-full bg-cyan" />
+      {label}
     </div>
   );
 }
 
-function FinField({
-  label,
-  value,
-  step,
-  onChange,
-  disabled,
-}: {
-  label: string;
-  value: number;
-  step: number;
-  onChange: (v: number) => void;
-  disabled?: boolean;
-}) {
+export function Financials() {
+  const { config, econ, econBusy, fin, setFin, ensureEcon } = useApp();
+  const [sens, setSens] = useState<SensitivityRow[] | null>(null);
+  const [sizing, setSizing] = useState<SizingResult | null>(null);
+  const [sizingProgress, setSizingProgress] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!econ && !econBusy) ensureEcon();
+  }, [econ, econBusy, ensureEcon]);
+
+  useEffect(() => {
+    setSens(null);
+    const id = setTimeout(() => setSens(sensitivity(config, fin)), 60);
+    return () => clearTimeout(id);
+  }, [config, fin]);
+
+  const runSizing = async () => {
+    setSizingProgress(0);
+    const r = await searchSizingAsync(config, { fin }, (d, t) => setSizingProgress(d / t));
+    setSizing(r);
+    setSizingProgress(null);
+  };
+
+  if (!econ) return <Skeleton label="Simulating a full measured year (2 × 35,136 steps) for the economics…" />;
+
+  const cash = [{ year: 0, net: -econ.capex.totalNaira, cumulative: -econ.capex.totalNaira }, ...econ.cashFlows.map((c) => ({ year: c.year, net: c.netNaira, cumulative: c.cumulativeNaira }))];
+  const b = econ.baselineAnnual;
+  const p = econ.proposedAnnual;
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+        <Kpi label="System CapEx" value={fmtNaira(econ.capex.totalNaira)} sub={`${fmtUsd(econ.capex.totalUsd)} incl. Sentinel platform`} tone="cyan" />
+        <Kpi label="Year-1 operating savings" value={fmtNaira(econ.annualSavingsNaira)} sub={`net ${fmtNaira(econ.netAnnualBenefitNaira)} after O&M + subscription`} tone="good" />
+        <Kpi label="Payback" value={econ.simplePaybackYears ? `${fmtNum(econ.simplePaybackYears, 1)} yr` : "n/a"} sub="cumulative net cash flow" />
+        <Kpi label={`NPV ${fin.analysisYears} yr @ ${fmtPct(fin.discountRate, 0)}`} value={fmtNaira(econ.npvNaira)} tone={econ.npvNaira > 0 ? "good" : "bad"} sub={econ.irr !== null ? `IRR ${fmtPct(econ.irr)}` : "IRR n/a"} />
+        <Kpi label="Diesel avoided" value={`${fmtNum(econ.dieselLitresAvoidedPerYear)} L/yr`} sub={`−${fmtPct(econ.dieselAvoidedPct, 0)} · ${fmtNum(econ.co2TonnesAvoidedPerYear)} t CO₂/yr`} tone="good" />
+        <Kpi label="EaaS provider IRR" value={econ.eaasProviderIrr !== null ? fmtPct(econ.eaasProviderIrr) : "n/a"} sub={`hospital keeps ${fmtPct(fin.eaasHospitalShare, 0)} of savings`} tone="warn" />
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-3">
+        <Card title="Operating year (simulated, not extrapolated)" subtitle={`NASA POWER ${fin.siteDatasetId.replace("_", " ")} · ${fmtNum(b.outageHours)} grid-outage hours incl. ${fin.lineOutageDays}-day line outage`}>
+          <Row k="Annual demand served" v={`${fmtNum(p.servedKwh / 1000)} MWh`} mono />
+          <Row k="Diesel: status quo → Sentinel" v={`${fmtNum(b.dieselLitres)} → ${fmtNum(p.dieselLitres)} L`} mono />
+          <Row k="Grid import: status quo → Sentinel" v={`${fmtNum(b.gridKwh / 1000)} → ${fmtNum(p.gridKwh / 1000)} MWh`} mono />
+          <Row k="Solar to the bus" v={`${fmtNum(p.pvKwh / 1000)} MWh`} mono />
+          <Row k="Generator run-hours" v={`${fmtNum(b.gensetRuntimeH)} → ${fmtNum(p.gensetRuntimeH)} h`} mono />
+          <Row k="Tier-1 transfer breaks / yr" v={`${fmtNum(b.tier1Interruptions)} → ${fmtNum(p.tier1Interruptions)}`} mono />
+          <Row k="Energy opex: status quo → Sentinel" v={`${fmtNaira(b.opexNaira)} → ${fmtNaira(p.opexNaira)}`} mono />
+          <Row k="Energy cost per bed-day (EaaS)" v={`₦${fmtNum(econ.baselineEnergyCostPerBedDayNaira)} → ₦${fmtNum(econ.proposedEnergyCostPerBedDayNaira)}`} mono />
+          <Row k="Discounted energy cost" v={`₦${fmtNum(econ.baselineLcoeNairaPerKwh)} → ₦${fmtNum(econ.lcoeNairaPerKwh)} /kWh`} mono />
+          <Note>Fuel is unconstrained here so both systems deliver identical service and the comparison is pure cost. The resilience value of the hybrid under constrained fuel is shown on the Line Outage and Resilience tabs and is not monetised.</Note>
+        </Card>
+
+        <Card title="Cash flow — hospital ownership" subtitle={`${fin.analysisYears} years · PV −${fmtPct(fin.pvDegradationPerYear, 1)}/yr · battery & PCS replaced in year ${fin.batteryLifeYears}`}>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart data={cash} margin={{ top: 5, right: 5, bottom: 0, left: -8 }}>
+                <AreaGradients />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="year" {...AXIS_PROPS} />
+                <YAxis tickFormatter={(v: number) => `${(v / 1e9).toFixed(1)}B`} width={50} {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} labelFormatter={(y) => `Year ${y}`} formatter={(v: number, k: string) => [fmtNairaFull(v), k === "net" ? "Net cash flow" : "Cumulative"]} />
+                <ReferenceLine y={0} stroke="#475569" />
+                <Bar dataKey="net" fill="#22D3EE" opacity={0.55} radius={[2, 2, 0, 0]} isAnimationActive={false} />
+                <Area type="monotone" dataKey="cumulative" stroke="#34D399" strokeWidth={2} fill="url(#gradCash)" isAnimationActive={false} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
+            {[
+              ["PV", econ.capex.pvUsd],
+              ["Storage", econ.capex.storageUsd],
+              ["PCS / inverter", econ.capex.inverterUsd],
+              ["EPC & BOS", econ.capex.installUsd],
+              ["Sentinel edge + metering", econ.capex.platformUsd],
+            ].map(([k, v]) => (
+              <div key={k as string} className="flex justify-between rounded-md bg-navy-950/60 px-2 py-1">
+                <span className="text-slate-400">{k}</span>
+                <span className="num font-mono text-white">{fmtUsd(v as number)}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+
+        <Card title="Who owns, who pays, who maintains" subtitle="Three structures, all computed">
+          <div className="space-y-2 text-xs leading-relaxed text-slate-300">
+            <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
+              <div className="font-bold text-white">1 · Hospital ownership</div>
+              Hospital (federal/state budget or own revenue) pays {fmtNaira(econ.capex.totalNaira)}; keeps all savings; contracts a local O&M
+              firm ({fmtNaira(econ.cashFlows[0].omNaira)}/yr). Payback {econ.simplePaybackYears ? `${fmtNum(econ.simplePaybackYears, 1)} yr` : "n/a"}.
+            </div>
+            <div className="rounded-lg border border-cyan/30 bg-cyan/5 p-3">
+              <div className="font-bold text-white">2 · Energy-as-a-Service (recommended)</div>
+              An energy-service company owns, insures and maintains PV + storage + Sentinel. The hospital pays a fixed{" "}
+              <span className="font-mono text-cyan">{fmtNaira(econ.eaasAnnualFeeNaira)}/yr</span> ({fmtNaira(econ.eaasAnnualFeeNaira / 12)}/month) — {fmtPct(1 - fin.eaasHospitalShare, 0)} of its
+              measured savings — so its energy bill falls from day one with zero CapEx. Provider IRR{" "}
+              <span className="font-mono text-cyan">{econ.eaasProviderIrr !== null ? fmtPct(econ.eaasProviderIrr) : "n/a"}</span> after O&M,
+              subscription and year-{fin.batteryLifeYears} replacements. Patients pay nothing extra.
+            </div>
+            <div className="rounded-lg border border-surface-border bg-navy-950/60 p-3">
+              <div className="font-bold text-white">3 · Blended finance</div>
+              Concessional capital lowers the provider&apos;s hurdle rate. A CRF-based fee equals the savings at a financing rate of{" "}
+              <span className="font-mono">{econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"}</span> — the number a
+              DFI needs. No grant is assumed anywhere.
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid gap-4 xl:grid-cols-[1fr_1.4fr]">
+        <Card title="Assumptions (edit → full re-simulation)">
+          <div className="space-y-2">
+            <FinField label="FX (₦/$)" value={fin.fxNairaPerUsd} step={50} onChange={(v) => setFin({ fxNairaPerUsd: v })} />
+            <FinField label="PV $/kWp installed" value={fin.capexUsdPerKwp} step={25} onChange={(v) => setFin({ capexUsdPerKwp: v })} />
+            <FinField label="Storage $/kWh" value={fin.capexUsdPerKwhStorage} step={10} onChange={(v) => setFin({ capexUsdPerKwhStorage: v })} />
+            <FinField label="Line-outage days / yr" value={fin.lineOutageDays} step={1} onChange={(v) => setFin({ lineOutageDays: Math.max(0, Math.min(60, v)) })} />
+            <FinField label="Discount rate" value={fin.discountRate} step={0.01} onChange={(v) => setFin({ discountRate: v })} />
+            <FinField label="Hospital share of savings (EaaS)" value={fin.eaasHospitalShare} step={0.05} onChange={(v) => setFin({ eaasHospitalShare: Math.max(0, Math.min(1, v)) })} />
+          </div>
+          <Note>
+            Diesel ₦{fmtNum(config.genset.fuelNairaPerLitre)}/L (Oct-2026 retail range; Twin tab), Band A ₦{fmtNum(config.grid.tariffNairaPerKwh)}/kWh (NERC May-2024 order).
+            Storage $260/kWh installed ≈ 2.2× BNEF&apos;s 2025 global turnkey average ($117/kWh) to cover import, logistics and security premia. Feeder frequency
+            1.08 interruptions/day matches the World Bank Enterprise Survey (32.8 outages/month, Nigeria 2014). {econBusy ? "Re-simulating…" : ""}
+          </Note>
+        </Card>
+
+        <Card title="Sensitivity (one at a time)" subtitle="Each row re-prices or re-simulates the full year">
+          {!sens ? (
+            <div className="py-8 text-center text-xs text-slate-400">Computing…</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="text-left text-slate-400">
+                    <th className="py-1.5 pr-2">Variable</th>
+                    <th className="py-1.5 pr-2">Change</th>
+                    <th className="py-1.5 pr-2">Payback</th>
+                    <th className="py-1.5 pr-2">NPV</th>
+                    <th className="py-1.5 pr-2">IRR</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sens.map((r, i) => (
+                    <tr key={i} className="border-t border-surface-border/50 text-slate-200">
+                      <td className="py-1.5 pr-2">{r.variable}</td>
+                      <td className="py-1.5 pr-2 font-mono">{r.change}</td>
+                      <td className="py-1.5 pr-2 font-mono">{r.paybackYears ? `${fmtNum(r.paybackYears, 1)} yr` : "n/a"}</td>
+                      <td className={clsx("py-1.5 pr-2 font-mono", r.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(r.npvNaira)}</td>
+                      <td className="py-1.5 pr-2 font-mono">{r.irr !== null ? fmtPct(r.irr) : "n/a"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      <Card
+        title="Sizing optimizer"
+        subtitle="Grid search over PV × storage. Feasible = Tier-1 on for all 936 h and critical service ≥ 99 % in the Maiduguri replay at 6,000 L/week; ranked by 20-yr NPV."
+        right={
+          <button onClick={runSizing} disabled={sizingProgress !== null} className="rounded-md bg-cyan/15 px-3 py-1.5 text-xs font-semibold text-cyan ring-1 ring-cyan/40 hover:bg-cyan/25 disabled:opacity-50">
+            {sizingProgress !== null ? `Searching… ${Math.round(sizingProgress * 100)}%` : "Run search (16 designs)"}
+          </button>
+        }
+      >
+        {sizing ? (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-xs">
+                <thead>
+                  <tr className="text-left text-slate-400">
+                    {["kWp", "kWh", "PCS kW", "Critical h", "Tier-1 h", "Diesel avoided/yr", "CapEx", "Payback", "NPV", "Feasible"].map((h) => (
+                      <th key={h} className="py-1.5 pr-2">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sizing.candidates.map((c, i) => (
+                    <tr key={i} className={clsx("border-t border-surface-border/50", sizing.best === c ? "text-cyan" : c.feasible ? "text-slate-200" : "text-slate-500")}>
+                      <td className="py-1.5 pr-2 font-mono">{c.pvKwp}</td>
+                      <td className="py-1.5 pr-2 font-mono">{c.batteryKwh}</td>
+                      <td className="py-1.5 pr-2 font-mono">{c.inverterKw}</td>
+                      <td className="py-1.5 pr-2 font-mono">{fmtNum(c.criticalServiceHours)}</td>
+                      <td className="py-1.5 pr-2 font-mono">{fmtNum(c.tier1Hours)}</td>
+                      <td className="py-1.5 pr-2 font-mono">{fmtPct(c.dieselAvoidedPct, 0)}</td>
+                      <td className="py-1.5 pr-2 font-mono">{fmtNaira(c.capexNaira)}</td>
+                      <td className="py-1.5 pr-2 font-mono">{c.paybackYears ? `${c.paybackYears.toFixed(1)} y` : "—"}</td>
+                      <td className={clsx("py-1.5 pr-2 font-mono", c.npvNaira > 0 ? "text-energy-green" : "text-energy-red")}>{fmtNaira(c.npvNaira)}</td>
+                      <td className="py-1.5 pr-2">{c.feasible ? "✓" : "✗"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Note>{sizing.target}. Best NPV: {sizing.best?.pvKwp} kWp + {sizing.best?.batteryKwh} kWh. The reference design keeps 600 kWh (rather than the NPV-best 300 kWh) because the Monte Carlo shows the extra storage carries Tier-1 through generator repairs — a resilience choice made explicit. Heuristic grid search, not a proven global optimum.</Note>
+          </>
+        ) : (
+          <p className="text-sm text-slate-400">Each design runs the 39-day replay and a full measured year (~0.5 s each).</p>
+        )}
+      </Card>
+    </div>
+  );
+}
+
+function FinField({ label, value, step, onChange }: { label: string; value: number; step: number; onChange: (v: number) => void }) {
+  const [local, setLocal] = useState(String(value));
+  useEffect(() => setLocal(String(value)), [value]);
+  const commit = () => {
+    const v = Number(local);
+    if (Number.isFinite(v) && v !== value) onChange(v);
+  };
   return (
     <label className="flex items-center justify-between gap-2">
       <span className="text-xs text-slate-400">{label}</span>
-      <input
-        type="number"
-        disabled={disabled}
-        className="input-num disabled:opacity-40"
-        value={value}
-        step={step}
-        onChange={(e) => onChange(Number(e.target.value))}
-      />
+      <input type="number" className="input-num" value={local} step={step} onChange={(e) => setLocal(e.target.value)} onBlur={commit} onKeyDown={(e) => e.key === "Enter" && commit()} />
     </label>
   );
 }

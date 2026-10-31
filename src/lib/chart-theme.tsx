@@ -22,7 +22,7 @@ export const TOOLTIP_STYLE = {
 
 export const TOOLTIP_LABEL = { color: "#8FA3BD" } as const;
 
-export const LEGEND_STYLE = { fontSize: 11, iconType: "circle" as const, iconSize: 8 };
+export const LEGEND_STYLE = { iconType: "circle" as const, iconSize: 8, wrapperStyle: { fontSize: 11, color: "#94A3B8" } };
 
 /** Gradient defs for area charts — mount once inside each chart. */
 export function AreaGradients() {

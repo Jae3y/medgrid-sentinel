@@ -2,14 +2,17 @@
   "name": "medgrid-sentinel",
   "version": "0.1.0",
   "private": true,
-  "description": "Intelligent hospital microgrid digital twin and energy resilience platform — Global Energy Hackathon 2026 (Anneru IAS)",
+  "description": "Intelligent hospital microgrid digital twin and energy resilience platform \u00e2\u20ac\u201d Global Energy Hackathon 2026 (Anneru IAS)",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
-    "results": "tsx scripts/generate-results.ts"
+    "results": "tsx scripts/generate-results.ts",
+    "serve": "node scripts/serve.mjs 3003",
+    "e2e": "node scripts/ui-walkthrough.mjs",
+    "dev:probe": "tsx scripts/dev/probe.ts",
+    "start": "node scripts/serve.mjs 3003"
   },
   "dependencies": {
     "clsx": "^2.1.1",

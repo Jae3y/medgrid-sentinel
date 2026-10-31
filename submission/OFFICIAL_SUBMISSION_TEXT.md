@@ -60,6 +60,6 @@ Nothing existed before 30 Oct 2026, 12:00 PM ET. Day 1: a first version built wi
 
 ## Links (fill in)
 - Repository: https://github.com/Jae3y/medgrid-sentinel
-- Live demo: https://jae3y.github.io/medgrid-sentinel/ (no sign-in; works offline once loaded)
+- Live demo: https://medgrid-sentinel.vercel.app (no sign-in; works offline once loaded). Mirror: https://jae3y.github.io/medgrid-sentinel/
 - Demo video: MedGridSentinel_Brief13_Demo.mp4 *(link, viewable without sign-in)*
 - Pitch video: MedGridSentinel_Brief13_Pitch.mp4

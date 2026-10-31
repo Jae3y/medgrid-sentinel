@@ -196,7 +196,7 @@ function bullets(s, items, x, y, w, h, size = 12.5) {
   s.addText(`Same engine, new configuration. 10 site-years on measured weather: payback ${fl.map((r) => `${r.site.split(",")[0].replace(" (NG)", "")} ${r.paybackYears.toFixed(1)} y`).join(" · ")}. ${fl.filter((r) => r.verdict === "strong").length} of ${fl.length} sites strong; ${fl.filter((r) => r.verdict !== "strong").map((r) => r.site.split(",")[0].replace(" (NG)", "")).join(", ")} only viable (better grid) — the tool says where it pays. Next: Ghana, Kenya, U.S. (NFPA 99/110) configurations.`, { x: 7.5, y: 3.4, w: 5.2, h: 1.4, fontFace: F, fontSize: 11, color: TEXT, margin: 0, valign: "top" });
   panel(s, 7.3, 5.0, 5.53, 1.55, PANEL2);
   s.addText("Team and ask", { x: 7.5, y: 5.1, w: 5.2, h: 0.3, fontFace: F, fontSize: 12, bold: true, color: CYAN, margin: 0 });
-  s.addText("Live demo: jae3y.github.io/medgrid-sentinel", { x: 7.5, y: 6.22, w: 5.2, h: 0.25, fontFace: F, fontSize: 11, bold: true, color: CYAN, margin: 0 });
+  s.addText("Live demo: medgrid-sentinel.vercel.app", { x: 7.5, y: 6.22, w: 5.2, h: 0.25, fontFace: F, fontSize: 11, bold: true, color: CYAN, margin: 0 });
   s.addText("Jackson Sixtus Abetianbe — solo entry (product, engineering, finance). We need: one pilot hospital in NE Nigeria, a licensed solar EPC / ESCO partner, 3 months of circuit-level metering, and power-systems + health-facility coaching.", { x: 7.5, y: 5.4, w: 5.2, h: 0.82, fontFace: F, fontSize: 11, color: TEXT, margin: 0, valign: "top" });
 }
 

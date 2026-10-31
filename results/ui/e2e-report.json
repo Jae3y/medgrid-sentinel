@@ -1,6 +1,6 @@
 {
-  "base": "http://localhost:3003",
-  "at": "2026-10-31T17:20:56.067Z",
+  "base": "https://medgrid-sentinel.vercel.app/",
+  "at": "2026-10-31T17:27:14.030Z",
   "steps": [
     "screenshot mission-hero",
     "screenshot scene-status-quo",

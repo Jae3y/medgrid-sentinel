@@ -68,7 +68,7 @@ export function FleetPage() {
       <Card title="Portfolio screen" subtitle={busy ? `Simulating ${rows.length}/${total} site-years…` : `${total} site-years simulated (2 × 35,136 steps each)`}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[860px] text-left text-xs">
-            <thead className="text-[10px] uppercase tracking-wider text-slate-500">
+            <thead className="text-[11.5px] text-slate-500">
               <tr className="border-b border-surface-border/60">
                 {["Site", "Grid regime", "Facility", "GHI kWh/m²·yr", "Yield kWh/kWp", "CapEx", "Payback", "NPV 20 y @18%", "IRR", "Diesel avoided", "T1 breaks avoided/yr", "Verdict"].map((h) => (
                   <th key={h} className="py-2 pr-3 font-semibold">{h}</th>

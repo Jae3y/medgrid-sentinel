@@ -75,7 +75,7 @@ export function SolarForecastCard() {
             <div key={l.layer} className="rounded-lg border border-surface-border/60 bg-navy-950/50 p-2.5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <span className="text-xs font-semibold text-white">{l.layer}</span>
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-cyan">{l.kind}</span>
+                <span className="text-[10px] font-semibold text-cyan">{l.kind}</span>
               </div>
               <p className="mt-0.5 text-[11.5px] leading-snug text-slate-400">{l.why}</p>
             </div>

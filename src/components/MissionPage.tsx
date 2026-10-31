@@ -265,7 +265,7 @@ function SmsPhone({ sim }: { sim: SimResult }) {
           ))}
         </div>
         <div className="mx-auto w-[190px] rounded-[22px] border-4 border-slate-700 bg-slate-900 p-3 shadow-inner">
-          <div className="mb-2 text-center text-[9px] uppercase tracking-widest text-slate-500">*347*7# · USSD</div>
+          <div className="mb-2 text-center text-[9px] text-slate-500">*347*7# · USSD</div>
           <pre className="whitespace-pre-wrap rounded-md bg-[#9BBC0F]/90 p-2 font-mono text-[10.5px] leading-tight text-[#0F380F]">{ussd}</pre>
           <div className="mt-2 grid grid-cols-3 gap-1">
             {["1", "2", "3", "4", "5", "6", "7", "8", "9", "*", "0", "#"].map((k) => (

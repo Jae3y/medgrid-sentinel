@@ -10,7 +10,7 @@ import { fmtNaira, fmtNum, fmtPct, fmtUsd } from "@/lib/format";
 function QA({ q, children }: { q: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-surface-border/70 bg-navy-950/50 p-3.5">
-      <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan">{q}</div>
+      <div className="text-[11px] font-semibold text-cyan">{q}</div>
       <div className="mt-1.5 text-[13px] leading-relaxed text-slate-300">{children}</div>
     </div>
   );
@@ -38,7 +38,7 @@ export function BriefPage() {
         </div>
         <h2 className="mt-3 text-xl font-bold text-white">Power for a city the grid can&apos;t protect</h2>
         <div className="mt-3 rounded-xl border border-cyan/30 bg-cyan/5 p-4">
-          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-cyan"><Target size={13} /> Success metric — Handbook Appendix B, verbatim</div>
+          <div className="flex items-center gap-2 text-[11px] font-semibold text-cyan"><Target size={13} /> Success metric — Handbook Appendix B, verbatim</div>
           <p className="mt-1 text-base font-semibold text-white">“Hours of critical service maintained during a line outage, and diesel litres avoided.”</p>
         </div>
         <div className="mt-4 grid gap-3 md:grid-cols-3">

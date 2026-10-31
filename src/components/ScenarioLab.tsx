@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useApp } from "@/lib/store";
 import { SCENARIOS, buildBaselineConfig, runSimulation } from "@/engine";
+import { AXIS_PROPS, GRID_PROPS, LEGEND_STYLE, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 import { fmtHour12, fmtKwh, fmtNaira, fmtPct } from "@/lib/format";
 import { Badge, Card, Note } from "./ui";
 import { Play, FlaskConical } from "lucide-react";
@@ -129,14 +130,11 @@ export function ScenarioLab() {
           <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -8 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fill: "#64748B", fontSize: 11 }} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} unit=" L" width={58} />
-                <Tooltip
-                  contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#94A3B8" }}
-                />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="name" {...AXIS_PROPS} />
+                <YAxis unit=" L" width={58} {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} cursor={{ fill: "rgba(34,211,238,0.06)" }} />
+                <Legend wrapperStyle={LEGEND_STYLE} />
                 <Bar dataKey="Baseline diesel (L)" fill="#F59E0B" radius={[3, 3, 0, 0]} />
                 <Bar dataKey="Sentinel diesel (L)" fill="#22D3EE" radius={[3, 3, 0, 0]} />
               </BarChart>

@@ -5,6 +5,7 @@ import { useApp } from "@/lib/store";
 import { fmtNaira, fmtNairaFull, fmtNum, fmtPct, fmtUsd } from "@/lib/format";
 import { Card, Kpi, Note, Row } from "./ui";
 import { searchSizing, sensitivity } from "@/engine";
+import { AreaGradients, AXIS_PROPS, GRID_PROPS, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 import {
   Area,
   AreaChart,
@@ -59,7 +60,7 @@ export function Financials() {
         <Kpi
           label="EaaS fee (provider financing)"
           value={`${fmtNaira(econ.eaasAnnualFeeNaira)}/yr`}
-          sub={`${fmtNum(econ.eaasAssetTariffNairaPerKwh)} ₦/kWh on asset energy · closes ≤ ${econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"} financing`}
+          sub={`closes ≤ ${econ.eaasBreakevenFinancingRate ? fmtPct(econ.eaasBreakevenFinancingRate) : "n/a"} financing · ${fmtNum(econ.eaasAssetTariffNairaPerKwh)} ₦/kWh asset`}
           tone="warn"
         />
       </div>
@@ -90,15 +91,12 @@ export function Financials() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={cashflow} margin={{ top: 5, right: 5, bottom: 0, left: -8 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="year" tick={{ fill: "#64748B", fontSize: 10 }} unit="y" />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} tickFormatter={(v: number) => `${(v / 1e6).toFixed(0)}M`} width={58} />
-                <Tooltip
-                  contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }}
-                  formatter={(v: number) => fmtNairaFull(v)}
-                  labelStyle={{ color: "#94A3B8" }}
-                />
-                <Area type="monotone" dataKey="cumulative" name="Cumulative" stroke="#34D399" fill="#34D399" fillOpacity={0.25} strokeWidth={2} />
+                <AreaGradients />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="year" unit="y" {...AXIS_PROPS} />
+                <YAxis tickFormatter={(v: number) => `${(v / 1e6).toFixed(0)}M`} width={58} {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} formatter={(v: number) => fmtNairaFull(v)} />
+                <Area type="monotone" dataKey="cumulative" name="Cumulative" stroke="#34D399" strokeWidth={2} fill="url(#gradCash)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

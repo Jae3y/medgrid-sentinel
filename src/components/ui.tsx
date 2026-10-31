@@ -61,7 +61,7 @@ export function Kpi({
       )}
       <div className="min-w-0">
         <div className="label truncate">{label}</div>
-        <div className={clsx("text-xl font-bold leading-tight", toneCls)}>{value}</div>
+        <div className={clsx("num text-xl font-bold leading-tight", toneCls)}>{value}</div>
         {sub && <div className="truncate text-xs text-slate-400">{sub}</div>}
       </div>
     </div>

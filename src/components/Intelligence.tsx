@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useApp } from "@/lib/store";
 import { evaluateForecast, forecastDepletion } from "@/engine";
+import { AXIS_PROPS, GRID_PROPS, LEGEND_STYLE, TOOLTIP_LABEL, TOOLTIP_STYLE } from "@/lib/chart-theme";
 import { fmtHour12, fmtNum } from "@/lib/format";
 import { Badge, Card, Kpi, Note, Row } from "./ui";
 import {
@@ -105,11 +106,11 @@ export function Intelligence() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -8 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="hour" tick={{ fill: "#64748B", fontSize: 10 }} interval={2} unit="h" />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} unit=" kW" width={58} />
-                <Tooltip contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }} labelStyle={{ color: "#94A3B8" }} />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="hour" interval={2} unit="h" {...AXIS_PROPS} />
+                <YAxis unit=" kW" width={58} {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
+                <Legend wrapperStyle={LEGEND_STYLE} />
                 <Line type="monotone" dataKey="measured" name="Held-out actual" stroke="#F8FAFC" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="forecast" name="Sentinel forecast" stroke="#22D3EE" strokeWidth={2} strokeDasharray="5 3" dot={false} />
               </LineChart>

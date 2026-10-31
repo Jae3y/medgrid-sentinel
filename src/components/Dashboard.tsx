@@ -22,11 +22,20 @@ import {
   Legend,
   Line,
   LineChart,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  AreaGradients,
+  AXIS_PROPS,
+  GRID_PROPS,
+  LEGEND_STYLE,
+  TOOLTIP_LABEL,
+  TOOLTIP_STYLE,
+} from "@/lib/chart-theme";
 import type { StepResult } from "@/engine";
 
 export function Dashboard() {
@@ -129,6 +138,7 @@ export function Dashboard() {
                 max={steps.length - 1}
                 value={stepIndex}
                 onChange={(e) => setStep(Number(e.target.value))}
+                aria-label="Simulation playback position"
                 className="w-40 accent-cyan"
               />
             </div>
@@ -186,20 +196,18 @@ export function Dashboard() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="t" tick={{ fill: "#64748B", fontSize: 10 }} interval={11} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} unit=" kW" width={58} />
-                <Tooltip
-                  contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#94A3B8" }}
-                />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="pv" name="Solar" stackId="src" stroke="#22D3EE" fill="#22D3EE" fillOpacity={0.35} />
-                <Area type="monotone" dataKey="grid" name="Grid" stackId="src" stroke="#34D399" fill="#34D399" fillOpacity={0.25} />
-                <Area type="monotone" dataKey="battery" name="Battery" stackId="src" stroke="#7DE9F7" fill="#7DE9F7" fillOpacity={0.3} />
-                <Area type="monotone" dataKey="genset" name="Generator" stackId="src" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.3} />
-                <Line type="monotone" dataKey="demand" name="Demand" stroke="#F8FAFC" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="critical" name="Critical (T1+T2)" stroke="#EF4444" strokeWidth={1.5} strokeDasharray="4 3" dot={false} />
+                <AreaGradients />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="t" interval={11} {...AXIS_PROPS} />
+                <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
+                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Area type="monotone" dataKey="pv" name="Solar" stackId="src" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
+                <Area type="monotone" dataKey="grid" name="Grid" stackId="src" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />
+                <Area type="monotone" dataKey="battery" name="Battery" stackId="src" stroke="#7DE9F7" strokeWidth={1.5} fill="url(#gradBattery)" />
+                <Area type="monotone" dataKey="genset" name="Generator" stackId="src" stroke="#F59E0B" strokeWidth={1.5} fill="url(#gradGenset)" />
+                <Line type="monotone" dataKey="demand" name="Demand" stroke="#F1F5F9" strokeWidth={2.2} dot={false} />
+                <Line type="monotone" dataKey="critical" name="Critical (T1+T2)" stroke="#F87171" strokeWidth={1.4} strokeDasharray="5 4" dot={false} />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -209,12 +217,21 @@ export function Dashboard() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="t" tick={{ fill: "#64748B", fontSize: 10 }} interval={11} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} unit="%" domain={[0, 100]} width={58} />
-                <Tooltip
-                  contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#94A3B8" }}
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="t" interval={11} {...AXIS_PROPS} />
+                <YAxis unit="%" domain={[0, 100]} width={58} {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
+                <ReferenceLine
+                  y={config.battery.gridReserveSocFrac * 100}
+                  stroke="#22D3EE"
+                  strokeDasharray="4 4"
+                  label={{ value: `reserve ${(config.battery.gridReserveSocFrac * 100).toFixed(0)}%`, fill: "#22D3EE", fontSize: 10, position: "insideTopRight" }}
+                />
+                <ReferenceLine
+                  y={config.battery.minSocFrac * 100}
+                  stroke="#EF4444"
+                  strokeDasharray="4 4"
+                  label={{ value: `floor ${(config.battery.minSocFrac * 100).toFixed(0)}%`, fill: "#F87171", fontSize: 10, position: "insideBottomRight" }}
                 />
                 <Line type="monotone" dataKey="soc" name="SOC" stroke="#34D399" strokeWidth={2.5} dot={false} />
               </LineChart>
@@ -247,19 +264,17 @@ export function Dashboard() {
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData} margin={{ top: 5, right: 5, bottom: 0, left: -10 }}>
-                <CartesianGrid stroke="#1B3A63" strokeDasharray="3 3" />
-                <XAxis dataKey="t" tick={{ fill: "#64748B", fontSize: 10 }} interval={11} />
-                <YAxis tick={{ fill: "#64748B", fontSize: 10 }} unit=" kW" width={58} />
-                <Tooltip
-                  contentStyle={{ background: "#0B1F3A", border: "1px solid #24466E", borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: "#94A3B8" }}
-                />
-                <Legend wrapperStyle={{ fontSize: 11 }} />
-                <Area type="monotone" dataKey="unserved" name="Unserved" stroke="#EF4444" fill="#EF4444" fillOpacity={0.5} />
-                <Area type="monotone" dataKey="pv" name="Solar" stackId="mix" stroke="#22D3EE" fill="#22D3EE" fillOpacity={0.4} />
-                <Area type="monotone" dataKey="grid" name="Grid" stackId="mix" stroke="#34D399" fill="#34D399" fillOpacity={0.3} />
-                <Area type="monotone" dataKey="battery" name="Battery" stackId="mix" stroke="#7DE9F7" fill="#7DE9F7" fillOpacity={0.35} />
-                <Area type="monotone" dataKey="genset" name="Generator" stackId="mix" stroke="#F59E0B" fill="#F59E0B" fillOpacity={0.35} />
+                <AreaGradients />
+                <CartesianGrid {...GRID_PROPS} />
+                <XAxis dataKey="t" interval={11} {...AXIS_PROPS} />
+                <YAxis width={58} unit=" kW" {...AXIS_PROPS} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={TOOLTIP_LABEL} />
+                <Legend wrapperStyle={LEGEND_STYLE} />
+                <Area type="monotone" dataKey="unserved" name="Unserved" stroke="#EF4444" strokeWidth={1.4} fill="url(#gradUnserved)" />
+                <Area type="monotone" dataKey="pv" name="Solar" stackId="mix" stroke="#22D3EE" strokeWidth={1.5} fill="url(#gradSolar)" />
+                <Area type="monotone" dataKey="grid" name="Grid" stackId="mix" stroke="#34D399" strokeWidth={1.5} fill="url(#gradGrid)" />
+                <Area type="monotone" dataKey="battery" name="Battery" stackId="mix" stroke="#7DE9F7" strokeWidth={1.5} fill="url(#gradBattery)" />
+                <Area type="monotone" dataKey="genset" name="Generator" stackId="mix" stroke="#F59E0B" strokeWidth={1.5} fill="url(#gradGenset)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>

@@ -146,6 +146,7 @@ export function DigitalTwin() {
               max={sim.steps.length - 1}
               value={stepIndex}
               onChange={(e) => setStep(Number(e.target.value))}
+              aria-label="Simulation playback position"
               className="w-56 accent-cyan"
             />
           }

@@ -45,12 +45,16 @@ interface AppState {
 }
 
 function computeAll(cfg: SystemConfig, fin: FinancialConfig) {
+  const t0 = performance.now();
   const { proposed, baseline } = compareAgainstBaseline(cfg);
   const econ = evaluateEconomics(cfg, fin);
-  return { sim: proposed, baseline, econ };
+  return { sim: proposed, baseline, econ, lastRunMs: performance.now() - t0 };
 }
 
 const initialCfg = defaultConfig();
+// Initial results are computed synchronously, but the measured wall-clock time is
+// intentionally NOT displayed until a client-side run occurs (a module-load timing
+// value differs between SSR and hydration and would trip React error #418).
 const initial = computeAll(initialCfg, DEFAULT_FINANCIAL);
 
 export const useApp = create<AppState>((set, get) => ({
@@ -86,8 +90,9 @@ export const useApp = create<AppState>((set, get) => ({
   },
   setFin: (patch) => {
     const fin = { ...get().fin, ...patch };
+    const t0 = performance.now();
     const econ = evaluateEconomics(get().config, fin);
-    set({ fin, econ });
+    set({ fin, econ, lastRunMs: performance.now() - t0 });
   },
   togglePlay: () => set((s) => ({ playing: !s.playing })),
   setStep: (i) => set({ stepIndex: i, playing: false }),

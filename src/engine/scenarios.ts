@@ -7,15 +7,17 @@
  * diesel litres avoided.
  */
 
-import type { SystemConfig, WeatherDay } from "./types";
+import type { FeederRegime, Strategy, SystemConfig, WeatherDay } from "./types";
 import { REFERENCE_HOSPITAL } from "./facility";
 import { WEATHER_LIBRARY } from "./weather";
+import { DEFAULT_SENTINEL_POLICY } from "./policy";
+import { dayOfYear } from "./measured";
 
 /** Engineering defaults (all documented in docs/TECHNICAL_METHODOLOGY.md). */
 export const DEFAULTS = {
-  gridTariffNairaPerKwh: 210, // Band A service class, July-2024 order ~₦209.5/kWh (verify current MYTO order)
-  dieselNairaPerLitre: 1550, // Lagos early-2026 average ~₦1,560/L (NBS tracker; volatile)
-  fxNairaPerUsd: 1550,
+  gridTariffNairaPerKwh: 207, // Band A, NERC order effective 6 May 2024: ₦206.80/kWh (no later Band A order found; verify at pilot)
+  dieselNairaPerLitre: 1950, // Oct-2026 retail range ₦1,900–2,020/L; Dangote gantry ₦1,800/L from 10 Oct 2026 (DATA_SOURCES #12)
+  fxNairaPerUsd: 1500, // planning rate; sensitivity covers ±20 %
 };
 
 const W: Record<string, WeatherDay> = WEATHER_LIBRARY;
@@ -23,7 +25,9 @@ const W: Record<string, WeatherDay> = WEATHER_LIBRARY;
 export function defaultConfig(): SystemConfig {
   return {
     facility: REFERENCE_HOSPITAL,
-    pv: { kwp: 300, performanceRatio: 0.78 },
+    // Reference design selected by the sizing optimizer (src/engine/sizing.ts) for the
+    // Maiduguri case: 600 kWp (~3,600 m² ground/carport mount) + 600 kWh LFP + 510 kW PCS.
+    pv: { kwp: 600, performanceRatio: 0.78 },
     battery: {
       nominalKwh: 600,
       minSocFrac: 0.15,
@@ -37,13 +41,14 @@ export function defaultConfig(): SystemConfig {
       gridChargeEnabled: true,
       gridChargeWindowEndHour: 6,
     },
-    inverter: { ratedKw: 250 },
+    inverter: { ratedKw: 510 },
     genset: {
       ratedKw: 400,
       minLoadKw: 120,
       fuelFixedLph: 10,
       fuelLinearLperKwh: 0.27,
       startupSteps: 1,
+      startupSeconds: 15, // ATS-class standby set: start + transfer ≈ 10–15 s
       maintenanceNairaPerHour: 3500,
       fuelNairaPerLitre: DEFAULTS.dieselNairaPerLitre,
       canSupportGridPeak: false,
@@ -176,11 +181,12 @@ export const SCENARIOS: ScenarioDef[] = [
   {
     id: "I",
     name: "I · Undersized system",
-    description: "Half the PV and battery under scenario B — shows a failing design honestly.",
+    description: "A quarter of the reference PV and storage under scenario B — shows a failing design honestly.",
     build: () => {
       const cfg = withGrid(defaultConfig(), [[1, 6, 18]]);
       cfg.pv = { kwp: 150, performanceRatio: 0.78 };
-      cfg.battery = { ...cfg.battery, nominalKwh: 300, maxChargeKw: 100, maxDischargeKw: 100 };
+      cfg.inverter = { ratedKw: 150 };
+      cfg.battery = { ...cfg.battery, nominalKwh: 150, maxChargeKw: 50, maxDischargeKw: 50 };
       return cfg;
     },
   },
@@ -200,4 +206,104 @@ export const SCENARIOS: ScenarioDef[] = [
 
 export function scenarioById(id: string): ScenarioDef {
   return SCENARIOS.find((s) => s.id === id) ?? SCENARIOS[0];
+}
+
+
+// ============================================================================
+// Brief #13 — "Power for a city the grid can't protect": Maiduguri line-outage replay
+// ============================================================================
+
+/**
+ * Documented event (DATA_SOURCES #9–#11): tower 372 on the Gombe–Damaturu–Maiduguri
+ * 330 kV line was vandalised on 22 Sep 2024; TCN restored the Damaturu–Maiduguri section
+ * on 31 Oct 2024 (~39 days). The replay uses NASA POWER measured hourly irradiance and
+ * temperature for Maiduguri over exactly those dates. The hospital is the illustrative
+ * 250-bed reference facility — NOT measured data from a named hospital.
+ */
+export const MAIDUGURI_EVENT = {
+  city: "Maiduguri, Borno State, Nigeria",
+  line: "Gombe–Damaturu–Maiduguri 330 kV",
+  vandalised: "2024-09-22",
+  restored: "2024-10-31",
+  simStart: "2024-09-20",
+  outageStartDay: 2,
+  outageDays: 39,
+  horizonDays: 42,
+};
+
+export interface LineOutageOptions {
+  strategy: Strategy;
+  /** Litres delivered per week, in two drops 3.5 days apart (the constrained fuel supply chain). */
+  weeklySupplyLitres: number;
+  tankLitres: number;
+  initialFuelFrac: number;
+  /** Hours/day the city's emergency plant still feeds the hospital feeder during the line outage. */
+  residualGridHoursPerDay: number;
+  pvKwp: number;
+  batteryKwh: number;
+  inverterKw: number;
+  gensetKw: number;
+  missedDeliveries: number[];
+}
+
+export const DEFAULT_LINE_OUTAGE: LineOutageOptions = {
+  strategy: "sentinel",
+  weeklySupplyLitres: 6000,
+  tankLitres: 10000,
+  initialFuelFrac: 0.6,
+  residualGridHoursPerDay: 0,
+  pvKwp: 600,
+  batteryKwh: 600,
+  inverterKw: 510,
+  gensetKw: 400,
+  missedDeliveries: [],
+};
+
+/** Typical Nigerian feeder regime: frequency matched to WBES 2014 (32.8 outages/month). */
+export const TYPICAL_FEEDER: FeederRegime = { outagesPerDay: 1.08, medianDurationHours: 4, sigma: 0.8 };
+
+export function lineOutageConfig(opts: Partial<LineOutageOptions> = {}): SystemConfig {
+  const o = { ...DEFAULT_LINE_OUTAGE, ...opts };
+  const base = defaultConfig();
+  const ev = MAIDUGURI_EVENT;
+  const windows: SystemConfig["grid"]["outageWindows"] = [];
+  for (let d = ev.outageStartDay; d < ev.outageStartDay + ev.outageDays; d++) {
+    if (o.residualGridHoursPerDay <= 0) windows.push({ day: d, startHour: 0, endHour: 24 });
+    else {
+      // Residual emergency-plant supply assumed in the evening peak window 17:00 onward.
+      windows.push({ day: d, startHour: 0, endHour: 17 });
+      const end = Math.min(24, 17 + o.residualGridHoursPerDay);
+      if (end < 24) windows.push({ day: d, startHour: end, endHour: 24 });
+    }
+  }
+  return {
+    ...base,
+    strategy: o.strategy,
+    sentinel: DEFAULT_SENTINEL_POLICY,
+    pv: { kwp: o.pvKwp, performanceRatio: 0.82, tempCoeffPerC: -0.0035, noctC: 45 },
+    battery: {
+      ...base.battery,
+      nominalKwh: o.batteryKwh,
+      maxChargeKw: Math.max(50, Math.round(o.batteryKwh / 3)),
+      maxDischargeKw: Math.max(50, Math.round(o.batteryKwh / 3)),
+      initialSocFrac: 0.9,
+    },
+    inverter: { ratedKw: o.inverterKw },
+    genset: { ...base.genset, ratedKw: o.gensetKw, fuelNairaPerLitre: DEFAULTS.dieselNairaPerLitre },
+    grid: { ...base.grid, outageWindows: windows },
+    fuel: {
+      tankLitres: o.tankLitres,
+      initialLitres: o.tankLitres * o.initialFuelFrac,
+      deliveryLitres: o.weeklySupplyLitres / 2,
+      deliveryEveryDays: o.weeklySupplyLitres > 0 ? 3.5 : 0,
+      firstDeliveryDay: 3,
+      deliveryHour: 10,
+      missedDeliveries: o.missedDeliveries,
+    },
+    measuredWeather: { datasetId: "maiduguri_2024", startDayOfYear: dayOfYear(ev.simStart) },
+    calendarStart: ev.simStart,
+    horizonDays: ev.horizonDays,
+    weather: [W.sunny],
+    seed: 2024,
+  };
 }

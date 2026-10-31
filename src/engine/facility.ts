@@ -79,11 +79,23 @@ export const RURAL_HOSPITAL: FacilityConfig = {
   })),
 };
 
-export function tierDemandAt(loads: LoadDef[], hourFloor: number): { 1: number; 2: number; 3: number } {
-  const d = { 1: 0, 2: 0, 3: 0 } as { 1: number; 2: number; 3: number };
-  for (const load of loads) {
-    const f = load.profile[hourFloor % 24] ?? 0;
-    d[load.tier] += load.ratedKw * f;
+const tierTables = new WeakMap<LoadDef[], { 1: number; 2: number; 3: number }[]>();
+
+/** 24-hour tier demand table (kW), cached per load list (load lists are treated as immutable). */
+export function tierTable(loads: LoadDef[]): { 1: number; 2: number; 3: number }[] {
+  let table = tierTables.get(loads);
+  if (!table) {
+    table = Array.from({ length: 24 }, (_, h) => {
+      const d = { 1: 0, 2: 0, 3: 0 } as { 1: number; 2: number; 3: number };
+      for (const load of loads) d[load.tier] += load.ratedKw * (load.profile[h] ?? 0);
+      return d;
+    });
+    tierTables.set(loads, table);
   }
-  return d;
+  return table;
+}
+
+export function tierDemandAt(loads: LoadDef[], hourFloor: number): { 1: number; 2: number; 3: number } {
+  const d = tierTable(loads)[((hourFloor % 24) + 24) % 24];
+  return { 1: d[1], 2: d[2], 3: d[3] };
 }

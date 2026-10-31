@@ -1,0 +1,102 @@
+[
+ {
+  "id": "abuja_2024",
+  "site": "abuja",
+  "year": 2024,
+  "lat": 9.06,
+  "lon": 7.49,
+  "annualGhiKwhM2": 1913.3,
+  "meanT2mC": 26.5,
+  "filledMissing": 0
+ },
+ {
+  "id": "accra_2024",
+  "site": "accra",
+  "year": 2024,
+  "lat": 5.6,
+  "lon": -0.19,
+  "annualGhiKwhM2": 1764.7,
+  "meanT2mC": 27.1,
+  "filledMissing": 0
+ },
+ {
+  "id": "houston_2024",
+  "site": "houston",
+  "year": 2024,
+  "lat": 29.76,
+  "lon": -95.37,
+  "annualGhiKwhM2": 1655.8,
+  "meanT2mC": 21.9,
+  "filledMissing": 0
+ },
+ {
+  "id": "kano_2024",
+  "site": "kano",
+  "year": 2024,
+  "lat": 12.0,
+  "lon": 8.52,
+  "annualGhiKwhM2": 2127.4,
+  "meanT2mC": 26.2,
+  "filledMissing": 0
+ },
+ {
+  "id": "lagos_2024",
+  "site": "lagos",
+  "year": 2024,
+  "lat": 6.52,
+  "lon": 3.38,
+  "annualGhiKwhM2": 1714.3,
+  "meanT2mC": 27.0,
+  "filledMissing": 0
+ },
+ {
+  "id": "maiduguri_2022",
+  "site": "maiduguri",
+  "year": 2022,
+  "lat": 11.83,
+  "lon": 13.15,
+  "annualGhiKwhM2": 2139.9,
+  "meanT2mC": 27.8,
+  "filledMissing": 0
+ },
+ {
+  "id": "maiduguri_2023",
+  "site": "maiduguri",
+  "year": 2023,
+  "lat": 11.83,
+  "lon": 13.15,
+  "annualGhiKwhM2": 2109.5,
+  "meanT2mC": 29.6,
+  "filledMissing": 0
+ },
+ {
+  "id": "maiduguri_2024",
+  "site": "maiduguri",
+  "year": 2024,
+  "lat": 11.83,
+  "lon": 13.15,
+  "annualGhiKwhM2": 2104.4,
+  "meanT2mC": 28.6,
+  "filledMissing": 0
+ },
+ {
+  "id": "nairobi_2024",
+  "site": "nairobi",
+  "year": 2024,
+  "lat": -1.29,
+  "lon": 36.82,
+  "annualGhiKwhM2": 2077.9,
+  "meanT2mC": 20.6,
+  "filledMissing": 0
+ },
+ {
+  "id": "portharcourt_2024",
+  "site": "portharcourt",
+  "year": 2024,
+  "lat": 4.82,
+  "lon": 7.03,
+  "annualGhiKwhM2": 1542.4,
+  "meanT2mC": 26.6,
+  "filledMissing": 0
+ }
+]

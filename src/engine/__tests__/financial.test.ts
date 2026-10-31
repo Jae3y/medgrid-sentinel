@@ -13,15 +13,16 @@ import { scenarioById } from "../scenarios";
 import { runSimulation } from "../simulate";
 
 describe("CapEx breakdown", () => {
-  it("hand-checked: 300 kWp + 600 kWh + 250 kW inverter", () => {
+  it("hand-checked: 600 kWp + 600 kWh + 510 kW PCS + platform", () => {
     const cfg = scenarioById("B").build();
     const c = capexBreakdown(cfg, DEFAULT_FINANCIAL);
-    expect(c.pvUsd).toBeCloseTo(300 * 800, 6); // 240,000
-    expect(c.storageUsd).toBeCloseTo(600 * 280, 6); // 168,000
-    expect(c.inverterUsd).toBeCloseTo(250 * 120, 6); // 30,000
-    expect(c.installUsd).toBeCloseTo(438000 * 0.12, 6); // 52,560
-    expect(c.totalUsd).toBeCloseTo(490560, 6);
-    expect(c.totalNaira).toBeCloseTo(490560 * 1550, 6);
+    expect(c.pvUsd).toBeCloseTo(600 * 650, 6); // 390,000
+    expect(c.storageUsd).toBeCloseTo(600 * 260, 6); // 156,000
+    expect(c.inverterUsd).toBeCloseTo(510 * 110, 6); // 56,100
+    expect(c.installUsd).toBeCloseTo(602100 * 0.15, 6); // 90,315
+    expect(c.platformUsd).toBe(12000);
+    expect(c.totalUsd).toBeCloseTo(704415, 6);
+    expect(c.totalNaira).toBeCloseTo(704415 * 1500, 6);
   });
 });
 
@@ -36,8 +37,36 @@ describe("annualization", () => {
   });
 });
 
-describe("evaluateEconomics", () => {
+describe("evaluateEconomics (full measured year, 20-year lifecycle)", () => {
   const econ = evaluateEconomics(scenarioById("B").build(), DEFAULT_FINANCIAL);
+
+  it("NPV and IRR agree in sign (IRR above the discount rate ⇔ NPV > 0)", () => {
+    expect(econ.irr).not.toBeNull();
+    expect(econ.npvNaira > 0).toBe(econ.irr! > DEFAULT_FINANCIAL.discountRate);
+  });
+
+  it("cumulative cash flow equals −CapEx + Σ net flows (independent sum)", () => {
+    const sum = econ.cashFlows.reduce((s, f) => s + f.netNaira, -econ.capex.totalNaira);
+    expect(econ.cashFlows[econ.cashFlows.length - 1].cumulativeNaira).toBeCloseTo(sum, 3);
+  });
+
+  it("books battery and inverter replacement in year 12", () => {
+    const y12 = econ.cashFlows.find((f) => f.year === 12)!;
+    const expected =
+      (econ.capex.storageUsd * DEFAULT_FINANCIAL.batteryReplacementFrac + econ.capex.inverterUsd * DEFAULT_FINANCIAL.inverterReplacementFrac) *
+      DEFAULT_FINANCIAL.fxNairaPerUsd;
+    expect(y12.replacementNaira).toBeCloseTo(expected, 3);
+  });
+
+  it("re-pricing a cached annual run equals simulating at the new price", () => {
+    const cfg = scenarioById("B").build();
+    const a = evaluateEconomics(cfg, DEFAULT_FINANCIAL);
+    const pricier = { ...cfg, genset: { ...cfg.genset, fuelNairaPerLitre: cfg.genset.fuelNairaPerLitre * 1.1 } };
+    const b = evaluateEconomics(pricier, DEFAULT_FINANCIAL);
+    // diesel cost scales exactly with price; litres unchanged
+    expect(b.baselineAnnual.dieselLitres).toBeCloseTo(a.baselineAnnual.dieselLitres, 6);
+    expect(b.baselineAnnual.dieselCostNaira).toBeCloseTo(a.baselineAnnual.dieselCostNaira * 1.1, 0);
+  });
 
   it("shows operating savings versus the diesel-only baseline", () => {
     expect(econ.annualSavingsNaira).toBeGreaterThan(0);
@@ -68,7 +97,7 @@ describe("evaluateEconomics", () => {
 describe("sensitivity analysis", () => {
   it("returns the full documented set of one-at-a-time variations", () => {
     const rows = sensitivity(scenarioById("B").build(), DEFAULT_FINANCIAL);
-    expect(rows).toHaveLength(8);
+    expect(rows).toHaveLength(9);
     for (const r of rows) {
       expect(Number.isFinite(r.eaasTariffNairaPerKwh)).toBe(true);
     }

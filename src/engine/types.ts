@@ -26,8 +26,16 @@ export interface FacilityConfig {
 export interface PVConfig {
   /** Installed DC capacity, kWp */
   kwp: number;
-  /** Performance ratio (includes inverter, soiling, temperature, cabling). 0..1 */
+  /**
+   * Performance ratio (inverter, soiling, mismatch, cabling). 0..1. When measured
+   * ambient temperature is available the temperature loss is modelled separately
+   * (see tempCoeffPerC) and this PR must then EXCLUDE temperature losses.
+   */
   performanceRatio: number;
+  /** Power temperature coefficient per °C above 25 °C cell temperature (mono-PERC ≈ −0.0035). */
+  tempCoeffPerC?: number;
+  /** Nominal operating cell temperature, °C. Cell model: T_c = T_amb + (NOCT − 20)/800 × G. */
+  noctC?: number;
 }
 
 export interface BatteryConfig {
@@ -61,8 +69,14 @@ export interface GensetConfig {
   fuelFixedLph: number;
   /** Marginal fuel burn, litres per kWh generated. */
   fuelLinearLperKwh: number;
-  /** Steps (15 min) from start command to breaker close. */
+  /** Steps (15 min) from start command to breaker close (legacy coarse model, used when startupSeconds is absent). */
   startupSteps: number;
+  /**
+   * Seconds from start command to transfer-switch closure (ATS-class sets: ~10–15 s).
+   * When present it supersedes startupSteps: the first running step loses
+   * startupSeconds / 900 of its energy unless storage bridges the gap.
+   */
+  startupSeconds?: number;
   /** Variable O&M while running, naira per hour. */
   maintenanceNairaPerHour: number;
   /** Delivered diesel price, naira per litre. */
@@ -81,6 +95,78 @@ export interface OutageWindow {
   /** Start hour of day (inclusive), end hour (exclusive). */
   startHour: number;
   endHour: number;
+}
+
+/** On-site diesel stock and the resupply chain that feeds it. Absent = unlimited fuel. */
+export interface FuelConfig {
+  tankLitres: number;
+  initialLitres: number;
+  /** Litres per delivery (capped by free tank space when it arrives). */
+  deliveryLitres: number;
+  /** Days between scheduled deliveries; 0 disables resupply. */
+  deliveryEveryDays: number;
+  /** Simulated day of the first scheduled delivery. */
+  firstDeliveryDay: number;
+  /** Hour of day deliveries arrive. */
+  deliveryHour: number;
+  /** Delivery indices (0-based) that never arrive (convoy cancelled / supplier stock-out). */
+  missedDeliveries?: number[];
+  /** Per-delivery delay in hours, keyed by delivery index (set by the Monte Carlo sampler). */
+  delayHours?: Record<number, number>;
+}
+
+/**
+ * Deterministic generator failure injection. The Monte Carlo sampler draws these from
+ * published reliability statistics (NREL/TP-5C00-76553); scenarios may set them explicitly.
+ */
+export interface GensetReliabilityInjection {
+  /** Islanding events (1-based outage count) at which the set fails to start. */
+  failToStartOnOutage?: number[];
+  /** Cumulative run-hours at which a running failure occurs (ascending). */
+  runFailureAtRunHours?: number[];
+  /** Hours from a failure until the set is available again (repair incl. logistics). */
+  repairHours: number;
+}
+
+/**
+ * Dispatch strategy. All strategies share the same physics and constraints and differ
+ * only in decisions — which is how the value of the control software is isolated.
+ *
+ *  - baseline:           grid + diesel only (status quo); the generator follows the full load.
+ *  - baseline_rationed:  status quo + manual rationing (every Tier-3 load off while islanded).
+ *  - conventional:       PV + battery + diesel under fixed-rule hybrid-inverter logic
+ *                        (battery first, generator load-follows once the battery hits its floor).
+ *  - sentinel:           identical hardware under MedGrid Sentinel predictive dispatch:
+ *                        fuel-runway governor, clinical ride-through reserve, efficient
+ *                        generator cycling.
+ */
+export type Strategy = "baseline" | "baseline_rationed" | "conventional" | "sentinel";
+
+export interface SentinelPolicy {
+  /** Minimum planning horizon for the fuel-runway governor, hours. */
+  minHorizonHours: number;
+  /** Planning horizon used when no delivery is scheduled, hours. */
+  maxHorizonHours: number;
+  /** Hours added after the next expected delivery (convoy-delay margin). */
+  deliveryMarginHours: number;
+  /** Fraction of forecast solar energy the governor is allowed to count on. */
+  pvForecastConfidence: number;
+  /** Hours of Tier-1 demand always held in the battery while the generator is off. */
+  clinicalReserveHours: number;
+  /** Generator cycling: stop charging and shut down once SOC reaches this fraction. */
+  gensetStopSocFrac: number;
+  /** Required surplus before the governor restores a higher service level (hysteresis). */
+  restoreMargin: number;
+}
+
+/** Stochastic feeder regime (seeded) that expands into explicit outage windows. */
+export interface FeederRegime {
+  /** Mean interruptions per day (Poisson). */
+  outagesPerDay: number;
+  /** Median interruption duration, hours (log-normal). */
+  medianDurationHours: number;
+  /** Log-normal shape parameter. */
+  sigma: number;
 }
 
 export interface GridConfig {
@@ -131,6 +217,23 @@ export interface SystemConfig {
   peakShaveKw: number | null;
   /** Seed for the small deterministic telemetry noise (never affects energy math). */
   seed: number;
+  /** Dispatch strategy (default "conventional"). */
+  strategy?: Strategy;
+  sentinel?: SentinelPolicy;
+  /** On-site diesel logistics; absent = unlimited fuel. */
+  fuel?: FuelConfig;
+  reliability?: GensetReliabilityInjection;
+  /**
+   * Measured weather: dataset id in src/data/irradiance (NASA POWER hourly) and the
+   * 0-based day-of-year that simulated day 0 maps to. Absent = synthetic library.
+   */
+  measuredWeather?: { datasetId: string; startDayOfYear: number };
+  /** Optional stochastic feeder regime layered on top of explicit outage windows. */
+  feederRegime?: FeederRegime;
+  /** Multiplier applied to every load (demand-surge studies). Default 1. */
+  loadScale?: number;
+  /** Calendar date of simulated day 0 (display only), e.g. "2024-09-20". */
+  calendarStart?: string;
 }
 
 export interface TierDemand {
@@ -165,6 +268,20 @@ export interface StepResult {
   gridCostNaira: number;
   dieselCostNaira: number;
   maintenanceNaira: number;
+  /** Diesel in the tank at the end of the step, litres (Infinity when unlimited). */
+  fuelLitres: number;
+  /** Load deliberately deferred by the dispatch policy (not a supply deficit), kW by tier. */
+  deferredKw: TierDemand;
+  /** Governor service level: 3 all tiers · 2 Tier 1+2 · 1 Tier 1 + half of Tier 2 · 0 Tier 1 only. */
+  serviceLevel: ServiceLevel;
+  /** Generator needed-or-not, it is unavailable this step (fault, repair, or empty tank). */
+  gensetUnavailable: boolean;
+  /** Irradiance used this step, W/m² (measured or synthetic). */
+  irradianceWm2: number;
+  /** Seconds of generator start-to-transfer gap inside this step (0 when none). */
+  startGapSec: number;
+  /** Diesel delivered at this step, litres. */
+  deliveredL: number;
   /** Simulated local telemetry (never presented as measured facility data). */
   telemetry?: { voltageV: number; freqHz: number; pqKind?: PQKind };
 }
@@ -210,7 +327,27 @@ export interface SimMetrics {
   maintenanceNaira: number;
   opexNaira: number;
   co2Kg: number;
+  /** Hours (while islanded) in which ≥ 99.5 % of Tier-1 demand was served. */
+  tier1MaintainedHours: number;
+  /** Hours (while islanded) in which ≥ 99.5 % of Tier-1 AND Tier-2 demand was served. */
+  criticalMaintainedHours: number;
+  /** Distinct episodes in which Tier-1 supply was interrupted. */
+  tier1Interruptions: number;
+  /** Energy deliberately deferred by policy (rationing), kWh. */
+  deferredKwh: number;
+  /** Hours in which the generator was unavailable (fault, repair or empty tank) while islanded. */
+  gensetUnavailableHours: number;
+  /** Islanded hours with an empty diesel tank. */
+  fuelOutHours: number;
+  /** Litres delivered by the resupply chain during the run. */
+  fuelDeliveredLitres: number;
+  /** Diesel left at the end of the run (Infinity when unlimited). */
+  fuelEndLitres: number;
+  /** Diesel burned per critical-service hour maintained. */
+  litresPerCriticalHour: number;
 }
+
+export type ServiceLevel = 0 | 1 | 2 | 3;
 
 export interface DayMetrics {
   day: number;

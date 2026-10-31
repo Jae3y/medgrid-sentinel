@@ -92,17 +92,19 @@ describe("battery constraints", () => {
 });
 
 describe("outage state machine", () => {
-  it("bridges the generator start delay on battery, then starts the genset", () => {
+  it("forms the island on battery with no Tier-1 break, then bridges the generator's 15 s transfer", () => {
     const cfg = defaultConfig();
-    cfg.grid.outageWindows = [{ startHour: 6, endHour: 18 }];
+    cfg.grid.outageWindows = [{ day: 1, startHour: 18, endHour: 24 }, { day: 2, startHour: 0, endHour: 18 }];
     const sim = runSimulation(cfg);
-    // find first islanded step of the outage (t = day1 06:00 → t = 96 + 24 = 120)
-    const t0 = 96 + 6 * 4;
+    const t0 = 96 + 18 * 4;
     const s0 = sim.steps[t0];
     expect(s0.islanded).toBe(true);
-    expect(s0.gensetOn).toBe(false); // battery bridges the start delay
-    const next = sim.steps[t0 + 1];
-    expect(next.gensetOn).toBe(true); // after 1-step startup
+    // Evening demand exceeds the 200 kW battery rating, so the set is called at once —
+    // and storage discharges through its 15 s start so Tier-1 sees no break.
+    expect(s0.battKw).toBeLessThan(0);
+    expect(s0.servedKw[1]).toBeCloseTo(s0.demandKw[1], 9);
+    expect(s0.startGapSec).toBe(0);
+    expect(sim.metrics.tier1Interruptions).toBe(0);
   });
 
   it("waits for the stability delay before re-closing the tie", () => {

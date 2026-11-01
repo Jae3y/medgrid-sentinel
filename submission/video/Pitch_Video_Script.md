@@ -1,10 +1,11 @@
 # Pitch Video Script — target 4:30 (maximum 5:00)
 
+
 File name: `MedGridSentinel_Brief13_Pitch.mp4`. Structure follows Handbook §10 (problem → solution → demo → feasibility & cost → scale → community fit → team & ask). Visuals: the 5-slide deck PDF plus short app clips. A face on camera is optional (Handbook FAQ).
 
 | Time | Visual | Narration |
 |---|---|---|
-| 0:00–0:30 | Slide 1 | "On the 22nd of September 2024, insurgents brought down a tower on the 330 kV line into Maiduguri. The city had no grid power for 39 days. Two years earlier, the state governor walked into two hospitals in the same city that had been dark for days. Their generators worked. They had no diesel. That is Brief 13: power for a city the grid can't protect." |
+| 0:00–0:30 | Slide 1 | "On the 22nd of September 2024, insurgents brought down a tower on the 330 kV line into Maiduguri. The city had no grid power for 39 days. In December 2022, the state governor found two hospitals in the same city dark for days. Their generators worked. They had no diesel. That is Brief 13: power for a city the grid can't protect." |
 | 0:30–0:55 | Slide 1, right panel | "The users are the works engineers and duty managers of referral hospitals like these. The beneficiaries are the patients in the ICU, the theatres, maternity and the cold chain. The payer is hospital management, or an energy-service company paid from the diesel the hospital stops buying. The root cause isn't a small generator. Backup is sized in kilowatts, but a line outage is a fuel-logistics crisis, and nobody decides with numbers which loads the last litres should keep alive." |
 | 0:55–1:30 | Slide 2 | "MedGrid Sentinel is a fuel-aware brain for hospital microgrids. Every hour, its fuel-runway governor compares diesel, battery and forecast solar against what each care tier needs until the next delivery. It defers laundry and admin first, and never the ICU. A clinical reserve in the battery means a failed generator never darkens the ICU, and the generator runs hard and stops early to save fuel. It runs offline and alerts the engineer by SMS on any phone." |
 | 1:30–2:15 | App clip: Line outage replay, flip Status quo ↔ Sentinel at 26 Sept 10:00, then the ledger | "We replayed the real 39-day outage on NASA's measured weather for those dates, with four controllers and the same fuel trucks. At six thousand litres a week the status quo keeps critical services on for 449 of 937 hours. Sentinel keeps all 937 and burns 2,841 fewer litres. On the same solar and battery, the software alone adds 179 hours." |

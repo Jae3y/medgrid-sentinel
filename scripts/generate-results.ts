@@ -74,6 +74,32 @@ const stress = (() => {
 })();
 const sms = smsFeed(headline.res.sentinel, 8).map((a) => a.text);
 
+// The moment the demo film opens on: the first quarter-hour (rounded up to a whole hour) in which the
+// status-quo hospital loses more than half of its Tier-1 demand. Same rule as the app's "First blackout" button.
+const fbBase = headline.res.baseline.steps;
+const fbRaw = fbBase.findIndex((s) => s.islanded && s.demandKw[1] > 0 && s.servedKw[1] < 0.5 * s.demandKw[1]);
+const fbStep = fbRaw + ((4 - (fbRaw % 4)) % 4);
+const fbDate = new Date(`${MAIDUGURI_EVENT.simStart}T00:00:00Z`);
+fbDate.setUTCDate(fbDate.getUTCDate() + Math.floor(fbStep / 96));
+const firstBlackout = {
+  step: fbStep,
+  isoDate: fbDate.toISOString().slice(0, 10),
+  hourOfDay: (fbStep % 96) / 4,
+  outageHour: (fbStep - MAIDUGURI_EVENT.outageStartDay * 96) / 4,
+  byController: Object.fromEntries(
+    STRATEGIES.map((st) => {
+      const steps = headline.res[st.id].steps;
+      const cur = steps[fbStep];
+      let crit = 0;
+      for (const x of steps.slice(0, fbStep + 1)) {
+        const gap = x.startGapSec > 0 && x.startGapSec <= 90;
+        if (x.islanded && (gap || x.servedKw[1] + x.servedKw[2] >= 0.995 * (x.demandKw[1] + x.demandKw[2]))) crit += 0.25;
+      }
+      return [st.id, { dieselOnSiteLitres: r1(cur.fuelLitres), tier1ServedKw: r1(cur.servedKw[1]), tier1DemandKw: r1(cur.demandKw[1]), tier2ServedKw: r1(cur.servedKw[2]), tier3ServedKw: r1(cur.servedKw[3]), criticalHoursSoFar: r1(crit, 2), pvKw: r1(cur.pvKw), batteryKw: r1(cur.battKw), socPct: r1(cur.socFrac * 100), generatorKw: r1(cur.gensetKw), generatorUnavailable: cur.gensetUnavailable }];
+    })
+  ),
+};
+
 // ---------- Normal-year diesel (for the "x normal weekly use" framing) ----------
 const normalYear = runSimulation(annualConfig(defaultConfig(), { ...DEFAULT_FINANCIAL, lineOutageDays: 0 }, "baseline"));
 const normalWeeklyLitres = normalYear.metrics.dieselLitres / (normalYear.metrics.horizonHours / 168);
@@ -173,6 +199,7 @@ const result = {
     results: headline.row,
     withGeneratorTripAt150h: stress,
     supplyCurve,
+    firstBlackout,
     sampleSms: sms,
   },
   monteCarlo14Day: mc,

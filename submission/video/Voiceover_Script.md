@@ -1,9 +1,10 @@
 # Voice-over Script (read-aloud versions, no stage directions)
 
+
 ## Demo (≈ 4:15)
 This is MedGrid Sentinel, built this weekend for Brief 13, power for a city the grid can't protect. On the 22nd of September 2024 insurgents cut the 330 kV line into Maiduguri. The city was off the grid for 39 days.
 
-Same hospital, same moment, run the way most hospitals run today: grid plus a diesel generator. It's day six. The tank is empty, the generator can't run, and the ICU, theatres and cold chain have no power. The generator didn't fail. The fuel ran out. That happened to two hospitals in this city in 2022.
+Same hospital, same moment, run the way most hospitals run today: grid plus a diesel generator. It's day five. The tank is empty, the generator can't run, and the ICU, theatres and cold chain have no power. The generator didn't fail. The fuel ran out. That happened to two hospitals in this city in 2022.
 
 Now add 600 kilowatts of solar and a 600 kilowatt-hour battery, run by an ordinary hybrid inverter. It survives today with 2,800 litres left. Sentinel, on the identical hardware, has 3,826 litres, because it has been budgeting fuel against the next delivery since the line went down.
 

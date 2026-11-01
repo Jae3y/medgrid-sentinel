@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-31T14:13:50.110Z",
+  "generatedAt": "2026-10-31T18:23:02.242Z",
   "reproduce": "npm run results (deterministic; seeds fixed)",
   "facility": {
     "name": "Reference Secondary Referral Hospital (illustrative)",
@@ -323,6 +323,66 @@
         }
       }
     ],
+    "firstBlackout": {
+      "step": 616,
+      "isoDate": "2024-09-26",
+      "hourOfDay": 10,
+      "outageHour": 106,
+      "byController": {
+        "baseline": {
+          "dieselOnSiteLitres": 0,
+          "tier1ServedKw": 0,
+          "tier1DemandKw": 95,
+          "tier2ServedKw": 0,
+          "tier3ServedKw": 0,
+          "criticalHoursSoFar": 105.5,
+          "pvKw": 0,
+          "batteryKw": 0,
+          "socPct": 0,
+          "generatorKw": 0,
+          "generatorUnavailable": true
+        },
+        "baseline_rationed": {
+          "dieselOnSiteLitres": 2536,
+          "tier1ServedKw": 95,
+          "tier1DemandKw": 95,
+          "tier2ServedKw": 124,
+          "tier3ServedKw": 0,
+          "criticalHoursSoFar": 106.25,
+          "pvKw": 0,
+          "batteryKw": 0,
+          "socPct": 0,
+          "generatorKw": 219,
+          "generatorUnavailable": false
+        },
+        "conventional": {
+          "dieselOnSiteLitres": 2800,
+          "tier1ServedKw": 95,
+          "tier1DemandKw": 95,
+          "tier2ServedKw": 124,
+          "tier3ServedKw": 136,
+          "criticalHoursSoFar": 106.25,
+          "pvKw": 389,
+          "batteryKw": 35,
+          "socPct": 89,
+          "generatorKw": 0,
+          "generatorUnavailable": false
+        },
+        "sentinel": {
+          "dieselOnSiteLitres": 3826,
+          "tier1ServedKw": 95,
+          "tier1DemandKw": 95,
+          "tier2ServedKw": 124,
+          "tier3ServedKw": 136,
+          "criticalHoursSoFar": 106.25,
+          "pvKw": 389,
+          "batteryKw": 35,
+          "socPct": 66,
+          "generatorKw": 0,
+          "generatorUnavailable": false
+        }
+      }
+    },
     "sampleSms": [
       "MGS 24/10 12:00 FUEL RUNWAY: FULL SERVICE restored. Diesel 2525L, batt 100%. ICU/OT/cold chain protected.",
       "MGS 24/10 22:00 Diesel received. Tank 4977L. Runway recalculated.",

@@ -1,5 +1,6 @@
 # Demo Video Script — target 4:15 (allowed 3–5 min)
 
+
 File name: `MedGridSentinel_Brief13_Demo.mp4` · 1920×1080 · English · real product only (judges treat the demo as the source of truth for what was built).
 
 Setup: production build served locally (see Screen_Recording_Runbook §1), Chrome at 100% zoom, app open on **Line outage replay**. Every number below is what the app shows at that moment. If a number differs on screen, say what's on screen.
@@ -7,7 +8,7 @@ Setup: production build served locally (see Screen_Recording_Runbook §1), Chrom
 | Time | Screen & exact action | Narration (say exactly) |
 |---|---|---|
 | 0:00–0:20 | Line outage replay, top of page. 3D scene shows **Thu 26 Sept, 10:00**, controller **Sentinel**. Don't touch anything. | "This is MedGrid Sentinel, built this weekend for Brief 13, power for a city the grid can't protect. On the 22nd of September 2024 insurgents cut the 330 kV line into Maiduguri. The city was off the grid for 39 days." |
-| 0:20–0:45 | Click **Status quo** in the controller switch. Pause 2 s on the red windows and the **0 L** tank. | "Same hospital, same moment, run the way most hospitals run today: grid plus a diesel generator. It's day six. The tank is empty, the generator can't run, and the ICU, theatres and cold chain have no power. The generator didn't fail. The fuel ran out. That happened to two hospitals in this city in 2022." |
+| 0:20–0:45 | Click **Status quo** in the controller switch. Pause 2 s on the red windows and the **0 L** tank. | "Same hospital, same moment, run the way most hospitals run today: grid plus a diesel generator. It's day five. The tank is empty, the generator can't run, and the ICU, theatres and cold chain have no power. The generator didn't fail. The fuel ran out. That happened to two hospitals in this city in 2022." |
 | 0:45–1:05 | Click **Fixed-rule hybrid**. Point at **Diesel on site 2,800**. Then click **Sentinel**; point at **3,826**. | "Now add 600 kilowatts of solar and a 600 kilowatt-hour battery, run by an ordinary hybrid inverter. It survives today with 2,800 litres left. Sentinel, on the identical hardware, has 3,826 litres, because it has been budgeting fuel against the next delivery since the line went down." |
 | 1:05–1:25 | Click **Play the outage**. Let it run ~8 s, then **Pause**. | "Everything in this model is driven by the simulation: the sun from NASA's measured irradiance for these exact dates, the panels, the battery gauge, the diesel level, and the lights in each ward." |
 | 1:25–1:55 | Scroll to the four-number ledger. Hover each number. | "Over the whole outage, with six thousand litres delivered each week, Sentinel keeps critical services on for 937 of 937 hours. The status quo manages 449. It burns 2,841 fewer litres. Life-critical circuits are never interrupted. On the same solar and battery, the software alone adds 179 hours." |

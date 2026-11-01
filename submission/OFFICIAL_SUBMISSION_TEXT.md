@@ -56,7 +56,7 @@ M1–3 metering + shadow mode at one Maiduguri-class hospital; M4–6 engineerin
 Simulation, not field-measured performance; illustrative loads; fuel and repair logistics assumed (exposed as sliders); 15-minute resolution (no protection transients); supervisory, not a certified protection system.
 
 ## Disclosure (short form)
-Nothing existed before 30 Oct 2026, 12:00 PM ET. Day 1: a first version built with the ZCode AI coding agent. Day 2: engine and product rebuilt with Claude Code (Anthropic). Open-source: Next.js, React, Recharts, Zustand, three.js / react-three-fiber, Vitest, Playwright, pptxgenjs, ReportLab. Data: NASA POWER (public). Published statistics: NREL, World Bank, WHO, NERC, BNEF. No patient or personal data. Full statement: DISCLOSURE_STATEMENT.pdf.
+Nothing existed before 30 Oct 2026, 12:00 PM ET. Day 1: a first version built with the ZCode AI coding agent. Day 2: engine and product rebuilt with Claude Code (Anthropic). Videos: real screen captures of the running app, edited with an AI-assisted pipeline (HyperFrames + FFmpeg driven by an AI agent) and a score composed in code, with the team's own voice-over; no generated footage of the product. Open-source: Next.js, React, Recharts, Zustand, three.js / react-three-fiber, Vitest, Playwright, pptxgenjs, ReportLab. Data: NASA POWER (public). Published statistics: NREL, World Bank, WHO, NERC, BNEF. No patient or personal data. Full statement: DISCLOSURE_STATEMENT.pdf.
 
 ## Links (fill in)
 - Repository: https://github.com/Jae3y/medgrid-sentinel

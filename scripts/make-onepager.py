@@ -113,7 +113,7 @@ sec("Biggest risk & how we will test it early",
     "daily-energy prediction error is within +/-15%. Secondary: theft/vandalism of panels - on-campus siting and insurance priced into the EaaS fee.")
 sec("Prior-work disclosure",
     "Nothing existed before 30 Oct 2026 12:00 PM ET. Day 1 (30 Oct) first version built with the ZCode AI coding agent; Day 2 (31 Oct) engine and product rebuilt with Claude Code (Anthropic). "
-    "Open-source: Next.js, React, Recharts, Zustand, Vitest, pptxgenjs, ReportLab. Data: NASA POWER. Full statement: DISCLOSURE_STATEMENT.pdf; git history is public.")
+    "Videos: real screen captures, AI-assisted editing, own voice-over. Open-source: Next.js, React, Recharts, Zustand, Vitest, pptxgenjs, ReportLab. Data: NASA POWER. Full statement: DISCLOSURE_STATEMENT.pdf; git history is public.")
 E.append(Spacer(1, 3))
 E.append(Paragraph("<b>Live demo:</b> https://medgrid-sentinel.vercel.app &nbsp;·&nbsp; <b>Code &amp; data:</b> github.com/Jae3y/medgrid-sentinel", S["b"]))
 doc.build(E)

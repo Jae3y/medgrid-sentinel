@@ -46,4 +46,4 @@ Modelled loads and generator condition may differ from the real hospital. Test: 
 
 ## Prior-work disclosure
 
-Nothing existed before 30 Oct 2026 12:00 PM ET. Day 1 (30 Oct) first version built with the ZCode AI coding agent; Day 2 (31 Oct) engine and product rebuilt with Claude Code (Anthropic). Open-source: Next.js, React, Recharts, Zustand, Vitest, pptxgenjs, ReportLab. Data: NASA POWER. Full statement: DISCLOSURE_STATEMENT.pdf; git history is public.
+Nothing existed before 30 Oct 2026 12:00 PM ET. Day 1 (30 Oct) first version built with the ZCode AI coding agent; Day 2 (31 Oct) engine and product rebuilt with Claude Code (Anthropic). Videos: real screen captures, AI-assisted editing, own voice-over. Open-source: Next.js, React, Recharts, Zustand, Vitest, pptxgenjs, ReportLab. Data: NASA POWER. Full statement: DISCLOSURE_STATEMENT.pdf; git history is public.
